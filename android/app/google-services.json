@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "236762405931",
+    "project_id": "claimmyshares-fdcc8",
+    "storage_bucket": "claimmyshares-fdcc8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:236762405931:android:3457bb0c9b4b1df3b8de6e",
+        "android_client_info": {
+          "package_name": "com.claimmyshares"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyChNydZ4bfIqluN_ycAlbpHr6MXZLPLFNM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
