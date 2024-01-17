@@ -3,28 +3,26 @@ import React from 'react';
 import { View, Text, Button, StyleSheet, Image ,TouchableOpacity,Platform,Appearance} from 'react-native';
 import { DefaultStyle } from '../styles/base';
 
+
 const MainScreen = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <Image style={styles.logoImage} source={require('../Images/cms.png')} />
             {/* <Text style={styles.title}>Botmatic</Text> */}
             <View style={{ marginTop: "60%" }}>
-                <View style={styles.buttonContainer}>
                     <TouchableOpacity
-                        style={styles.button}
+                        style={styles.buttonContainer}
                         onPress={() => navigation.navigate('Login')}
                     >
                         <Text style={styles.buttonText}>Login</Text>
                     </TouchableOpacity>
-                </View>
-                <View style={styles.buttonContainer}>
+                
                     <TouchableOpacity
-                        style={styles.button}
+                        style={styles.createaccount}
                         onPress={() => navigation.navigate('CreateAccount')}
                     >
-                        <Text style={styles.buttonText}>Create Account</Text>
+                        <Text style={styles.createaccounttext}>Create Account</Text>
                     </TouchableOpacity>
-                </View>
             </View>
         </View>
     );
@@ -44,32 +42,55 @@ const styles = StyleSheet.create({
         color: 'orange',
     },
     buttonContainer: {
-        marginTop: 30,
-        width: DefaultStyle.DEVICE_WIDTH / 1.1,
-        borderRadius: 5,
-        elevation:15
-        // shadowColor: '#00000',
-        // shadowOffset: {width: -4, height: 4},
-        // shadowOpacity: 1,
-        // shadowRadius: 3,
+           
+          width: DefaultStyle.DEVICE_WIDTH / 1.1,
+          height: DefaultStyle.DEVICE_HEIGHT / 20,
+          marginTop:20,
+          justifyContent:'center',
+          alignItems:'center',
+          backgroundColor: '#007BFF',
+          borderRadius: 5,
+          shadowColor: Appearance.getColorScheme()=='dark'?null:'#cde5fe',
+          shadowOffset: {width: -2,  height: -2,},
+          shadowOpacity: 1,
+          shadowRadius: 10,
+         
     },
+    createaccount: {
+        width: DefaultStyle.DEVICE_WIDTH / 1.1,
+        height: DefaultStyle.DEVICE_HEIGHT / 20,
+        marginTop: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#f5f5f5',
+        borderWidth: 1,  // Set the border width
+        borderColor: '#827979',  // Set the border color
+        borderRadius: 5,
+      },
+  createaccounttext:{
+    color:"#000000",
+    fontWeight:'bold',fontSize:18,
+    justifyContent:'center',
+    
+},
     logoImage: {
         height: DefaultStyle.DEVICE_HEIGHT / 2.5,
         width: DefaultStyle.DEVICE_WIDTH / 1.1,
     },
     button:{
        
-            width: DefaultStyle.DEVICE_WIDTH / 1.1,
-            height: DefaultStyle.DEVICE_HEIGHT / 15,
-            alignItems: 'center',
-            borderRadius: DefaultStyle.UNIT / 2,
-            backgroundColor: '#EF6A32',
-            justifyContent: 'center'
+            // width: DefaultStyle.DEVICE_WIDTH / 1.1,
+            // height: DefaultStyle.DEVICE_HEIGHT / 15,
+            // alignItems: 'center',
+            // borderRadius: DefaultStyle.UNIT / 2,
+            // // backgroundColor: '#ffffff',
+            // justifyContent: 'center'
         
     },
     buttonText:{
-        color:"white",
+        color:"#ffffff", fontSize:18,fontFamily:'inter',
         fontWeight:'bold',
+        justifyContent:'center',
         
     },
     

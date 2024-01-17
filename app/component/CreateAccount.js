@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity,Image } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity,Image, Appearance } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+
 import { DefaultStyle } from '../styles/base';
 
 const CreateAccount = () => {
@@ -11,6 +12,7 @@ const CreateAccount = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [isChecked, setChecked] = useState(false);
 
   const handleCreateAccount = () => {
     // Implement your logic to handle the creation of the account
@@ -18,70 +20,95 @@ const CreateAccount = () => {
     console.log('Creating Account:', { name, phone, email, password, confirmPassword });
   };
 
-  return (
-    <View style={styles.container}>
-      {/* <Text style={styles.title}>Create Account</Text> */}
-      <Image style={styles.logoImage} source={require('../Images/cms.png')} />
+  const handleProfilePress = () => {
+    // Navigate to the 'Profile' screen
+    navigation.navigate('Profile');
+  };
 
-      {/* Name TextInput */}
+
+  return (
+    <View style={styles.page}>
+      <View style={styles.container}>
+      {/* <Image style={styles.logoImage} source={require('../Images/cms.png')} /> */}
+
       <TextInput
-        style={styles.input}
+        style={styles.buttonContainer}
         placeholder="Name"
+        placeholderTextColor='#3D3939'
         value={name}
         onChangeText={text => setName(text)}
       />
 
-      {/* Phone TextInput */}
       <TextInput
-        style={styles.input}
+        style={styles.buttonContainer}
         placeholder="Phone Number"
+        placeholderTextColor='#3D3939'
         keyboardType="phone-pad"
         value={phone}
         onChangeText={text => setPhone(text)}
       />
 
-      {/* Email TextInput */}
       <TextInput
-        style={styles.input}
+        style={styles.buttonContainer}
         placeholder="Email"
+        placeholderTextColor='#3D3939'
         keyboardType="email-address"
         value={email}
         onChangeText={text => setEmail(text)}
       />
 
-      {/* Password TextInput */}
       <TextInput
-        style={styles.input}
+        style={styles.buttonContainer}
         placeholder="Password"
+        placeholderTextColor='#3D3939'
         secureTextEntry
         value={password}
         onChangeText={text => setPassword(text)}
       />
 
-      {/* Confirm Password TextInput */}
       <TextInput
-        style={styles.input}
+        style={styles.buttonContainer}
         placeholder="Confirm Password"
+        placeholderTextColor='#3D3939'
         secureTextEntry
         value={confirmPassword}
         onChangeText={text => setConfirmPassword(text)}
       />
-
-      {/* Create Account Button */}
-      <TouchableOpacity style={styles.createAccountButton} onPress={handleCreateAccount}>
-        <Text style={styles.createAccountButtonText}>Create Account</Text>
+      
+      <TouchableOpacity style={styles.loginButton} onPress={handleCreateAccount}>
+        <Text style={styles.loginButtonText}>Create Account</Text>
       </TouchableOpacity>
+      </View>
+      <Text style={{marginLeft:40,}}>_____________________ or_______________________</Text>
+      <View style={{padding:'5%',justifyContent:'flex-start',alignItems:'center',paddingTop:10}}>
+
+      <TouchableOpacity style={styles.buttonContainer} onPress={handleProfilePress}>
+        <Text style={styles.buttonText}>Continue with Google</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.buttonContainer}>
+        <Text style={styles.buttonText}>Continue with Phone</Text>
+      </TouchableOpacity>
+      <View style={{flexDirection:'row',marginTop:20}}>
+      <Text style={[styles.buttonText,{color:'#ffffff'}]}>Already has a account ? </Text>
+      <Text style={[styles.buttonText,{color:'blue'}]} onPress={()=>{ navigation.navigate('Login')}}>Login</Text>
+      </View>
+
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  page:{
+    height:'100%',
+    backgroundColor:Appearance.getColorScheme()=="dark"?"black":'#f5f5f5'},
   container: {
     padding: '10%',
-    flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
-    backgroundColor:'white'
+    height:DefaultStyle.DEVICE_HEIGHT / 2,
+    backgroundColor:Appearance.getColorScheme()=="dark"?"black":'#f5f5f5'
   },
   title: {
     fontSize: 24,
@@ -98,21 +125,74 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   logoImage: {
-    height: DefaultStyle.DEVICE_HEIGHT / 2.5,
-    width: DefaultStyle.DEVICE_WIDTH / 1.1,
+    height: DefaultStyle.DEVICE_HEIGHT / 4,
+    width: DefaultStyle.DEVICE_WIDTH / 1.5,
 },
-  createAccountButton: {
-    backgroundColor: 'green',
-    padding: 10,
-    borderRadius: 8,
-    width: '100%',
-    alignItems: 'center',
-    marginTop: 10,
+
+
+inputbox: {
+  width: DefaultStyle.DEVICE_WIDTH / 1.1,
+  height: DefaultStyle.DEVICE_HEIGHT / 20,
+  padding:10,
+  marginTop:10,
+  backgroundColor: '#FFFFFF',
+  borderRadius: 4,
+  shadowColor: '#cde5fe',
+  shadowOffset: {
+    width: -2,
+    height: -2,
   },
-  createAccountButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
+  shadowOpacity: 1,
+  shadowRadius: 10,
+},
+buttonContainer: {
+         
+  width: DefaultStyle.DEVICE_WIDTH / 1.2,
+  height: DefaultStyle.DEVICE_HEIGHT / 22,
+  marginTop:15,
+  padding:10,
+  justifyContent:'center',
+  alignItems:'center',
+  backgroundColor: '#FFFFFF',
+  borderRadius: 5,
+  shadowColor: '#cde5fe',
+  shadowOffset: {width: -2,  height: -2,},
+    shadowOpacity: 0.8,
+    shadowRadius: 5,
+ 
+},
+buttonText:{
+color:"black",
+fontWeight:'bold',
+justifyContent:'center',
+
+},
+loginButton: {
+  backgroundColor: '#007BFF',
+  width: DefaultStyle.DEVICE_WIDTH / 1.2,
+  height: DefaultStyle.DEVICE_HEIGHT / 20,
+  padding: 10,
+  marginTop:30,
+  borderRadius: 8,
+  alignItems: 'center',
+  justifyContent: 'center',
+  fontFamily: 'Inter',
+  fontStyle: 'normal',
+  fontWeight: '700',
+  fontSize: 18,
+  lineHeight: 22,
+  textAlign: 'center',
+  color: Appearance.getColorScheme()=="dark"?"white":"black",
+
+},
+
+loginButtonText: {
+  color: Appearance.getColorScheme()=="dark"?"white":"black",
+  fontWeight: 'bold',
+  fontSize:18,
+  textTransform: 'uppercase',
+
+},
 });
 
 export default CreateAccount;

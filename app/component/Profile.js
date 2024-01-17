@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, Appearance } from 'react-native';
+import { DefaultStyle } from '../styles/base';
 
 const Profile = () => {
   // Sample user data
@@ -59,15 +60,25 @@ const Profile = () => {
 const styles = StyleSheet.create({
   container: {
     padding: '5%',
-    backgroundColor: 'white',
+    backgroundColor: Appearance.getColorScheme()=='dark'?"black":'white',
     height: '100%',
   },
   userInfo: {
+    width: DefaultStyle.DEVICE_WIDTH / 1.1,
+    height: DefaultStyle.DEVICE_HEIGHT / 10,
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
-    elevation:10,backgroundColor:'white',
+    marginTop:10,
+    backgroundColor:Appearance.getColorScheme()=='dark'?"#312E2E":'white',
     borderRadius:10,
+    shadowColor: Appearance.getColorScheme()=='dark'?null:'#cde5fe',
+    shadowOffset: {
+      width: -2,
+      height: -2,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 10,
   },
   profileImage: {
     width: 80,
@@ -81,24 +92,31 @@ const styles = StyleSheet.create({
   userName: {
     fontSize: 20,
     fontWeight: 'bold',
+    color:Appearance.getColorScheme()=='dark'?'white':'black',
   },
   userEmail: {
     fontSize: 15,
-    color: 'gray',
+    color: Appearance.getColorScheme()=='dark'?'white':'gray',
   },
   buttonsContainer: {
     marginTop: 20,
   },
   button: {
-    backgroundColor: 'white',
+    backgroundColor: Appearance.getColorScheme()=='dark'?'#312E2E': 'white',
     padding: 15,
     borderRadius: 8,
     marginBottom: 10,
-    elevation:10,
-    marginTop:5,
+    marginTop:10,
+    shadowColor: Appearance.getColorScheme()=='dark'? null: '#cde5fe',
+    shadowOffset: {
+      width: -2,
+      height: -2,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 10,
   },
   buttonText: {
-    color: 'black',
+    color: Appearance.getColorScheme()=='dark'?'white':'black',
     textAlign: 'center',
     fontWeight: 'bold',
   },
