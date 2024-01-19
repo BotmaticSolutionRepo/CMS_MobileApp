@@ -81,8 +81,8 @@ const Login = () => {
         value={password}
         onChangeText={text => setPassword(text)}
       />
-      
-      <Text style={styles.forgotpass}onPress={()=>{navigation.navigate('Forgot Password')}}>Forgot Password?</Text>
+
+      <Text style={styles.forgotpass} onPress={() => { navigation.navigate('Forgot Password') }}>Forgot Password?</Text>
 
 
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
@@ -115,10 +115,10 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontFamily: 'Inter',
     marginBottom: 20,
-    textAlign: 'center',color:Appearance.getColorScheme() == "dark" ? "#FFFFFF" : '#000000',
+    textAlign: 'center', color: Appearance.getColorScheme() == "dark" ? "#FFFFFF" : '#000000',
   },
-  forgotpass:{
-    fontSize: 15, fontFamily: 'intern', color: 'gray', fontWeight: '500', textAlign: 'right', marginRight: 10, marginTop: 10 
+  forgotpass: {
+    fontSize: 15, fontFamily: 'intern', color: 'gray', fontWeight: '500', textAlign: 'right', marginRight: 10, marginTop: 10
   },
 
   loginButton: {
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     backgroundColor: '#FFFFFF',
     borderRadius: 4,
-    shadowColor: Appearance.getColorScheme()=='dark'? null:'#cde5fe',
+    shadowColor: Appearance.getColorScheme() == 'dark' ? null : '#cde5fe',
     shadowOffset: {
       width: -2,
       height: -2,
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
     borderRadius: 5,
-    shadowColor: Appearance.getColorScheme()=='dark'?"":'#cde5fe',
+    shadowColor: Appearance.getColorScheme() == 'dark' ? "" : '#cde5fe',
     shadowOffset: { width: -2, height: -2, },
     shadowOpacity: 0.9,
     shadowRadius: 10,

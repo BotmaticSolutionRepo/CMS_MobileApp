@@ -35,8 +35,8 @@ const ForgotPassword = () => {
       </TouchableOpacity>
      
       <View style={{flexDirection:'row',marginTop:10,textAlign:'center',marginLeft:"20%"}}>
-      <Text style={[styles.buttonText,{color:'#FFFFFF'}]}>  If you didn’t recieve link,</Text>
-      <Text style={[styles.buttonText,{color:'blue'}]} onPress={()=>{ navigation.navigate('Profile')}}>Resend</Text>
+      <Text style={styles.buttonText}>  If you didn’t recieve link, </Text>
+      <Text style={[styles.buttonText,{color:'blue'}]} onPress={()=>{ navigation.navigate('ChangePassword')}}>Resend</Text>
       </View>
       </View>
      </View>
@@ -96,4 +96,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowRadius: 10,
   },
+  buttonText:{
+    color:Appearance.getColorScheme()=="dark"?"white":"black",
+    fontWeight:'bold',
+    justifyContent:'center',
+    
+    },
 })
