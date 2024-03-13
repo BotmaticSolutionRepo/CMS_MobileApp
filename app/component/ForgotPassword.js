@@ -3,6 +3,7 @@ import React ,{useState} from 'react'
 import { TextInput } from 'react-native-gesture-handler'
 import { DefaultStyle } from '../styles/base';
 import { useNavigation } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/FontAwesome'; // Import the icon library
 
 
 const ForgotPassword = () => {
@@ -23,6 +24,7 @@ const ForgotPassword = () => {
       <Text style={styles.title}>Enter your email or mobile number and we’ll send a link on your email to reset your password. </Text>
 
       <View style={{marginTop:10}}> 
+      <View style={{flexDirection:'row'}}>
       <TextInput
         style={styles.inputbox}
         placeholder="Username or Email"
@@ -30,6 +32,8 @@ const ForgotPassword = () => {
         value={mobno}
         onChangeText={text => setmobno(text)}
       />
+     <Icon name="envelope" size={20} color="green" style={styles.icon} />
+      </View>
       <TouchableOpacity style={styles.loginButton} onPress={handlesendlink}>
         <Text style={styles.loginButtonText}>send link</Text>
       </TouchableOpacity>
@@ -55,6 +59,12 @@ const styles = StyleSheet.create({
   marginLeft:10,marginTop:30,fontSize:15,color:'gray'
   // color:Appearance.getColorScheme()=="dark"?"gray":"black"
  },
+ icon: {
+  position: 'absolute',
+  right: 10,
+  top:20
+  // marginLeft:24,
+},
 
   loginButton: {
     backgroundColor: '#007BFF',

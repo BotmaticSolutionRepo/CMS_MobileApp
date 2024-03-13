@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, Image, Appearance } from 'react-native';
 import React, { useState } from 'react'
+import Icon from 'react-native-vector-icons/FontAwesome'; // Import the icon library
 
 const PersonalInformation = () => {
     var color = Appearance.getColorScheme()=='dark'?"#FFFFFF":'#000000';
@@ -18,8 +19,11 @@ const PersonalInformation = () => {
     return (
         <View style={styles.container}>
             <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                <View style={{ height: 100, width: 100, borderRadius: 100, }}>
-                    <Image style={{ height: 93, width: 93, borderRadius: 93, }} source={require('../Images/cms.png')} />
+                <View style={{ height: 100, width: 100, borderRadius: 100,flexDirection:'row' }}>
+                    <Image style={{ height: 93, width: 93, borderRadius: 93,zIndex:0 }} source={require('../Images/cms.png')} />
+                    <View style={{height:32,width:32,borderRadius:32,backgroundColor:'green',marginTop:65,marginLeft:-20,zIndex:1000}}>
+                    <Icon name="camera" size={18} color="white" style={{ position: 'absolute', right: 7,top:7}} />
+                    </View>
                 </View>
             </View>
 
@@ -52,6 +56,7 @@ const PersonalInformation = () => {
 
                 <View>
                     <Text style={styles.title}>Email</Text>
+                   <View style={{flexDirection:'row'}}>
                     <TextInput
                         style={styles.input}
                         placeholder="Email"
@@ -60,6 +65,9 @@ const PersonalInformation = () => {
                         value={email}
                         onChangeText={text => setemail(text)}
                     />
+                         <Icon name="envelope" size={20} color="green" style={styles.icon} />
+                   </View>
+
                 </View>
 
                 <View style={{ flexDirection: 'row' }}>
@@ -76,6 +84,8 @@ const PersonalInformation = () => {
                     </View>
                     <View style={{ width: '60%', marginLeft: 40 }}>
                         <Text style={styles.title}>Phone</Text>
+                       <View style={{flexDirection:'row'}}>
+
                         <TextInput
                             style={styles.input}
                             placeholder="Phone Number"
@@ -84,10 +94,13 @@ const PersonalInformation = () => {
                             value={email}
                             onChangeText={text => setemail(text)}
                         />
+                        <Icon name="phone" size={20} color="green" style={styles.icon} />
+                       </View>
                     </View>
                 </View>
                 <View>
                     <Text style={styles.title}>Address</Text>
+                   <View>
                     <TextInput
                         style={styles.input}
                         placeholder="Address"
@@ -96,6 +109,8 @@ const PersonalInformation = () => {
                         value={email}
                         onChangeText={text => setemail(text)}
                     />
+                  <Icon name="home" size={20} color="green" style={styles.icon} />
+                   </View>
                 </View>
 
             </View>
@@ -124,6 +139,12 @@ const styles = StyleSheet.create({
         marginBottom: 5,
         marginLeft: 10
     },
+    icon: {
+        position: 'absolute',
+        right: 10,
+        top:10
+        // marginLeft:24,
+      },
     input: {
         height: 40,
         borderColor: 'gray',

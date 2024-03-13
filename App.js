@@ -17,6 +17,15 @@ import Profile from './app/component/Profile';
 import ForgotPassword from './app/component/ForgotPassword';
 import ChangePassword from './app/component/ChangePassword';
 import PersonalInformation from './app/component/PersonalInformation';
+import WeeklyProgress from './app/component/WeeklyProgress';
+import UpdateKYC from './app/component/ UpdateKYC';
+import SupportChat from './app/component/SupportChat';
+import Notification from './app/component/Notification';
+import SupportTeam from './app/component/SupportTeam';
+import WeeklyProgressTwo from './app/component/WeeklyProgressTwo';
+
+
+
 import { Appearance } from 'react-native';
 
 
@@ -51,6 +60,18 @@ const App = () => {
         <Stack.Screen name="Forgot Password" component={ForgotPassword} options={{ title: 'Forgot Password', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
         <Stack.Screen name="ChangePassword" component={ChangePassword} options={{ title: 'Change Password', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
         <Stack.Screen name="PersonalInformation" component={PersonalInformation} options={{ title: 'Personal Information', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
+        <Stack.Screen name="WeeklyProgress" component={WeeklyProgress} options={{ title: 'WeeklyProgressTwo', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
+        <Stack.Screen name="UpdateKYC" component={UpdateKYC} options={{title: 'Update KYC', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9',  }}  />
+        <Stack.Screen name="SupportChat" component={SupportChat} options={{ title: 'Support Chat', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
+        <Stack.Screen name="Notification" component={Notification} options={{ title: 'Notification', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
+        <Stack.Screen name="SupportTeam" component={SupportTeam} options={{ title: 'SupportTeam', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
+        <Stack.Screen name="WeeklyProgressTwo" component={WeeklyProgressTwo} options={{ title: 'WeeklyProgressTwo', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
+
+
+
+
+
+
 
       </Stack.Navigator>
     </NavigationContainer>

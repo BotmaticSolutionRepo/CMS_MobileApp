@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, Appearance } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Appearance } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/FontAwesome'; // Import the icon library
 
 import { DefaultStyle } from '../styles/base';
 
@@ -25,75 +26,93 @@ const CreateAccount = () => {
     navigation.navigate('Profile');
   };
 
-
   return (
     <View style={styles.page}>
       <View style={styles.container}>
-        {/* <Image style={styles.logoImage} source={require('../Images/cms.png')} /> */}
+        {/* Name Input */}
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Name"
+            placeholderTextColor='#3D3939'
+            value={name}
+            onChangeText={text => setName(text)}
+          />
+          <Icon name="user" size={20} color="black" style={styles.icon} />
+        </View>
 
-        <TextInput
-          style={styles.buttonContainer}
-          placeholder="Name"
-          placeholderTextColor='#3D3939'
-          value={name}
-          onChangeText={text => setName(text)}
-        />
+        {/* Phone Input */}
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Phone Number"
+            placeholderTextColor='#3D3939'
+            keyboardType="phone-pad"
+            value={phone}
+            onChangeText={text => setPhone(text)}
+          />
+          <Icon name="phone" size={20} color="black" style={styles.icon} />
+        </View>
 
-        <TextInput
-          style={styles.buttonContainer}
-          placeholder="Phone Number"
-          placeholderTextColor='#3D3939'
-          keyboardType="phone-pad"
-          value={phone}
-          onChangeText={text => setPhone(text)}
-        />
+        {/* Email Input */}
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            placeholderTextColor='#3D3939'
+            keyboardType="email-address"
+            value={email}
+            onChangeText={text => setEmail(text)}
+          />
+          <Icon name="envelope" size={20} color="black" style={styles.icon} />
+        </View>
 
-        <TextInput
-          style={styles.buttonContainer}
-          placeholder="Email"
-          placeholderTextColor='#3D3939'
-          keyboardType="email-address"
-          value={email}
-          onChangeText={text => setEmail(text)}
-        />
+        {/* Password Input */}
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            placeholderTextColor='#3D3939'
+            secureTextEntry
+            value={password}
+            onChangeText={text => setPassword(text)}
+          />
+          <Icon name="lock" size={20} color="black" style={styles.icon} />
+        </View>
 
-        <TextInput
-          style={styles.buttonContainer}
-          placeholder="Password"
-          placeholderTextColor='#3D3939'
-          secureTextEntry
-          value={password}
-          onChangeText={text => setPassword(text)}
-        />
+        {/* Confirm Password Input */}
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Confirm Password"
+            placeholderTextColor='#3D3939'
+            secureTextEntry
+            value={confirmPassword}
+            onChangeText={text => setConfirmPassword(text)}
+          />
+          <Icon name="eye" size={20} color="black" style={styles.icon} />
+        </View>
 
-        <TextInput
-          style={styles.buttonContainer}
-          placeholder="Confirm Password"
-          placeholderTextColor='#3D3939'
-          secureTextEntry
-          value={confirmPassword}
-          onChangeText={text => setConfirmPassword(text)}
-        />
-
+        {/* Create Account Button */}
         <TouchableOpacity style={styles.loginButton} onPress={handleCreateAccount}>
           <Text style={styles.loginButtonText}>Create Account</Text>
         </TouchableOpacity>
       </View>
+      {/* Continue with Google and Phone */}
       <Text style={{ marginLeft: 40, }}>_____________________ or_______________________</Text>
       <View style={{ padding: '5%', justifyContent: 'flex-start', alignItems: 'center', paddingTop: 10 }}>
-
         <TouchableOpacity style={styles.buttonContainer} onPress={handleProfilePress}>
           <Text style={styles.buttonText}>Continue with Google</Text>
+          <Icon name="google" size={20} color="red" style={styles.icon} />
         </TouchableOpacity>
-
         <TouchableOpacity style={styles.buttonContainer}>
+          <Icon name="phone" size={20} color="green" style={styles.icon} />
           <Text style={styles.buttonText}>Continue with Phone</Text>
         </TouchableOpacity>
         <View style={{ flexDirection: 'row', marginTop: 20 }}>
-          <Text style={[styles.buttonText, { color: '#ffffff' }]}>Already has a account ? </Text>
+          <Text style={[styles.buttonText, { color: 'gray' }]}>Already have an account? </Text>
           <Text style={[styles.buttonText, { color: 'blue' }]} onPress={() => { navigation.navigate('Login') }}>Login</Text>
         </View>
-
       </View>
     </View>
   );
@@ -111,62 +130,45 @@ const styles = StyleSheet.create({
     height: DefaultStyle.DEVICE_HEIGHT / 2,
     backgroundColor: Appearance.getColorScheme() == "dark" ? "black" : '#f5f5f5'
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  icon: {
+    position: 'absolute',
+    right: 10,
+    // marginLeft:24,
   },
   input: {
+    flex: 1,
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
     borderRadius: 8,
-    marginBottom: 10,
     paddingLeft: 10,
-    width: '100%',
-  },
-  logoImage: {
-    height: DefaultStyle.DEVICE_HEIGHT / 4,
-    width: DefaultStyle.DEVICE_WIDTH / 1.5,
-  },
-
-
-  inputbox: {
-    width: DefaultStyle.DEVICE_WIDTH / 1.1,
-    height: DefaultStyle.DEVICE_HEIGHT / 20,
-    padding: 10,
-    marginTop: 10,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 4,
-    shadowColor: '#cde5fe',
-    shadowOffset: {
-      width: -2,
-      height: -2,
-    },
-    shadowOpacity: 1,
-    shadowRadius: 10,
+    paddingRight: 40, // Adjust the paddingRight to accommodate the icon
   },
   buttonContainer: {
-
-    width: DefaultStyle.DEVICE_WIDTH / 1.2,
-    height: DefaultStyle.DEVICE_HEIGHT / 22,
+    flexDirection: 'row',
+    alignItems: 'center',
+    width:'60%',
     marginTop: 15,
     padding: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#FFFFFF',
     borderRadius: 5,
     shadowColor: '#cde5fe',
-    shadowOffset: { width: -2, height: -2, },
+    shadowOffset: { width: -2, height: -2 },
     shadowOpacity: 0.8,
     shadowRadius: 5,
-
+    justifyContent:'space-around'
   },
   buttonText: {
     color: "black",
     fontWeight: 'bold',
+    marginLeft:10,
+    
     justifyContent: 'center',
-
   },
   loginButton: {
     backgroundColor: '#007BFF',
@@ -184,15 +186,12 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     textAlign: 'center',
     color: Appearance.getColorScheme() == "dark" ? "white" : "black",
-
   },
-
   loginButtonText: {
-    color: Appearance.getColorScheme() == "dark" ? "white" : "black",
+    color: 'white',
     fontWeight: 'bold',
     fontSize: 18,
     textTransform: 'uppercase',
-
   },
 });
 

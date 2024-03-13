@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, Alert, Appearance } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/FontAwesome'; // Import the icon library
 
 import { DefaultStyle } from '../styles/base';
 
@@ -64,6 +65,7 @@ const Login = () => {
       <Text style={styles.title}>Track Your Status</Text>
 
       {/* Username/Email TextInput */}
+      <View style={{flexDirection:'row'}}>
       <TextInput
         style={styles.inputbox}
         placeholder="Username or Email"
@@ -71,8 +73,10 @@ const Login = () => {
         value={username}
         onChangeText={text => setUsername(text)}
       />
+     <Icon name="envelope" size={20} color="green" style={styles.icon} />
+      </View>
 
-
+    <View style={{flexDirection:'row'}}>
       <TextInput
         style={styles.inputbox}
         placeholder="Password"
@@ -81,6 +85,8 @@ const Login = () => {
         value={password}
         onChangeText={text => setPassword(text)}
       />
+     <Icon name="eye" size={20} color="green" style={styles.icon} />
+    </View>
 
       <Text style={styles.forgotpass} onPress={() => { navigation.navigate('Forgot Password') }}>Forgot Password?</Text>
 
@@ -147,6 +153,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textTransform: 'uppercase',
 
+  },
+  icon: {
+    position: 'absolute',
+    right: 10,
+    top:20
+    // marginLeft:24,
   },
 
   inputbox: {

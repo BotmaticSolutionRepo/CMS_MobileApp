@@ -1,13 +1,14 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, Appearance } from 'react-native';
 import { DefaultStyle } from '../styles/base';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const Profile = () => {
   // Sample user data
   const user = {
     name: 'Rutik Gubge',
     email: 'basweshwar.g@botmaticsolution.in',
-    profileImage: require('../Images/cms.png'), // Replace with the actual path
+    profileImage: require('../Images/cms.png'), 
   };
 
   const handleButtonPress = (buttonName) => {
@@ -31,22 +32,28 @@ const Profile = () => {
         {/* Touchable Opacity Buttons */}
         <TouchableOpacity style={styles.button} onPress={() => handleButtonPress('Personal Information')}>
           <Text style={styles.buttonText}>Personal Information</Text>
+          <Icon name="user" size={20} color="green" style={styles.icon} />
+
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.button} onPress={() => handleButtonPress('Settings')}>
           <Text style={styles.buttonText}>Settings</Text>
+          <Icon name="gear" size={20} color="green" style={styles.icon} />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.button} onPress={() => handleButtonPress('FAQs')}>
           <Text style={styles.buttonText}>FAQs</Text>
+          <Icon name="info-circle" size={20} color="green" style={styles.icon} />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.button} onPress={() => handleButtonPress('Our Policies')}>
           <Text style={styles.buttonText}>Our Policies</Text>
+          <Icon name="key" size={20} color="green" style={styles.icon} />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.button} onPress={() => handleButtonPress('Support')}>
           <Text style={styles.buttonText}>Support</Text>
+          <Icon name="support" size={20} color="green" style={styles.icon} />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.logoutButton} onPress={() => handleButtonPress('Logout')}>
@@ -102,6 +109,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   button: {
+    flexDirection:'row',justifyContent:'space-between',
     backgroundColor: Appearance.getColorScheme()=='dark'?'#312E2E': 'white',
     padding: 15,
     borderRadius: 8,
