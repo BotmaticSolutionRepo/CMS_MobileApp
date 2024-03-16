@@ -2,8 +2,11 @@ import React from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, Appearance } from 'react-native';
 import { DefaultStyle } from '../styles/base';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useNavigation } from '@react-navigation/native';
+
 
 const Profile = () => {
+  const navigation = useNavigation(); 
   // Sample user data
   const user = {
     name: 'Rutik Gubge',
@@ -11,11 +14,28 @@ const Profile = () => {
     profileImage: require('../Images/cms.png'), 
   };
 
-  const handleButtonPress = (buttonName) => {
+  const handlepersonal = (buttonName) => {
+    navigation.navigate('PersonalInformation');
+    
     // Handle button press actions based on the buttonName
     console.log('Button pressed:', buttonName);
   };
-
+  const handleSetting = (buttonName) => {
+    navigation.navigate('NotificationSettings');
+    console.log('Button pressed:', buttonName);
+  };
+  const handlefaq = (buttonName) => {
+    navigation.navigate('Faq');
+    console.log('Button pressed:', buttonName);
+  };
+  const handlesupport = (buttonName) => {
+    navigation.navigate('SupportTeam');
+    console.log('Button pressed:', buttonName);
+  };
+  const handlelogout = (buttonName) => {
+    navigation.navigate('Login');
+    console.log('Button pressed:', buttonName);
+  };
   return (
     <View style={styles.container}>
       {/* User Info Section */}
@@ -30,18 +50,18 @@ const Profile = () => {
       {/* Buttons Section */}
       <View style={styles.buttonsContainer}>
         {/* Touchable Opacity Buttons */}
-        <TouchableOpacity style={styles.button} onPress={() => handleButtonPress('Personal Information')}>
+        <TouchableOpacity style={styles.button} onPress={() => handlepersonal('Personal Information')}>
           <Text style={styles.buttonText}>Personal Information</Text>
           <Icon name="user" size={20} color="green" style={styles.icon} />
 
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button} onPress={() => handleButtonPress('Settings')}>
+        <TouchableOpacity style={styles.button} onPress={() => handleSetting('Settings')}>
           <Text style={styles.buttonText}>Settings</Text>
           <Icon name="gear" size={20} color="green" style={styles.icon} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button} onPress={() => handleButtonPress('FAQs')}>
+        <TouchableOpacity style={styles.button} onPress={() => handlefaq('FAQs')}>
           <Text style={styles.buttonText}>FAQs</Text>
           <Icon name="info-circle" size={20} color="green" style={styles.icon} />
         </TouchableOpacity>
@@ -51,12 +71,12 @@ const Profile = () => {
           <Icon name="key" size={20} color="green" style={styles.icon} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button} onPress={() => handleButtonPress('Support')}>
+        <TouchableOpacity style={styles.button} onPress={() => handlesupport('Support')}>
           <Text style={styles.buttonText}>Support</Text>
           <Icon name="support" size={20} color="green" style={styles.icon} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.logoutButton} onPress={() => handleButtonPress('Logout')}>
+        <TouchableOpacity style={styles.logoutButton} onPress={() => handlelogout('Logout')}>
           <Text style={styles.logoutButtonText}>Logout</Text>
         </TouchableOpacity>
       </View>

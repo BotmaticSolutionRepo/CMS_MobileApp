@@ -1,8 +1,10 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, Image, Appearance } from 'react-native';
 import React, { useState } from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import the icon library
+import { useNavigation } from '@react-navigation/native';
 
 const PersonalInformation = () => {
+    const navigation=useNavigation();
     var color = Appearance.getColorScheme()=='dark'?"#FFFFFF":'#000000';
 
     const [email, setemail] = useState('');
@@ -13,6 +15,11 @@ const PersonalInformation = () => {
     const handleChangePassword = () => {
 
         navigation.navigate('PersonalInformation');
+
+    };
+    const handlesave = () => {
+
+        navigation.navigate('Profile');
 
     };
 
@@ -115,7 +122,7 @@ const PersonalInformation = () => {
 
             </View>
             <View style={{ marginTop: 40 }}>
-                <TouchableOpacity style={styles.button} onPress={handleChangePassword}>
+                <TouchableOpacity style={styles.button} onPress={handlesave}>
                     <Text style={styles.buttonText}>Save</Text>
                 </TouchableOpacity>
 

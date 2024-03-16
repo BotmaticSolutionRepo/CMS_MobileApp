@@ -33,7 +33,7 @@ const ChangePassword = () => {
     }
   };
   const handlerest = ()=>{
-    navigation.navigate('WeeklyProgressTwo');
+    navigation.navigate('Dashboard');
 
   }
 

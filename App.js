@@ -21,8 +21,15 @@ import WeeklyProgress from './app/component/WeeklyProgress';
 import UpdateKYC from './app/component/ UpdateKYC';
 import SupportChat from './app/component/SupportChat';
 import Notification from './app/component/Notification';
+import Faq from './app/component/Faq';
 import SupportTeam from './app/component/SupportTeam';
 import WeeklyProgressTwo from './app/component/WeeklyProgressTwo';
+import Dashboard from './app/component/Dashboard';
+import NotificationSettings from './app/component/NotificationSettings';
+
+
+
+
 
 
 
@@ -66,6 +73,10 @@ const App = () => {
         <Stack.Screen name="Notification" component={Notification} options={{ title: 'Notification', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
         <Stack.Screen name="SupportTeam" component={SupportTeam} options={{ title: 'SupportTeam', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
         <Stack.Screen name="WeeklyProgressTwo" component={WeeklyProgressTwo} options={{ title: 'WeeklyProgressTwo', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
+        <Stack.Screen name="Dashboard" component={Dashboard} options={{ headerShown:false }} />
+        <Stack.Screen name="NotificationSettings" component={NotificationSettings} options={{ title: 'Notification Settings', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
+        <Stack.Screen name="Faq" component={Faq} options={{ title: 'FAQ', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
+
 
 
 

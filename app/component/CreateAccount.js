@@ -16,6 +16,7 @@ const CreateAccount = () => {
   const [isChecked, setChecked] = useState(false);
 
   const handleCreateAccount = () => {
+    navigation.navigate('Login');
     // Implement your logic to handle the creation of the account
     // You can use the entered values (name, phone, email, password, confirmPassword)
     console.log('Creating Account:', { name, phone, email, password, confirmPassword });
@@ -192,6 +193,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 18,
     textTransform: 'uppercase',
+  
   },
 });
 

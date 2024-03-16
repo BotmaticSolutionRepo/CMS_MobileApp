@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, Alert, Appearance } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, Alert, Appearance, KeyboardAvoidingView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import the icon library
@@ -17,6 +17,7 @@ const Login = () => {
 
 
   const handleLogin = async () => {
+    
     console.log("username____", username, "pass__", password, "environment____", Environment, "\n Token____", await AsyncStorage.getItem("DeviceToken"));
     if (username == "" || password == "") {
       Alert.alert("enter username and password")
@@ -43,20 +44,27 @@ const Login = () => {
       .then(data => {
         // Handle the response from the login API
         console.log('Login response:', data);
-        // Add your logic for handling successful login or displaying error messages
+        if (data.isException) {
+          Alert.alert(data.result); // Display error message
+        } else {
+          navigation.navigate('Dashboard'); // Navigate to Dashboard if no exception
+        }
       })
       .catch(error => {
         console.error('Error during login:', error);
         // Handle error scenarios
       });
-  };
+};
 
-  const handleProfilePress = () => {
+const handleProfilePress = () => {
     // Navigate to the 'Profile' screen
     navigation.navigate('Profile');
-  };
+};
+
 
   return (
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : null}>
+
     <View style={styles.container}>
       <View style={{ height: '50%', justifyContent: 'flex-end' }}>
 
@@ -103,6 +111,7 @@ const Login = () => {
         <Text style={styles.buttonText}>Continue with Phone</Text>
       </TouchableOpacity> */}
     </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -130,7 +139,7 @@ const styles = StyleSheet.create({
   loginButton: {
     backgroundColor: '#007BFF',
     height: DefaultStyle.DEVICE_HEIGHT / 20,
-    padding: 10,
+    paddingbo: 10,
     borderRadius: 8,
     width: '100%',
     alignItems: 'center',
@@ -165,9 +174,12 @@ const styles = StyleSheet.create({
     width: DefaultStyle.DEVICE_WIDTH / 1.1,
     height: DefaultStyle.DEVICE_HEIGHT / 20,
     padding: 10,
+    color:Appearance.getColorScheme() == 'dark' ? 'black' : 'white',
     marginTop: 10,
+    alignContent:'space-between',
     backgroundColor: '#FFFFFF',
     borderRadius: 4,
+    borderWidth:1,
     shadowColor: Appearance.getColorScheme() == 'dark' ? null : '#cde5fe',
     shadowOffset: {
       width: -2,
@@ -190,6 +202,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: -2, height: -2, },
     shadowOpacity: 0.9,
     shadowRadius: 10,
+    
 
   },
   buttonText: {
