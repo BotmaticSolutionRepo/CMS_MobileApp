@@ -36,6 +36,10 @@ const Profile = () => {
     navigation.navigate('Login');
     console.log('Button pressed:', buttonName);
   };
+  const handleButtonPress = (buttonName) => {
+    navigation.navigate('ourpolicies');
+    console.log('Button pressed:', buttonName);
+  };
   return (
     <View style={styles.container}>
       {/* User Info Section */}
@@ -99,7 +103,7 @@ const styles = StyleSheet.create({
     marginTop:10,
     backgroundColor:Appearance.getColorScheme()=='dark'?"#312E2E":'white',
     borderRadius:10,
-    shadowColor: Appearance.getColorScheme()=='dark'?null:'#cde5fe',
+    shadowColor: Appearance.getColorScheme()=='dark'?null:"white",
     shadowOffset: {
       width: -2,
       height: -2,

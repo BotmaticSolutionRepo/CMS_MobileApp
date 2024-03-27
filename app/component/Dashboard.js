@@ -6,6 +6,7 @@ import { RadioButton } from 'react-native-paper';
 import { Platform } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
+import App from '../../App';
 
 // import App from '../../App';
 
@@ -44,7 +45,7 @@ const Dashboard = () => {
           placeholderTextColor={colorScheme === 'dark' ? 'white' : 'black'}
 
         />
-        <Icon name="chevron-down" size={24} color="black" style={styles.searchIcon} />
+        <Icon name="chevron-down" size={24}  style={styles.searchIcon} />
       </View>
       <Text style={styles.fileProgressText}>File Progress</Text>
 
@@ -73,7 +74,7 @@ const Dashboard = () => {
             </View>
             <View style={{flexDirection:'row',marginLeft:100}}>
               <RadioButton.Android
-                color="white"
+                color="gray"
                 status="checked"
               />
               <Text style={{fontWeight:'bold',fontSize:12,color:Appearance.getColorScheme()=='dark'?'white':'black'}}>25% Incompleted</Text>
@@ -243,6 +244,7 @@ const styles = StyleSheet.create({
   },
   searchIcon: {
     padding: 10,
+    color:Appearance.getColorScheme()=='dark'?'white':'black',
   },
   fileProgressContainer: {
     marginBottom: 20,

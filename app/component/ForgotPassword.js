@@ -14,8 +14,11 @@ const ForgotPassword = () => {
 
   const handlesendlink = () => {
     // Navigate to the 'Profile' screen
-    navigation.navigate('Profile');
+   // navigation.navigate('Profile');
   };
+  const handleResend = () =>{
+    console.log('clicked resend')
+  }
 
 
   return (
@@ -40,7 +43,7 @@ const ForgotPassword = () => {
      
       <View style={{flexDirection:'row',marginTop:10,textAlign:'center',marginLeft:"20%"}}>
       <Text style={styles.buttonText}>  If you didn’t recieve link, </Text>
-      <Text style={[styles.buttonText,{color:'blue'}]} onPress={()=>{ navigation.navigate('ChangePassword')}}>Resend</Text>
+      <Text style={[styles.buttonText,{color:'blue'}]} onPress={handleResend}>Resend</Text>
       </View>
       </View>
      </View>
@@ -95,9 +98,11 @@ const styles = StyleSheet.create({
     width: DefaultStyle.DEVICE_WIDTH / 1.1,
     height: DefaultStyle.DEVICE_HEIGHT / 20,
     padding:10,
+    color:'black',
     marginTop:10,
     backgroundColor: '#FFFFFF',
     borderRadius: 4,
+    borderWidth:0.3,
     shadowColor: Appearance.getColorScheme()=='dark'?null:'#cde5fe',
     shadowOffset: {
       width: -2,

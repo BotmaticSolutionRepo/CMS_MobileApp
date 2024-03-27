@@ -107,7 +107,7 @@ const NotificationSettings = () => {
           </View>
         </View>
         <View style={styles.settingBox}>
-          <Text style={styles.settingTitle}>kishor</Text>
+          <Text style={styles.settingTitle}>Enable Notification</Text>
           <Text style={styles.settingDescriptionSmall}>Receive timely notifications about app updates, new features.</Text>
           <View style={styles.toggleButtonContainer}>
             <TouchableOpacity onPress={toggleKishorNotifications}>

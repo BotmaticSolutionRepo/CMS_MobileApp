@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Appearance } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Appearance, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import the icon library
 
@@ -13,12 +13,77 @@ const CreateAccount = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [isChecked, setChecked] = useState(false);
+  const [nameError, setNameError] = useState('');
+  const [phoneError, setPhoneError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleCreateAccount = () => {
-    navigation.navigate('Login');
-    // Implement your logic to handle the creation of the account
-    // You can use the entered values (name, phone, email, password, confirmPassword)
+    let isValid = true;
+
+    // Check if required fields are empty
+    if (!name.trim()) {
+      setNameError('required');
+      isValid = false;
+    } else {
+      setNameError('');
+    }
+
+    if (!phone.trim()) {
+      setPhoneError('required');
+      isValid = false;
+    } else {
+      setPhoneError('');
+    }
+    if (!password.trim()) {
+      setPasswordError('required');
+      isValid = false;
+    } else {
+      setPasswordError('');
+    }
+    
+
+    if (!isValid) {
+      return;
+    }
+
+    // Validate name
+    if (!/^[a-zA-Z]+$/.test(name)) {
+      setNameError('Name should only contain alphabets');
+      isValid = false;
+    } else {
+      setNameError('');
+    }
+
+    // Validate phone number
+    if (!/^\d{10,12}$/.test(phone)) {
+      setPhoneError('Phone number should contain 10 to 12 digits');
+      isValid = false;
+    } else {
+      setPhoneError('');
+    }
+
+    // Validate password
+    if (!/^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*]).{8,}$/.test(password)) {
+      setPasswordError('Password should contain at least one number, one alphabet, one special character, and be at least 8 characters long');
+      isValid = false;
+    } else {
+      setPasswordError('');
+    }
+
+    // Check if passwords match
+    if (password !== confirmPassword) {
+      Alert.alert('Passwords Mismatch', 'Password and Confirm Password should match');
+      isValid = false;
+    }
+
+    if (!isValid) {
+      return;
+    }
+
+    // Navigate to the Login screen
+    Alert.alert('Account Created', 'Your account has been successfully created.', [{ text: 'OK', onPress: () => navigation.navigate('Login') }]);
     console.log('Creating Account:', { name, phone, email, password, confirmPassword });
   };
 
@@ -41,6 +106,7 @@ const CreateAccount = () => {
           />
           <Icon name="user" size={20} color="black" style={styles.icon} />
         </View>
+        {nameError ? <Text style={styles.errorText}>{nameError}</Text> : null}
 
         {/* Phone Input */}
         <View style={styles.inputContainer}>
@@ -54,6 +120,7 @@ const CreateAccount = () => {
           />
           <Icon name="phone" size={20} color="black" style={styles.icon} />
         </View>
+        {phoneError ? <Text style={styles.errorText}>{phoneError}</Text> : null}
 
         {/* Email Input */}
         <View style={styles.inputContainer}>
@@ -74,12 +141,15 @@ const CreateAccount = () => {
             style={styles.input}
             placeholder="Password"
             placeholderTextColor='#3D3939'
-            secureTextEntry
+            secureTextEntry={!showPassword}
             value={password}
             onChangeText={text => setPassword(text)}
           />
-          <Icon name="lock" size={20} color="black" style={styles.icon} />
+         <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+    <Icon name={!showPassword ? "eye-slash" : "eye"} size={20} color="green" style={[styles.icon,{marginBottom:15}]} />
+  </TouchableOpacity>
         </View>
+        {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
 
         {/* Confirm Password Input */}
         <View style={styles.inputContainer}>
@@ -87,11 +157,13 @@ const CreateAccount = () => {
             style={styles.input}
             placeholder="Confirm Password"
             placeholderTextColor='#3D3939'
-            secureTextEntry
+            secureTextEntry={!showConfirmPassword}
             value={confirmPassword}
             onChangeText={text => setConfirmPassword(text)}
           />
-          <Icon name="eye" size={20} color="black" style={styles.icon} />
+          <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
+    <Icon name={!showConfirmPassword ? "eye-slash" : "eye"} size={20} color="green" style={styles.icon} />
+  </TouchableOpacity>
         </View>
 
         {/* Create Account Button */}
@@ -100,7 +172,7 @@ const CreateAccount = () => {
         </TouchableOpacity>
       </View>
       {/* Continue with Google and Phone */}
-      <Text style={{ marginLeft: 40, }}>_____________________ or_______________________</Text>
+      <Text style={{ marginLeft: 40,marginTop:15 }}>_____________________ or_______________________</Text>
       <View style={{ padding: '5%', justifyContent: 'flex-start', alignItems: 'center', paddingTop: 10 }}>
         <TouchableOpacity style={styles.buttonContainer} onPress={handleProfilePress}>
           <Text style={styles.buttonText}>Continue with Google</Text>
@@ -139,7 +211,8 @@ const styles = StyleSheet.create({
   icon: {
     position: 'absolute',
     right: 10,
-    // marginLeft:24,
+    alignItems:'center'
+   // marginBottom:8,
   },
   input: {
     flex: 1,
@@ -148,7 +221,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     paddingLeft: 10,
-    paddingRight: 40, // Adjust the paddingRight to accommodate the icon
+    paddingRight: 40,
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -168,8 +241,6 @@ const styles = StyleSheet.create({
     color: "black",
     fontWeight: 'bold',
     marginLeft:10,
-    
-    justifyContent: 'center',
   },
   loginButton: {
     backgroundColor: '#007BFF',
@@ -193,7 +264,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 18,
     textTransform: 'uppercase',
-  
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    bottom:13
   },
 });
 
