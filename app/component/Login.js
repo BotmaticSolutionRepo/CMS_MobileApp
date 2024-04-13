@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, Alert, Appearance, KeyboardAvoidingView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, Alert, Appearance, KeyboardAvoidingView, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/FontAwesome'; // Import the icon library
+import Icon from 'react-native-vector-icons/FontAwesome';
+import DeviceInfo from 'react-native-device-info'; // Import the library for fetching device info
 
 import { DefaultStyle } from '../styles/base';
 
@@ -14,46 +15,54 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showpassword, setshowpassword] = useState(true);
+  const [deviceId, setDeviceId] = useState('');
+  
 
-  const handleLogin = async () => {
+  useEffect(() => {
+    fetchDeviceId(); // Fetch device ID when component mounts
+  }, []);
+
+  const fetchDeviceId = async () => {
+    const id = await DeviceInfo.getUniqueId();
+    const deviceInfo = await DeviceInfo.getDevice();
+    console.log('Device ID:', id);
+    console.log('Device Info:', deviceInfo); // Log device information
+    setDeviceId(id);
+  };
+
+  const handleLogin = async () => { 
+    console.log('loginnnnnnnnnnnnnnnn',Environment.BASE_URL)
     if (username === "" || password === "") {
       Alert.alert("Enter username and password");
       return false;
     } else {
-      // Perform login using the credentials (username and password)
-      // Send a request to your login API using the Environment variable
+      
       fetch(Environment.BASE_URL + "/LoginUser", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          username,
-          password,
-          deviceToken: "f01vtc3cTIOf7OL2KKnCRC:APA91bGYnmCbPxaD11WsIEhkwGc5W5VCmENHU1Qyk3RihdM3LooTzjAiHwJrKpJTcmcAWYSjl43ORU1CQJd7Y8MFAxVAUsAweHFThRAFTW-wB9m8z66L4AwvZ3uxj3tkKjByvbpj1cVW",
-          requestSource: "mobileapp"
-        }),
+          Username:username,
+          Password:password,
+                }),
       })
-        .then(response => response.json())
-        .then(data => {
-          // Handle the response from the login API
-          console.log('Login response:', data);
-          if (data.isException) {
-            Alert.alert(data.result); // Display error message
-          } else {
-            navigation.navigate('Dashboard'); // Navigate to Dashboard if no exception
-          }
-        })
+      .then(response => response.json())
+      .then(async(data) => {
+        // Handle the response from the login API
+        console.log('Loginresponse............:', data);
+        if (data.isException) {
+          Alert.alert(data.result);
+        } else {
+          navigation.navigate('Dashboard', { UserName: data.result.UserName }); // Pass username as a parameter
+        }
+      })
+      
         .catch(error => {
           console.error('Error during login:', error);
-          // Handle error scenarios
+        
         });
     }
-  };
-
-  const handleProfilePress = () => {
-    // Navigate to the 'Profile' screen
-    navigation.navigate('Profile');
   };
 
   return (
@@ -71,10 +80,10 @@ const Login = () => {
           value={username}
           onChangeText={text => setUsername(text)}
         />
-         <View style={styles.icon}>
-        <Icon name='envelope' size={20} color='green' />
-      </View>     
-       </View>
+        <View style={styles.icon}>
+          <Icon name='envelope' size={20} color='green' />
+        </View>
+      </View>
 
       <View style={styles.inputContainer}>
         <TextInput

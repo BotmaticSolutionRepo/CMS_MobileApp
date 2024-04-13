@@ -1,6 +1,6 @@
 var _Environments = {
-               production:  {BASE_URL: 'https://api.vyay.live', API_KEY: ''}, //Production or live url 
-              // production: {BASE_URL: 'http://13.126.125.20:8090', API_KEY: ''}, //Devlopment
+              // production:  {BASE_URL: 'https://api.vyay.live', API_KEY: ''}, //Production or live url 
+               production: {BASE_URL: 'http://13.126.125.20:84', API_KEY: ''}, //Devlopment
 
 
           //      production:  {BASE_URL: 'http://13.126.125.20:8092', API_KEY: ''}, //production old url 

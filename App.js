@@ -7,7 +7,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import messaging from '@react-native-firebase/messaging';
+// import messaging from '@react-native-firebase/messaging';
 
 import MainScreen from './app/component/MainScreen';
 import LoginScreen from './app/component/Login';
@@ -40,22 +40,22 @@ const Stack = createStackNavigator();
 const isdarkmode = Appearance.getColorScheme() == "dark";
 const App = () => {
 
-  const checkToken = async () => {
-    const fcmToken = await messaging().getToken();
-    if (fcmToken) {
-      console.log("token_____", fcmToken);
-      await AsyncStorage.setItem("DeviceToken", fcmToken)
-        .then(() => {
-          console.log('Token stored successfully');
-          // Add your logic for handling successful login or displaying error messages
-        })
-        .catch(error => {
-          console.error('Error storing token:', error);
-        });
-    }
-  }
+  // const checkToken = async () => {
+  //   const fcmToken = await messaging().getToken();
+  //   if (fcmToken) {
+  //     console.log("token_____", fcmToken);
+  //     await AsyncStorage.setItem("DeviceToken", fcmToken)
+  //       .then(() => {
+  //         console.log('Token stored successfully');
+  //         // Add your logic for handling successful login or displaying error messages
+  //       })
+  //       .catch(error => {
+  //         console.error('Error storing token:', error);
+  //       });
+  //   }
+  // }
 
-  checkToken();
+  // checkToken();
 
   return (
     <NavigationContainer>

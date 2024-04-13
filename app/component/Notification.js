@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, FlatList, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, FlatList, Image, TouchableOpacity, Appearance, AppRegistry } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const Notification = () => {
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
-  },
+    backgroundColor:Appearance.getColorScheme()=='dark'?'black':'white'  },
   notificationItem: {
     marginBottom: 10,
     paddingBottom: 10,
@@ -67,11 +67,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 7,
+    color:Appearance.getColorScheme()=='dark'?'white':'black',
   },
   name: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: 'black',
+    color:Appearance.getColorScheme()=='dark'?'white':'black',
     width:'83%'
     //marginLeft: 5,
   },
@@ -79,6 +80,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#555',
     borderBottomWidth: 0.4,
+    borderBottomColor:Appearance.getColorScheme()=='dark'?'white':'black',
     paddingBottom: 3,
   },
   profileImage: {

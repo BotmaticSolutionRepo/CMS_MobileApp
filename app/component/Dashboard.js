@@ -1,22 +1,38 @@
-import React from 'react';
-import { StyleSheet, Text, View, TextInput, ScrollView,Image,Appearance, AppRegistry,useColorScheme} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, TextInput, ScrollView,Image,Appearance, AppRegistry,useColorScheme,} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { CircularProgress } from 'react-native-svg-circular-progress';
 import { RadioButton } from 'react-native-paper';
 import { Platform } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
-import App from '../../App';
 
-// import App from '../../App';
 
-// import { ScrollView } from 'react-native-gesture-handler';
-
-const Dashboard = () => {
+const Dashboard = ({ route }) => {
+  const { UserName } = route.params;
+  const [dashboardData, setDashboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigation = useNavigation(); 
   const colorScheme = useColorScheme();
+  useEffect(() => {
+    fetchDashboardData();
+}, []);
+
+const fetchDashboardData = async () => {
+    try {
+        const response = await fetch('http://13.126.125.20:84/GetDashboardDetails');
+        const data = await response.json();
+        setDashboardData(data);
+        console.log('dashboarddata........', data); 
+
+    } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+        setLoading(false);
+    }
+};
+  console.log('usernameeeeeeeee',UserName)
   const handleprofile = () =>{
-    navigation.navigate('Profile');
+    navigation.navigate('Profile', { UserName: UserName });
 
   };
   return (
@@ -32,16 +48,18 @@ const Dashboard = () => {
           /></TouchableOpacity>
           <View style={styles.profileText}>
             <Text style={styles.profileGreeting}>Hello,</Text>
-            <Text style={styles.profileName}>Kishor!</Text>
+            <Text style={styles.profileName}>{UserName}!</Text>
           </View>
         </View>
-        <Icon name="bell" size={24} color="#FFCF23" style={styles.notificationIcon} /> 
+        
+        <Icon name="bell" size={24} color="#FFCF23" style={styles.notificationIcon} onPress={()=>{ navigation.navigate('Notification')}} /> 
       </View>
     <ScrollView  showsVerticalScrollIndicator={false}>
       <View style={styles.searchBox}>
         <TextInput
           style={styles.searchInput}
           placeholder="Company name"
+          editable={false}
           placeholderTextColor={colorScheme === 'dark' ? 'white' : 'black'}
 
         />
@@ -308,7 +326,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginLeft: 5,
     marginTop: 10,
-    color:Appearance.getColorScheme()=='dark'?'#988C8C':'white',
+    color:'gray',
   },
   progressBar: {
     height: 10,

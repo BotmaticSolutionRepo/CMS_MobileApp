@@ -5,11 +5,16 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 
 
-const Profile = () => {
+const Profile = ({ route }) => {
   const navigation = useNavigation(); 
+   // Access the route object to get parameters
+
+  // Extract the username from the route params
+  const { UserName } = route.params;
+
   // Sample user data
   const user = {
-    name: 'Rutik Gubge',
+    name: UserName,
     email: 'basweshwar.g@botmaticsolution.in',
     profileImage: require('../Images/cms.png'), 
   };
@@ -37,7 +42,7 @@ const Profile = () => {
     console.log('Button pressed:', buttonName);
   };
   const handleButtonPress = (buttonName) => {
-    navigation.navigate('ourpolicies');
+  //  navigation.navigate('ourpolicies');
     console.log('Button pressed:', buttonName);
   };
   return (

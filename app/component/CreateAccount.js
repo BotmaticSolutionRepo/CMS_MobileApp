@@ -100,11 +100,11 @@ const CreateAccount = () => {
           <TextInput
             style={styles.input}
             placeholder="Name"
-            placeholderTextColor='#3D3939'
+            placeholderTextColor='gray'
             value={name}
             onChangeText={text => setName(text)}
           />
-          <Icon name="user" size={20} color="black" style={styles.icon} />
+          <Icon name="user" size={20} color="gray" style={styles.icon} />
         </View>
         {nameError ? <Text style={styles.errorText}>{nameError}</Text> : null}
 
@@ -113,12 +113,12 @@ const CreateAccount = () => {
           <TextInput
             style={styles.input}
             placeholder="Phone Number"
-            placeholderTextColor='#3D3939'
+            placeholderTextColor='gray'
             keyboardType="phone-pad"
             value={phone}
             onChangeText={text => setPhone(text)}
           />
-          <Icon name="phone" size={20} color="black" style={styles.icon} />
+          <Icon name="phone" size={20} color='gray' style={styles.icon} />
         </View>
         {phoneError ? <Text style={styles.errorText}>{phoneError}</Text> : null}
 
@@ -127,12 +127,12 @@ const CreateAccount = () => {
           <TextInput
             style={styles.input}
             placeholder="Email"
-            placeholderTextColor='#3D3939'
+            placeholderTextColor='gray'
             keyboardType="email-address"
             value={email}
             onChangeText={text => setEmail(text)}
           />
-          <Icon name="envelope" size={20} color="black" style={styles.icon} />
+          <Icon name="envelope" size={20} color="gray" style={styles.icon} />
         </View>
 
         {/* Password Input */}
@@ -140,13 +140,13 @@ const CreateAccount = () => {
           <TextInput
             style={styles.input}
             placeholder="Password"
-            placeholderTextColor='#3D3939'
+            placeholderTextColor='gray'
             secureTextEntry={!showPassword}
             value={password}
             onChangeText={text => setPassword(text)}
           />
          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-    <Icon name={!showPassword ? "eye-slash" : "eye"} size={20} color="green" style={[styles.icon,{marginBottom:15}]} />
+    <Icon name={!showPassword ? "eye-slash" : "eye"} size={20} color="green" style={[styles.icon,{top:-10}]} />
   </TouchableOpacity>
         </View>
         {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
@@ -156,13 +156,13 @@ const CreateAccount = () => {
           <TextInput
             style={styles.input}
             placeholder="Confirm Password"
-            placeholderTextColor='#3D3939'
+            placeholderTextColor='gray'
             secureTextEntry={!showConfirmPassword}
             value={confirmPassword}
             onChangeText={text => setConfirmPassword(text)}
           />
           <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
-    <Icon name={!showConfirmPassword ? "eye-slash" : "eye"} size={20} color="green" style={styles.icon} />
+    <Icon name={!showConfirmPassword ? "eye-slash" : "eye"} size={20} color="green" style={[styles.icon,{top:-10}]} />
   </TouchableOpacity>
         </View>
 
@@ -212,6 +212,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 10,
     alignItems:'center'
+    
    // marginBottom:8,
   },
   input: {
@@ -268,7 +269,9 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red',
     fontSize: 12,
-    bottom:13
+    bottom:10,
+    marginRight:230
+    
   },
 });
 
