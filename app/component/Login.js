@@ -18,9 +18,9 @@ const Login = () => {
   const [deviceId, setDeviceId] = useState('');
   
 
-  useEffect(() => {
-    fetchDeviceId(); // Fetch device ID when component mounts
-  }, []);
+  // useEffect(() => {
+  //   fetchDeviceId(); // Fetch device ID when component mounts
+  // }, []);
 
   const fetchDeviceId = async () => {
     const id = await DeviceInfo.getUniqueId();
