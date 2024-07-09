@@ -12,14 +12,14 @@ const MainScreen = ({ navigation }) => {
             <View style={{ marginTop: "60%" }}>
                 <TouchableOpacity
                     style={styles.buttonContainer}
-                    onPress={() => navigation.navigate('Login')}
+                    onPress={() => navigation.navigate('MultipleSearch')}
                 >
                     <Text style={styles.buttonText}>Login</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                     style={styles.createaccount}
-                    onPress={() => navigation.navigate('CreateAccount')}
+                    onPress={() => navigation.navigate('Details')}
                 >
                     <Text style={styles.createaccounttext}>Create Account</Text>
                 </TouchableOpacity>

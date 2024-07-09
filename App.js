@@ -25,6 +25,23 @@ import Faq from './app/component/Faq';
 import SupportTeam from './app/component/SupportTeam';
 import WeeklyProgressTwo from './app/component/WeeklyProgressTwo';
 import Dashboard from './app/component/Dashboard';
+import BdDashboard from './app/component/BdDashboard';
+import BdFilesReport from './app/component/BdFilesReport';
+import BdSearch from './app/component/BdSearch';
+import AddFile from './app/component/AddFile';
+import Details from './app/component/Details';
+import OtherDetails from './app/component/OtherDetails';
+import PersonalDetails from './app/component/PersonalDetails';
+import MultipleSearch from './app/component/MultipleSearch';
+
+
+
+
+
+
+
+
+
 import NotificationSettings from './app/component/NotificationSettings';
 
 
@@ -74,6 +91,19 @@ const App = () => {
         <Stack.Screen name="SupportTeam" component={SupportTeam} options={{ title: 'SupportTeam', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
         <Stack.Screen name="WeeklyProgressTwo" component={WeeklyProgressTwo} options={{ title: 'WeeklyProgressTwo', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
         <Stack.Screen name="Dashboard" component={Dashboard} options={{ headerShown:false }} />
+        <Stack.Screen name="BdDashboard" component={BdDashboard} options={{ headerShown:false }} />
+        <Stack.Screen name="BdFilesReport" component={BdFilesReport} options={{ headerShown:false }} />
+        <Stack.Screen name="BdSearch" component={BdSearch} options={{ headerShown:false }} />
+        <Stack.Screen name="AddFile" component={AddFile} options={{ headerShown:false }} />
+        <Stack.Screen name="Details" component={Details} options={{ headerShown:false }} />
+        <Stack.Screen name="OtherDetails" component={OtherDetails} options={{ headerShown:false }} />
+        <Stack.Screen name="PersonalDetails" component={PersonalDetails} options={{ headerShown:false }} />
+        <Stack.Screen name="MultipleSearch" component={MultipleSearch} options={{ headerShown:false }} />
+
+
+
+
+
         <Stack.Screen name="NotificationSettings" component={NotificationSettings} options={{ title: 'Notification Settings', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
         <Stack.Screen name="Faq" component={Faq} options={{ title: 'FAQ', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
 
