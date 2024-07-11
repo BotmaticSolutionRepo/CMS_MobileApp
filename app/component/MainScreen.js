@@ -12,7 +12,7 @@ const MainScreen = ({ navigation }) => {
             <View style={{ marginTop: "60%" }}>
                 <TouchableOpacity
                     style={styles.buttonContainer}
-                    onPress={() => navigation.navigate('MultipleSearch')}
+                    onPress={() => navigation.navigate('Login')}
                 >
                     <Text style={styles.buttonText}>Login</Text>
                 </TouchableOpacity>

@@ -2,15 +2,18 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, FlatList, Image, TouchableOpacity, Appearance, AppRegistry } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-const Notification = () => {
-  const [notifications, setNotifications] = useState([
-    { id: 1, name: "Kishor Patil ", timestamp: new Date(), description: "Hellowwwwwwwwfbjdhvcbnkfjbv ckhbfj vkhjbf dvckh fvb fvkv fdvbfkhvbfvuifhbviuf ", image: require('../Images/cms.png') },
-    { id: 2, name: "Kishor Gaikwad", timestamp: new Date(), description: "Hellow Guys", image: require('../Images/cms.png') },
-    { id: 3, name: "Rutik Gubge", timestamp: new Date(), description: "Hellow Guys", image: require('../Images/cms.png') },
-    { id: 4, name: "Sankalp Chavan", timestamp: new Date(), description: "Hellow Guys", image: require('../Images/cms.png') },
-    { id: 5, name: "Kishor Gaikwad", timestamp: new Date(), description: "Hellow Guys", image: require('../Images/cms.png') },
-    // Add more sample notifications here
-  ]);
+const Notification = ({ route }) => {
+  console.log("notification",route.params.notification)
+  // const [notifications, setNotifications] = useState([
+  //   { id: 1, name: "Kishor Patil ", timestamp: new Date(), description: "Hellowwwwwwwwfbjdhvcbnkfjbv ckhbfj vkhjbf dvckh fvb fvkv fdvbfkhvbfvuifhbviuf ", image: require('../Images/cms.png') },
+  //   { id: 2, name: "Kishor Gaikwad", timestamp: new Date(), description: "Hellow Guys", image: require('../Images/cms.png') },
+  //   { id: 3, name: "Rutik Gubge", timestamp: new Date(), description: "Hellow Guys", image: require('../Images/cms.png') },
+  //   { id: 4, name: "Sankalp Chavan", timestamp: new Date(), description: "Hellow Guys", image: require('../Images/cms.png') },
+  //   { id: 5, name: "Kishor Gaikwad", timestamp: new Date(), description: "Hellow Guys", image: require('../Images/cms.png') },
+  //   // Add more sample notifications here
+  // ]);
+  const [notifications, setNotifications] = useState(route.params.notification)
+
   const navigation = useNavigation();
 
   const formatTime = (date) => {
@@ -23,18 +26,18 @@ const Notification = () => {
     <View style={styles.container}>
       <FlatList
         data={notifications}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.Notification_ID.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity style={styles.notificationItem}>
             <View style={styles.notificationContent}>
-              <Image source={item.image} style={styles.profileImage} />
+              <Image  source={require('../Images/cms.png')} style={styles.profileImage} />
               <View style={styles.notificationText}>
                 <View style={styles.header}>
                   <Text style={styles.name}>{item.name}</Text>
-                  <Text style={styles.timestamp}>{formatTime(item.timestamp)}{'>'}</Text>
+                  <Text style={styles.timestamp}>{item.Notification_Date_Time}</Text>
 
                 </View>
-                <Text style={styles.description}>{item.description}</Text>
+                <Text style={styles.description}>{item.Notification_Message}</Text>
               </View>
             </View>
           </TouchableOpacity>
@@ -73,7 +76,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color:Appearance.getColorScheme()=='dark'?'white':'black',
-    width:'83%'
+    width:'75%'
     //marginLeft: 5,
   },
   description: {
@@ -94,7 +97,7 @@ const styles = StyleSheet.create({
     color: 'gray',
     marginRight: 5,
     // marginLeft:90,
-   alignContent:'flex-end',width:'17%'
+   alignContent:'flex-end',width:'25%'
     
   },
 });

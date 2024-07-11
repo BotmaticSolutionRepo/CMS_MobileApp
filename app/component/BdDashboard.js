@@ -1,14 +1,65 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, Modal, FlatList } from 'react-native';
+import React, { useState , useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView,TextInput, Image, Modal, FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { DefaultStyle } from '../styles/base';
 
-
+var Environment = require('../../environment.js');
 const BdDashboard = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedValue, setSelectedValue] = useState('10');
- // const navigation = useNavigation(); 
+  const [AssignFiles, setAssignFiles] = useState([]);
+  const [notification, setnotification] = useState([]);
 
+
+
+ // const navigation = useNavigation(); 
+ const fetchDashboardData = async () => {
+  try {
+      const token = await AsyncStorage.getItem('token');
+
+      fetch(Environment.BASE_URL + "/GetDashboardDetails", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+         token:token
+                }),
+      })
+      .then(response => response.json())
+      .then(async(data) => {
+
+        // Handle the response from the login API
+        console.log('GetDashboardDetails............:', data);
+        if (!data.isException) {
+          setAssignFiles(data.result.AssignedFiles);
+          setnotification(data.result.notifications)
+          
+        }
+        // console.log('GetDashboardDetails............:', data.result.AssignedFiles);
+
+
+      })
+      
+        .catch(error => {
+          console.error('Error during login:', error);
+        
+        });
+      
+      // setDashboardData(data);
+      // console.log('dashboarddata........', AssignFiles); 
+
+  } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+      // setLoading(false);
+  }
+};
+
+useEffect(() => {
+  fetchDashboardData();
+}, []);
 
   const entries = ['10', '20', '30', '40', '50'];
 
@@ -33,7 +84,7 @@ const BdDashboard = ({ navigation }) => {
         />
         <Text style={styles.appName}>Claim My Shares</Text>
         <View style={styles.headerRight}>
-          <Icon name="notifications-outline" size={20} color="#000" style={styles.icon} />
+          <Icon name="notifications-outline" size={20} color="#000" style={styles.icon} onPress={() => navigation.navigate('Notification',{notification:notification})} />
           <Text style={styles.username}>Michael Davis</Text>
         </View>
       </View>
@@ -60,15 +111,25 @@ const BdDashboard = ({ navigation }) => {
       <View style={{marginLeft: 10, marginTop: 10}}>
         <Text style={{fontWeight: 'bold', fontSize: 20, color: 'black'}}>Assigned Files</Text>
       </View>
-
+      <View style={{width:'90%', flexDirection:'row'}}>
       <TouchableOpacity 
         style={styles.entriesPerPageContainer}
         onPress={() => setModalVisible(true)}
       >
-        <Text style={styles.entriesPerPageText}>{selectedValue}</Text>
+         <Text style={styles.entriesPerPageText}>{selectedValue}</Text>
         <Icon name="chevron-down-outline" size={20} color="#000" style={styles.icon} />
-        <Text style={styles.entriesPerPageLabel}> entries per page</Text>
       </TouchableOpacity>
+        <Text style={styles.entriesPerPageLabel}> entries per page</Text>
+        <TextInput style={styles.inputBox}
+                placeholder={("SearchHere")}
+                placeholderTextColor="#000000"
+                name="searchTxt"
+                onFocus={()=>{this.setState({isSearchActive:true})}}
+                onBlur={()=>{this.setState({isSearchActive:false})}}
+                onChangeText={(text) => this.handleChange('searchTxt', text)}
+              />   
+
+      </View>
 
       <ScrollView style={styles.scrollView}>
         <View style={styles.table}>
@@ -77,11 +138,11 @@ const BdDashboard = ({ navigation }) => {
             <Text style={[styles.columnHeader, styles.borderRight]}>Assigned By</Text>
             <Text style={styles.columnHeader}>BD Status</Text>
           </View>
-          {Array.from({ length: parseInt(selectedValue) }).map((_, index) => (
+          {AssignFiles.map((item, index) => (
             <View key={index} style={styles.tableRow}>
               <Text style={[styles.tableCell, styles.borderRight]}>{index + 1}</Text>
-              <Text style={[styles.tableCell, styles.borderRight]}>Kishor {index + 3}</Text>
-              <Text style={styles.tableCell}>Pending</Text>
+              <Text style={[styles.tableCell, styles.borderRight]}>{item.updated_by}</Text>
+              <Text style={styles.tableCell}>{item.BD_Status_String}</Text>
             </View>
           ))}
         </View>
@@ -195,13 +256,28 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     borderRadius: 5,
     margin: 10,
+    width:'20%'
   },
   entriesPerPageText: {
     fontSize: 16,
   },
   entriesPerPageLabel: {
-    fontSize: 12,
+    fontSize: 15,
     color: '#777',
+    marginTop:20,
+  },
+  inputBox: {
+    width: "45%",
+    borderRadius: DefaultStyle.UNIT / 2,
+    paddingHorizontal: DefaultStyle.PADDING / 2,
+    fontSize: DefaultStyle.FONT_SIZE,
+    marginVertical: DefaultStyle.MARGIN / 4,
+    color: '#000000',
+    backgroundColor: 'gray',
+    marginLeft:10,
+    marginTop:10,
+    borderColor: '#ddd',
+    height: DefaultStyle.DEVICE_HEIGHT / 18,
   },
   scrollView: {
     margin: 10,

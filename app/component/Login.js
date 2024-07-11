@@ -32,37 +32,42 @@ const Login = () => {
 
   const handleLogin = async () => { 
     console.log('loginnnnnnnnnnnnnnnn',Environment.BASE_URL)
-    if (username === "" || password === "") {
-      Alert.alert("Enter username and password");
-      return false;
-    } else {
-      
-      fetch(Environment.BASE_URL + "/LoginUser", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          Username:username,
-          Password:password,
-                }),
-      })
-      .then(response => response.json())
-      .then(async(data) => {
-        // Handle the response from the login API
-        console.log('Loginresponse............:', data);
-        if (data.isException) {
-          Alert.alert(data.result);
-        } else {
-          navigation.navigate('Dashboard', { UserName: data.result.UserName }); // Pass username as a parameter
-        }
-      })
-      
-        .catch(error => {
-          console.error('Error during login:', error);
-        
-        });
-    }
+   try {
+     if (username === "" || password === "") {
+       Alert.alert("Enter username and password");
+       return false;
+     } else {
+       
+       await fetch(Environment.BASE_URL + "/LoginUser", {
+         method: 'POST',
+         headers: {
+           'Content-Type': 'application/json',
+         },
+         body: JSON.stringify({
+           Username:username,
+           Password:password,
+                 }),
+       })
+       .then(response => response.json())
+       .then(async(data) => {
+         // Handle the response from the login API
+         console.log('Loginresponse............:', data);
+         if (data.isException) {
+           Alert.alert(data.result);
+         } else {
+           await AsyncStorage.setItem("token",data.token);
+           navigation.navigate('BdDashboard', { UserName: data.result.UserName }); // Pass username as a parameter
+         }
+       })
+       
+         .catch(error => {
+           console.error('Error during login:', error);
+         
+         });
+     }
+   } catch (error) {
+    console.log("errror",error)
+   }
   };
 
   return (
