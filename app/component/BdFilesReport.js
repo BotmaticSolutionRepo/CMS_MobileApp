@@ -1,23 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, TextInput, FlatList, StyleSheet, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 
-const data = [
-  { key: 'Yet To Start', value: 21 },
-  { key: 'Work In Process', value: 25 },
-  { key: 'Not Traced', value: 34 },
-  { key: 'Lost', value: 14 },
-  { key: 'Hold', value: 2 },
-  { key: 'Completed on BD', value: 45 },
-  { key: 'Completed on Call', value: 50 },
-  { key: 'Completed on Call', value: 67 }
+const initialData = [
+  { key: 'Yet To Start', value: 0 },
+  { key: 'Work In Process', value: 0 },
+  { key: 'Not Traced', value: 0 },
+  { key: 'Lost', value: 0 },
+  { key: 'Hold', value: 0 },
+  { key: 'Completed on BD', value: 0 },
+  { key: 'Completed on Call', value: 0 }
 ];
 
-const BdFilesReport = () => {
+const BdFilesReport = ({ route }) => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [isDropdownVisible, setDropdownVisible] = useState(false);
-  const navigation = useNavigation(); 
+  const [bdStatusCounts, setBdStatusCounts] = useState([]);
+  const [data, setData] = useState(initialData);
+
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    if (route.params && route.params.bdStatusCounts) {
+      const fetchedCounts = route.params.bdStatusCounts;
+      console.log('Fetched BD Status Counts:', fetchedCounts); 
+      setBdStatusCounts(fetchedCounts);
+    }
+  }, [route.params]);
+
+  useEffect(() => {
+    // Update data with counts from bdStatusCounts
+    const updatedData = initialData.map(item => {
+      const countItem = bdStatusCounts.find(status => status.BD_Status === item.key);
+      return {
+        ...item,
+        value: countItem ? countItem.Count : 0
+      };
+    });
+    setData(updatedData);
+  }, [bdStatusCounts]);
 
   const handleDropdownToggle = () => {
     setDropdownVisible(!isDropdownVisible);
@@ -31,7 +53,7 @@ const BdFilesReport = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>BD Files Report</Text>
-      <ScrollView contentContainerStyle={styles.scrollView}>
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.bdStatusContainer}>
           <Text style={styles.subHeader}>BD Status</Text>
           <View style={styles.topRow}>
@@ -91,7 +113,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 10
   },
-  scrollView: {
+  scrollViewContent: {
     flexGrow: 1,
   },
   bdStatusContainer: {

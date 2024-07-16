@@ -1,26 +1,10 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, FlatList, Image, TouchableOpacity, Appearance, AppRegistry } from 'react-native';
+import { StyleSheet, Text, View, FlatList, Image, TouchableOpacity, Appearance } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const Notification = ({ route }) => {
-  console.log("notification",route.params.notification)
-  // const [notifications, setNotifications] = useState([
-  //   { id: 1, name: "Kishor Patil ", timestamp: new Date(), description: "Hellowwwwwwwwfbjdhvcbnkfjbv ckhbfj vkhjbf dvckh fvb fvkv fdvbfkhvbfvuifhbviuf ", image: require('../Images/cms.png') },
-  //   { id: 2, name: "Kishor Gaikwad", timestamp: new Date(), description: "Hellow Guys", image: require('../Images/cms.png') },
-  //   { id: 3, name: "Rutik Gubge", timestamp: new Date(), description: "Hellow Guys", image: require('../Images/cms.png') },
-  //   { id: 4, name: "Sankalp Chavan", timestamp: new Date(), description: "Hellow Guys", image: require('../Images/cms.png') },
-  //   { id: 5, name: "Kishor Gaikwad", timestamp: new Date(), description: "Hellow Guys", image: require('../Images/cms.png') },
-  //   // Add more sample notifications here
-  // ]);
-  const [notifications, setNotifications] = useState(route.params.notification)
-
+  const [notifications, setNotifications] = useState(route.params.notification);
   const navigation = useNavigation();
-
-  const formatTime = (date) => {
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    return `${hours}:${minutes < 10 ? '0' : ''}${minutes}  >`;
-  };
 
   return (
     <View style={styles.container}>
@@ -30,14 +14,10 @@ const Notification = ({ route }) => {
         renderItem={({ item }) => (
           <TouchableOpacity style={styles.notificationItem}>
             <View style={styles.notificationContent}>
-              <Image  source={require('../Images/cms.png')} style={styles.profileImage} />
+              <Image source={require('../Images/cms.png')} style={styles.profileImage} />
               <View style={styles.notificationText}>
-                <View style={styles.header}>
-                  <Text style={styles.name}>{item.name}</Text>
-                  <Text style={styles.timestamp}>{item.Notification_Date_Time}</Text>
-
-                </View>
                 <Text style={styles.description}>{item.Notification_Message}</Text>
+                <Text style={styles.timestamp}>{item.Notification_Date_Time}</Text>
               </View>
             </View>
           </TouchableOpacity>
@@ -51,39 +31,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
-    backgroundColor:Appearance.getColorScheme()=='dark'?'black':'white'  },
+    backgroundColor: Appearance.getColorScheme() === 'dark' ? 'black' : 'white',
+  },
   notificationItem: {
     marginBottom: 10,
     paddingBottom: 10,
-   // borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    borderBottomWidth: 0.4,
+    borderBottomColor: Appearance.getColorScheme() === 'dark' ? 'white' : 'black',
   },
   notificationContent: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
   notificationText: {
     marginLeft: 10,
     flex: 1,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 7,
-    color:Appearance.getColorScheme()=='dark'?'white':'black',
-  },
-  name: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color:Appearance.getColorScheme()=='dark'?'white':'black',
-    width:'75%'
-    //marginLeft: 5,
-  },
   description: {
     fontSize: 14,
     color: '#555',
-    borderBottomWidth: 0.4,
-    borderBottomColor:Appearance.getColorScheme()=='dark'?'white':'black',
     paddingBottom: 3,
   },
   profileImage: {
@@ -93,12 +59,8 @@ const styles = StyleSheet.create({
   },
   timestamp: {
     fontSize: 12,
-    fontWeight:'bold',
     color: 'gray',
-    marginRight: 5,
-    // marginLeft:90,
-   alignContent:'flex-end',width:'25%'
-    
+    textAlign: 'right',
   },
 });
 

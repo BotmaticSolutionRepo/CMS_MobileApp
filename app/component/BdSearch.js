@@ -1,12 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const data = [
-  { id: '1', fileID: '37', fileNo: '474', companyName: 'Bajaj Holdings Investment Limited', country: 'INDIA' },
-  { id: '2', fileID: '37', fileNo: '474', companyName: 'Federal Bank Limited', country: 'INDIA' },
-];
+var Environment = require('../../environment.js');
 
 const BdSearch = () => {
   const navigation = useNavigation();
@@ -14,6 +12,37 @@ const BdSearch = () => {
   const [entriesPerPage, setEntriesPerPage] = useState('10');
   const [isFilterDropdownVisible, setFilterDropdownVisible] = useState(false);
   const [isEntriesDropdownVisible, setEntriesDropdownVisible] = useState(false);
+  const [dashboardData, setDashboardData] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const fetchDashboardData = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      fetch(Environment.BASE_URL + "/GetFiles", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token: token }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('GetFilesDetails:', data);
+        if (!data.isException) {
+          setDashboardData(data.result);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+    }
+  };
 
   const handleFilterDropdownToggle = () => {
     setFilterDropdownVisible(!isFilterDropdownVisible);
@@ -33,16 +62,27 @@ const BdSearch = () => {
     setEntriesDropdownVisible(false);
   };
 
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+  };
+
+  const filteredData = dashboardData.filter(item => 
+    item.Company_Name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const renderItem = ({ item }) => (
+<TouchableOpacity onPress={() => navigation.navigate('AddFile', { fileId: item.File_ID, aadharCard: item.Aadhar_number, panCard: item.Pan_Card })}>
+
     <View style={styles.tableRow}>
-      <Text style={styles.cell}>{item.fileID}</Text>
+      <Text style={styles.cell}>{item.File_ID}</Text>
       <View style={styles.verticalDivider}></View>
-      <Text style={styles.cell}>{item.fileNo}</Text>
+      <Text style={styles.cell}>{item.File_No}</Text>
       <View style={styles.verticalDivider}></View>
-      <Text style={styles.cell}>{item.companyName}</Text>
+      <Text style={styles.cell}>{item.Company_Name}</Text>
       <View style={styles.verticalDivider}></View>
-      <Text style={styles.cell}>{item.country}</Text>
+      <Text style={styles.cell}>{item.State}</Text>
     </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -68,7 +108,10 @@ const BdSearch = () => {
               ))}
             </View>
           )}
-          <TextInput style={[styles.filterInput,{width:'50%',marginRight:10}]} placeholder="Enter..." />
+          <TextInput
+            style={[styles.filterInput, { width: '50%', marginRight: 10 }]}
+            placeholder="Enter..."
+          />
           <TouchableOpacity style={styles.searchButton}>
             <Text style={styles.searchButtonText}>🔍</Text>
           </TouchableOpacity>
@@ -76,8 +119,8 @@ const BdSearch = () => {
       </View>
 
       <View style={styles.buttonRow}>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Multiple Search</Text>
+      <TouchableOpacity style={styles.button} >
+      <Text style={styles.buttonText}>Multiple Search</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button}>
           <Text style={styles.buttonText}>Clear All</Text>
@@ -104,7 +147,12 @@ const BdSearch = () => {
             ))}
           </View>
         )}
-        <TextInput style={styles.searchInput} placeholder="Search..." />
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Com_name"
+          value={searchQuery}
+          onChangeText={handleSearch}
+        />
         <TouchableOpacity style={styles.paginationButton}>
           <Text style={styles.paginationText}>PREV</Text>
         </TouchableOpacity>
@@ -115,7 +163,7 @@ const BdSearch = () => {
       </View>
 
       <FlatList
-        data={data}
+        data={filteredData}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         ListHeaderComponent={() => (
@@ -140,16 +188,12 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#fff',
   },
-  time: {
-    textAlign: 'right',
-    marginBottom: 10,
-  },
   filterRow: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
     marginTop: 10,
-    width:"40%",
+    width: "40%",
     marginLeft: 10,
     marginRight: 10,
   },

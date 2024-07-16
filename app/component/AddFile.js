@@ -1,8 +1,14 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, ScrollView, Image, StyleSheet, TouchableOpacity, FlatList, Modal } from 'react-native';
+import React, { useState,useEffect } from 'react';
+import { View, Text, TextInput,Alert, ScrollView,Button, Image, StyleSheet, TouchableOpacity, FlatList, Modal } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Card, IconButton } from 'react-native-paper';
+import DocumentPicker from 'react-native-document-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+var Environment = require('../../environment.js');
+//import Modal from 'react-native-modal';
+import AntDesignIcon from 'react-native-vector-icons/AntDesign';
+
 
 const data = [
   { id: '1', fileID: '37', fileNo: '474', companyName: 'Bajaj Holdings Investment Limited', country: 'INDIA' },
@@ -12,6 +18,17 @@ const data = [
 const AddFile = () => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
+  const [file, setFile] = useState(null);
+  //const [isModalVisible, setModalVisible] = useState(false);
+  const [documentType, setDocumentType] = useState(null); // State for selected document type
+
+  const [isModalVisible, setModalVisible] = useState(false);
+  const documentTypes = [
+    { label: 'Adhar Card', value: 'Adhar_Card' },
+    { label: 'Pan Card', value: 'Pan_Card' },
+    { label: 'Passport', value: 'Passport' },
+    { label: 'Driver License', value: 'Driver_License' },
+  ];
   const [items, setItems] = useState([
     { label: 'Select the team member', value: '' },
     { label: 'Member 1', value: 'member1' },
@@ -28,22 +45,26 @@ const AddFile = () => {
 
   const [openEntries, setOpenEntries] = useState(false);
   const [valueEntries, setValueEntries] = useState('10');
+  const [fileData, setFileData] = useState([]); // Define fileData state
+
+
   const [itemsEntries, setItemsEntries] = useState([
     { label: '10', value: '10' },
     { label: '25', value: '25' },
     { label: '50', value: '50' },
   ]);
 
-
   const renderItem = ({ item }) => (
     <View style={styles.tableRow}>
       <Text style={styles.cell}>{item.fileID}</Text>
       <View style={styles.verticalDivider}></View>
-      <Text style={styles.cell}>{item.fileNo}</Text>
+      <Text style={styles.cell}>{item.adharCard}</Text>
       <View style={styles.verticalDivider}></View>
-      <Text style={styles.cell}>{item.companyName}</Text>
+      <Text style={styles.cell}>{item.panCard}</Text>
     </View>
   );
+  
+  
 
   const [isPersonalModalVisible, setPersonalModalVisible] = useState(false);
   const [isBDModalVisible, setBDModalVisible] = useState(false);
@@ -52,9 +73,110 @@ const AddFile = () => {
 
 
 
+
   const togglePersonalModal = () => {
     setPersonalModalVisible(!isPersonalModalVisible);
   };
+  const chooseFile = async () => {
+    try {
+      const res = await DocumentPicker.pick({
+        type: [DocumentPicker.types.allFiles],
+      });
+      setFile(res[0]);
+      setModalVisible(false);
+      console.log('File selected:', res[0]);
+    } catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+        // User cancelled the picker
+      } else {
+        console.error('Error choosing file:', err);
+      }
+    }
+  };
+
+
+  const uploadFile = async () => {
+    if (!file) {
+      console.error('No file selected.');
+      return;
+    }
+  
+    if (!documentType) {
+      console.error('No document type selected.');
+      return;
+    }
+  
+    let body = new FormData();
+    body.append('Img', {
+      name: file.name,
+      type: `image/jpeg`,
+      uri: file.uri,
+    });
+    body.append(
+      'jq data',
+      JSON.stringify({
+        Document_Description: "",
+        FileID:43 ,
+        Document_Type: documentType
+      }));
+      const requestOptions = {
+        method: 'POST',
+        headers: {
+          // "Content-Type": "application/json",
+          'Content-Type': 'multipart/form-data',
+        },
+        body: body,
+      };
+
+      fetch(Environment.BASE_URL + '/UploadKycDocument', requestOptions)
+      .then(response => response.json())
+      .then(async result => {
+        console.log(
+          'UploadKycDocumentResponse==================================------',
+          result,
+        );
+
+      });
+   
+
+  };
+  const fetchFileData = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      fetch(Environment.BASE_URL + "/GetFiles", {
+        method: 'POST',
+
+
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token: token }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('GetFilesDetails:', data);
+        if (!data.isException) {
+          // Assuming data.result is an array of file details as described
+          const updatedFileData = data.result.map(item => ({
+            fileID: item.File_ID,
+            adharCard: item.Aadhar_number,
+            panCard: item.Pan_Card,
+            // Add other fields as needed
+          }));
+          setFileData(updatedFileData);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+  
+  useEffect(() => {
+    fetchFileData();
+  }, []);
 
   const toggleBDModal = () => {
     setBDModalVisible(!isBDModalVisible);
@@ -65,6 +187,8 @@ const AddFile = () => {
   const toggleOPModal = () => {
     setOPModalVisible(!isOPModalVisible);
   };
+  
+  
 
   return (
     <ScrollView style={styles.container}>
@@ -135,15 +259,55 @@ const AddFile = () => {
 
       <Card style={styles.card}>
         <Text style={[styles.cardTitle, { backgroundColor: "#162732",width:'100%', color: "white", marginBottom: 5, borderRadius: 10 }]}>KYC Documents</Text>
-        <View style={styles.kycHeader}>
-          <TouchableOpacity style={[styles.fileButton, { backgroundColor: "#007BFF", marginLeft: 70, width: '40%', height: '70%', marginTop: 10 }]} onPress={() => { }}>
-            <Text style={styles.fileButtonText}>Choose file</Text>
-            <Icon name="attach-file" size={20} color="white" />
+        <View style={styles.dropdownContainer}>
+            <DropDownPicker
+              open={open}
+              value={documentType}
+              items={documentTypes}
+              setOpen={setOpen}
+              setValue={setDocumentType}
+              setItems={() => documentTypes}
+              containerStyle={styles.largePicker}
+              textStyle={styles.largePickerText}
+            />
+          </View>
+
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+       
+          <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
+            <Text style={styles.buttonText}>Choose File</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.updateButton, { backgroundColor: '#0FBE00' }]} onPress={() => { }}>
-            <Text style={styles.updateButtonText}>Upload</Text>
-          </TouchableOpacity>
+         
+
+          
+            <TouchableOpacity style={styles.button} onPress={uploadFile}>
+              <Text style={styles.buttonText}>Upload</Text>
+            </TouchableOpacity>
+          
         </View>
+
+        <Modal
+          transparent={true}
+          visible={isModalVisible}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <TouchableOpacity style={styles.modalButton} onPress={chooseFile}>
+                <AntDesignIcon name="addfile" size={40} color="orange" />
+                <Text>Select File</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
+        {file && (
+          <View style={styles.fileInfoContainer}>
+            <Text style={{color:'blue',marginBottom:1}}>{file.name}</Text>
+          </View>
+        )}
+
+
         <View style={styles.entries}>
           <TextInput style={styles.search} placeholder="Search..." />
           <DropDownPicker
@@ -158,19 +322,19 @@ const AddFile = () => {
           <Text style={styles.entriesText}>entries per page</Text>
         </View>
         <FlatList
-          data={data}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          ListHeaderComponent={() => (
-            <View style={styles.tableHeader}>
-              <Text style={styles.headerCell}>file id</Text>
-              <View style={styles.verticalDivider}></View>
-              <Text style={styles.headerCell}>Aadhar Card</Text>
-              <View style={styles.verticalDivider}></View>
-              <Text style={styles.headerCell}>Pan Card</Text>
-            </View>
-          )}
-        />
+    data={fileData}
+    renderItem={renderItem}
+    keyExtractor={(item, index) => index.toString()}
+    ListHeaderComponent={() => (
+      <View style={styles.tableHeader}>
+        <Text style={styles.headerCell}>File ID</Text>
+        <Text style={styles.headerCell}>Aadhar Card</Text>
+        <Text style={styles.headerCell}>Pan Card</Text>
+      </View>
+    )}
+  />
+
+
         <FlatList
           data={data}
           renderItem={renderItem}
@@ -226,21 +390,21 @@ const AddFile = () => {
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Personal Details</Text>
             <View style={styles.modalItem}>
-              <Text style={styles.modalLabel}>Employee ID:</Text>
+              <Text style={styles.modalLabel}>File ID:</Text>
               <TextInput style={styles.modalInput} placeholder="Enter Employee ID" 
                 placeholderTextColor="#FFFFFF"
 
               />
             </View>
             <View style={styles.modalItem}>
-              <Text style={styles.modalLabel}>Employee Name:</Text>
+              <Text style={styles.modalLabel}>File No:</Text>
               <TextInput style={styles.modalInput} placeholder="Enter Employee Name"
                 placeholderTextColor="#FFFFFF"
 
               />
             </View>
             <View style={styles.modalItem}>
-              <Text style={styles.modalLabel}>Email Address:</Text>
+              <Text style={styles.modalLabel}>Company Name</Text>
               <TextInput style={styles.modalInput} placeholder="Enter Email Address"
                 placeholderTextColor="#FFFFFF"
 
@@ -409,6 +573,11 @@ const styles = StyleSheet.create({
     height: 30,
     marginRight: 10,
   },
+  buttonText: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 16,
+  },
   headerTitle: {
     fontSize: 18,
     color: 'white',
@@ -475,6 +644,25 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginRight: 5,
   },
+  dropdownContainer: {
+    flex: 1,
+    marginLeft: 10,
+    width:'100%',
+    width:70,
+    marginTop:10,
+    marginBottom:10
+  },
+  largePicker: {
+    height: 30,
+    width: 150,
+    marginBottom:20
+  },
+  largePickerText: {
+    fontSize: 18,
+  },
+  picker: {
+    height: 20,
+  },
   entries: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -514,6 +702,13 @@ const styles = StyleSheet.create({
     flex: 1,
     fontWeight: 'bold',
     color:'white',
+  },
+  button: {
+    backgroundColor: '#162732',
+    padding: 10,
+    borderRadius: 5,
+    width:'40%',marginBottom:5
+  //  marginVertical: 10,
   },
   cell: {
     flex: 1,
@@ -563,14 +758,15 @@ const styles = StyleSheet.create({
   },
   modalInput: {
     borderWidth: 1,
-    borderColor: 'gray',
+   borderColor: 'gray',
     borderRadius: 5,
     padding: 10,
-    color:'white',
+    color:'#162732',
+    backgroundColor:'white',
     width: '100%',
   },
   modalButton: {
-    backgroundColor: '#162732',
+   // backgroundColor: '#162732',
     paddingVertical: 10,
     paddingHorizontal: 20,
     alignItems: 'center',
