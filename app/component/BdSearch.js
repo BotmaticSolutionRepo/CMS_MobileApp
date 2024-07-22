@@ -70,7 +70,7 @@ const BdSearch = () => {
     item.Company_Name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const renderItem = ({ item }) => (
+  const renderItem = ({ item ,key}) => (
 <TouchableOpacity onPress={() => navigation.navigate('AddFile', { fileId: item.File_ID, aadharCard: item.Aadhar_number, panCard: item.Pan_Card })}>
 
     <View style={styles.tableRow}>
@@ -222,6 +222,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 10,
+    zIndex:0
   },
   button: {
     flex: 1,

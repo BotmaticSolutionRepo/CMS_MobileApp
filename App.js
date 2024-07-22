@@ -92,13 +92,13 @@ const App = () => {
         <Stack.Screen name="WeeklyProgressTwo" component={WeeklyProgressTwo} options={{ title: 'WeeklyProgressTwo', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
         <Stack.Screen name="Dashboard" component={Dashboard} options={{ headerShown:false }} />
         <Stack.Screen name="BdDashboard" component={BdDashboard} options={{ headerShown:false }} />
-        <Stack.Screen name="BdFilesReport" component={BdFilesReport} options={{ headerShown:false }} />
-        <Stack.Screen name="BdSearch" component={BdSearch} options={{ headerShown:false }} />
-        <Stack.Screen name="AddFile" component={AddFile} options={{ headerShown:false }} />
+        <Stack.Screen name="BdFilesReport" component={BdFilesReport} options={{title: 'Bd Files Report', headerShown:true , }} />
+        <Stack.Screen name="BdSearch" component={BdSearch} options={{title: 'Files', headerShown:true , }} />
+        <Stack.Screen name="AddFile" component={AddFile} options={{title: 'File Details', headerShown:true , }} />
         <Stack.Screen name="Details" component={Details} options={{ headerShown:false }} />
         <Stack.Screen name="OtherDetails" component={OtherDetails} options={{ headerShown:false }} />
         <Stack.Screen name="PersonalDetails" component={PersonalDetails} options={{ headerShown:false }} />
-        <Stack.Screen name="MultipleSearch" component={MultipleSearch} options={{ headerShown:false }} />
+        <Stack.Screen name="MultipleSearch" component={MultipleSearch} options={{title: 'Multiple Search', headerShown:true , }} />
 
 
 

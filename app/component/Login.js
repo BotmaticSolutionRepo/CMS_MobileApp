@@ -12,8 +12,8 @@ var Environment = require('../../environment.js');
 const Login = () => {
   const navigation = useNavigation();
 
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('michaeldavis');
+  const [password, setPassword] = useState('Password123');
   const [showpassword, setshowpassword] = useState(true);
   const [deviceId, setDeviceId] = useState('');
   
@@ -46,6 +46,7 @@ const Login = () => {
          body: JSON.stringify({
            Username:username,
            Password:password,
+      
                  }),
        })
        .then(response => response.json())
@@ -56,6 +57,8 @@ const Login = () => {
            Alert.alert(data.result);
          } else {
            await AsyncStorage.setItem("token",data.token);
+           await AsyncStorage.setItem("Username",data.result.UserName);
+
            navigation.navigate('BdDashboard', { UserName: data.result.UserName }); // Pass username as a parameter
          }
        })

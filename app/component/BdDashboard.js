@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
     width: "45%",
     borderRadius: DefaultStyle.UNIT / 2,
     paddingHorizontal: DefaultStyle.PADDING / 2,
-    fontSize: DefaultStyle.FONT_SIZE,
+    fontSize: 13,
     marginVertical: DefaultStyle.MARGIN / 4,
     color: '#000000',
     backgroundColor: 'white',
