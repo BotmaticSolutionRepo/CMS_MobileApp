@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Alert, ScrollView, Button, Image, StyleSheet, TouchableOpacity, FlatList, Modal } from 'react-native';
+import { View, Text, TextInput, Alert, ScrollView, Button, Image, StyleSheet,Appearance, Platform,TouchableOpacity, Dimensions, FlatList, Modal } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Picker } from '@react-native-picker/picker';
 import { Card, IconButton } from 'react-native-paper';
 import DocumentPicker from 'react-native-document-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import FontIcon from 'react-native-vector-icons/FontAwesome';
+import Spinner from 'react-native-loading-spinner-overlay';
+import { Dropdown } from 'react-native-element-dropdown';
+
+import Pdf from 'react-native-pdf';
+
 var Environment = require('../../environment.js');
 //import Modal from 'react-native-modal';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
@@ -17,11 +23,22 @@ const data = [
   { id: '2', fileID: '37', fileNo: '474', companyName: 'Federal Bank Limited', country: 'INDIA' },
 ];
 
-const AddFile = () => {
+const AddFile = ({ route }) => {
+
+  const [Fileiddd, setFileiddd] = useState(route.params.fileId);
+  const [isSpinnerVisible, setisSpinnerVisible] = useState(true);
   const [open, setOpen] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
+  const [isPdfModalVisible, setisPdfModalVisible] = useState(false);
+  const [AdharCardPdf, SetAdharCardPdf] = useState("");
+  const [PanCardPdf, SetPanCardPdf] = useState("");
+  const [AgreeentCopyPdf, SetAgreeentCopyPdf] = useState("");
+  const [ClientMasterListPdf, SetClientMasterListPdf] = useState("");
+  const [CancelChequePdf, SetCancelChequePdf] = useState("");
+
+
   const [openEntries, setOpenEntries] = useState(false);
-  const [imageBase64, setImageBase64] = useState([]);
+  const [PdfUri, setPdfUri] = useState([]);
   const [Imageurl, SetImageurl] = useState("");
   const [Username, setUsername] = useState("");
   const [comments, setcomments] = useState([]);
@@ -94,16 +111,16 @@ const AddFile = () => {
   const [Opspaymentreceived, setOpspaymentreceived] = useState('');
 
 
-  
 
-  
 
- 
+
+
+
   const [fileData, setFileData] = useState([]); // Define fileData state
 
 
 
-  
+
   const [itemsEntries, setItemsEntries] = useState([
     { label: '10', value: '10' },
     { label: '25', value: '25' },
@@ -111,10 +128,12 @@ const AddFile = () => {
   ]);
 
   const documentTypes = [
-    { label: 'Adhar Card', value: 'Adhar_Card' },
-    { label: 'Pan Card', value: 'Pan_Card' },
-    { label: 'Passport', value: 'Passport' },
-    { label: 'Driver License', value: 'Driver_License' },
+    { label: 'Adhar Card', value: 'adhar_card' },
+    { label: 'Pan Card', value: 'pan_card' },
+    { label: 'Client Master List', value: 'Client_Master_List' },
+    { label: 'Agreement Copy', value: 'Agreement_Copy' },
+    { label: 'Cancel Cheque', value: 'cancel_cheque' },
+
   ];
   const [items, setItems] = useState([
     { label: 'Select the team member', value: '' },
@@ -154,10 +173,12 @@ const AddFile = () => {
   const togglePersonalModal = () => {
     setPersonalModalVisible(!isPersonalModalVisible);
   };
+
+
   const chooseFile = async () => {
     try {
       const res = await DocumentPicker.pick({
-        type: [DocumentPicker.types.allFiles],
+        type: [DocumentPicker.types.pdf], // Specify PDF type
       });
       setFile(res[0]);
       setModalVisible(false);
@@ -172,51 +193,6 @@ const AddFile = () => {
   };
 
 
-  const uploadFile = async () => {
-    if (!file) {
-      console.error('No file selected.');
-      return;
-    }
-
-    if (!documentType) {
-      console.error('No document type selected.');
-      return;
-    }
-
-    let body = new FormData();
-    body.append('Img', {
-      name: file.name,
-      type: `image/jpeg`,
-      uri: file.uri,
-    });
-    body.append(
-      'jq data',
-      JSON.stringify({
-        Document_Description: "",
-        FileID: 43,
-        Document_Type: documentType
-      }));
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        // "Content-Type": "application/json",
-        'Content-Type': 'multipart/form-data',
-      },
-      body: body,
-    };
-
-    fetch(Environment.BASE_URL + '/UploadKycDocument', requestOptions)
-      .then(response => response.json())
-      .then(async result => {
-        console.log(
-          'UploadKycDocumentResponse==================================------',
-          result,
-        );
-
-      });
-
-
-  };
   const fetchFileData = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
@@ -230,7 +206,7 @@ const AddFile = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          File_ID: 26,
+          File_ID: Fileiddd,
           token: token
         }),
       })
@@ -243,8 +219,8 @@ const AddFile = () => {
           if (!data.isException) {
             // Assuming data.result is an array of file details as described
             await setFileData(updatedFileData);
-            setcomments(data.result?.comments)
-            setassignteamls(updatedFileData.Teams)
+            setcomments(data.result?.comments);
+            // setassignteamls(updatedFileData.Teams)
             setFileid(JSON.stringify(updatedFileData.Record.File_ID))
             setFileno(updatedFileData.Record.File_No)
             setCompanyname(updatedFileData.Record.Company_Name)
@@ -293,10 +269,18 @@ const AddFile = () => {
             setOpssharescredited(updatedFileData.Record.Ops_SharesCredited)
             setOpsinvoiceissued(updatedFileData.Record.Ops_InvoiceIssued)
             setOpspaymentreceived(updatedFileData.Record.Ops_PaymentReceived)
-           
 
 
 
+            // setassignteamls(updatedFileData.Teams)
+
+            if (updatedFileData.Teams) {
+              var newarray = updatedFileData.Teams.map((item) => {
+                return { label: item.Team_Name, value: item.Team_ID };
+              })
+              setassignteamls(newarray);
+              // console.log("newwwwwwwww____",newarray) 
+            }
             if (data.result?.BdStatusList) {
               var newarray = data.result?.BdStatusList.map((item) => {
                 return { label: item.BD_Status, value: item.Id };
@@ -308,19 +292,58 @@ const AddFile = () => {
           }
 
           // console.log("filedetailsssgggssss", updatedFileData.Record.File_ID);
-          // if (data?.result?.KycDocumentList[0]?.Adhar_Card) {
-          //   console.log("imaggeeeeee_____",data?.result?.KycDocumentList[0]?.Adhar_Card)
-          //   const adharCardBytes = data.result.KycDocumentList[0].Adhar_Card;
-          //   // Convert the byte array to a base64 string
-          //   const base64Image = `data:image/jpeg;base64,${base64.encode(adharCardBytes)}`;
-          //   // console.log('Base64 Image:', base64Image.slice(0,1000));
-          //   const byteArray = convertBase64ToByteArray(base64Image);
-          //   setImageBase64(byteArray);
-          // }
 
+          // console.log("Document______", data?.result?.KycDocumentList[0]?.Adhar_Card.slice(0,1000));
 
+          if (data?.result?.KycDocumentList[0]?.Adhar_Card) {
+            const adharCardBytes = data.result.KycDocumentList[0].Adhar_Card;
+            const pdfBase64 = `data:application/pdf;base64,${adharCardBytes}`;
+            console.log('Base64 PDF Length:', pdfBase64.length);
 
-        }) 
+            SetAdharCardPdf(pdfBase64);
+          } else {
+            console.log('No Adhar_Card found in the data');
+          }
+          if (data?.result?.KycDocumentList[0]?.Pan_Card) {
+            const adharCardBytes = data.result.KycDocumentList[0].Pan_Card;
+            const pdfBase64 = `data:application/pdf;base64,${adharCardBytes}`;
+            console.log('Pan_Card Pdf Length:', pdfBase64.length);
+
+            SetPanCardPdf(pdfBase64);
+          } else {
+            console.log('No PanCard found in the data');
+          }
+          if (data?.result?.KycDocumentList[0]?.Agreement_Copy) {
+            const adharCardBytes = data.result.KycDocumentList[0].Agreement_Copy;
+            const pdfBase64 = `data:application/pdf;base64,${adharCardBytes}`;
+            console.log('Agreement_Copy PDF Length:', pdfBase64.length);
+
+            SetAgreeentCopyPdf(pdfBase64);
+          } else {
+            console.log('No Agreement_Copy found in the data');
+          }
+          if (data?.result?.KycDocumentList[0]?.Client_Master_List) {
+            const adharCardBytes = data.result.KycDocumentList[0].Client_Master_List;
+            const pdfBase64 = `data:application/pdf;base64,${adharCardBytes}`;
+            console.log('Client_Master_List PDF Length:', pdfBase64.length);
+
+            SetClientMasterListPdf(pdfBase64);
+          } else {
+            console.log('No Client_Master_List found in the data');
+          }
+
+          if (data?.result?.KycDocumentList[0]?.Cancel_Cheque) {
+            const adharCardBytes = data.result.KycDocumentList[0].Cancel_Cheque;
+            const pdfBase64 = `data:application/pdf;base64,${adharCardBytes}`;
+            console.log('Cancel_Cheque PDF Length:', pdfBase64.length);
+
+            SetCancelChequePdf(pdfBase64);
+          } else {
+            console.log('No Cancel_Cheque found in the data');
+          }
+          // console.log("rutik_______",AdharCardPdf)
+          setisSpinnerVisible(false);
+        })
         .catch(error => {
           console.error('Error fetching data:', error);
         });
@@ -336,14 +359,173 @@ const AddFile = () => {
     fetchFileData();
   }, []);
 
-  const byteArrayToBase64 = (byteArray) => {
-    return `data:image/jpeg;base64,${encode(byteArray)}`;
-  };
-  function convertBase64ToByteArray(base64Image) {
-    const base64Data = base64Image.replace(/^data:image\/[a-z]+;base64,/, '');
-    const byteArr = base64.decode(base64Data);
-    return byteArr;
+  const handleDeleteDocument = async (document) => {
+    setisSpinnerVisible(true);
+    console.log("datasendtodeletekycdocument__________",JSON.stringify({
+      Document_Type:document,
+      FileID:Fileid,
+            }),)
+            // return false;
+    await fetch(Environment.BASE_URL + "/DeleteKycDocument", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        Document_Type:document,
+        FileID:Fileid,
+   
+              }),
+    })
+    .then(response => response.json())
+    .then(async(data) => {
+      // Handle the response from the login API
+      console.log('DeleteKycDocumentresponse............:', data);
+      setisSpinnerVisible(false);
+
+      if (data.isException) {
+        Alert.alert(data.result);
+      } else {
+        Alert.alert(
+          (('Success')),
+          (`${data.result}`),
+          [
+            // { text: (t('Cancel')), style: 'cancel' },
+            { text: (('OK')), onPress : () => {
+               setisSpinnerVisible(true);
+              fetchFileData();} 
+            },
+          ],
+          { cancelable: false }
+        );
+        switch (document) {
+          case "adhar_card":
+            SetAdharCardPdf("");
+            break;
+          case "pan_card":
+            SetPanCardPdf("");
+            break;
+          case "Agreement_Copy":
+            SetAgreeentCopyPdf("");
+            break;
+          case "Client_Master_List":
+            SetClientMasterListPdf("");
+            break;
+          case "cancel_cheque":
+            SetCancelChequePdf("");
+            break;
+          default:
+            // Handle default case, e.g., display an error message
+            console.error("Invalid document type",document);
+            break;
+        }
+      }
+    
+    })
+    
+      .catch(error => {
+        console.error('Error during login:', error);
+        setisSpinnerVisible(false);
+      
+      });
+
   }
+
+  const uploadFile = async () => {
+    if (!file) {
+      console.error('No file selected.');
+      return;
+    }
+
+    if (!documentType) {
+      console.error('No document type selected.');
+      return;
+    }
+    setisSpinnerVisible(true);
+    let body = new FormData();
+    body.append('Img', {
+      name: file.name,
+      type: `image/jpeg`,
+      uri: file.uri,
+    });
+    body.append(
+      'jq data',
+      JSON.stringify({
+        Document_Description: "",
+        FileID: Fileiddd,
+        Document_Type: documentType
+      }));
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        // "Content-Type": "application/json",
+        'Content-Type': 'multipart/form-data',
+      },
+      body: body,
+    };
+    console.log("datasendtoUploadKycDocument______",body);
+
+    fetch(Environment.BASE_URL + '/UploadKycDocument', requestOptions)
+      .then(response => response.json())
+      .then(async result => {
+        console.log(
+          'UploadKycDocumentResponse==================================------',
+          result,
+        );
+        setisSpinnerVisible(false);
+        setFile(null);
+        setdocumentType("")
+        if (result.isException) {
+          Alert.alert(result.result);
+        } else {
+          Alert.alert(
+            (('Success')),
+            (`${result.result}`),
+            [
+              // { text: (t('Cancel')), style: 'cancel' },
+              { text: (('OK')), onPress : () => {
+                 setisSpinnerVisible(true);
+                fetchFileData();} 
+              },
+            ],
+            { cancelable: false }
+          );
+        }
+       
+      });
+
+
+  };
+
+  const handleViewDocument = (document) => {
+    setisSpinnerVisible(true);
+    switch (document) {
+      case "AdharCard":
+        setPdfUri(AdharCardPdf);
+        break;
+      case "PanCard":
+        setPdfUri(PanCardPdf);
+        break;
+      case "AgreementCopy":
+        setPdfUri(AgreeentCopyPdf);
+        break;
+      case "ClientMasterList":
+        setPdfUri(ClientMasterListPdf);
+        break;
+      case "CancelCheque":
+        setPdfUri(CancelChequePdf);
+        break;
+      default:
+        // Handle default case, e.g., display an error message
+        console.error("Invalid document type");
+        break;
+    }
+    setisPdfModalVisible(true);
+    setisSpinnerVisible(false);
+  };
+
+
+
   const toggleBDModal = () => {
     setBDModalVisible(!isBDModalVisible);
   };
@@ -388,18 +570,18 @@ const AddFile = () => {
         },
         body: JSON.stringify({
           CommentText: comment,
-          User_ID: 13 ,
-          File_ID:Fileid ,
-          token:token 
+          User_ID: 13,
+          File_ID: Fileid,
+          token: token
         }),
       };
       console.log(
         'dataSendforCommentsection______________________',
         JSON.stringify({
           CommentText: comment,
-          User_ID: 13 ,
-          File_ID:Fileid ,
-          token:token 
+          User_ID: 13,
+          File_ID: Fileid,
+          token: token
         }),
       );
 
@@ -409,37 +591,37 @@ const AddFile = () => {
         .then(async result => {
           console.log('PostComments----------------------', result);
           if (result.isException == false) {
-              Alert.alert(result.result);
+            Alert.alert(result.result);
           } else {
-              Alert.alert(result.result);
+            Alert.alert(result.result);
           }
-          
+
         })
-        
+
         .catch(error => {
           console.error('Errorpostingcomments:', error);
         });
 
-        await fetch(Environment.BASE_URL + "/EditFile", {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            File_ID: 26,
-            token: token
-          }),
-        })
-          .then(response => response.json())
-          .then(async (data) => {
-            console.log('GetFilesDetailssssss:', data);  
-            if (!data.isException) {
-              // Assuming data.result is an array of file details as described
-              setcomments(data.result?.comments)
-            }
-            });  
+      await fetch(Environment.BASE_URL + "/EditFile", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          File_ID: 26,
+          token: token
+        }),
+      })
+        .then(response => response.json())
+        .then(async (data) => {
+          console.log('GetFilesDetailssssss:', data);
+          if (!data.isException) {
+            // Assuming data.result is an array of file details as described
+            setcomments(data.result?.comments)
+          }
+        });
 
-   
+
 
     } catch (error) {
       console.log("error_____", error.stack);
@@ -452,72 +634,72 @@ const AddFile = () => {
     return localDate.toLocaleString(); // You can format it as you like
   };
 
-  const handlechangeteam = async (item)=>{
+  const handlechangeteam = async (item) => {
 
     setassignteam(item);
-    console.log("datasedntogetuserbyteamid_____",item)
+    console.log("datasedntogetuserbyteamid_____", item)
     // return false;
-    await fetch(Environment.BASE_URL + "/GetUsersByTeamId",{
+    await fetch(Environment.BASE_URL + "/GetUsersByTeamId", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        File_ID:item
+        File_ID: item.value
       })
-    }) .then(response => response.json())
-    .then(async (data) => {
+    }).then(response => response.json())
+      .then(async (data) => {
 
-      console.log("teammember_______",data);
+        console.log("teammember_______", data);
 
-      if (data.result) {
-        var newarray = data.result.map((item) => {
-          return { label: item.First_Name, value: item.User_ID };
-        })
-        setassignteamMemberls(newarray);
-      }
-    })
+        if (data.result) {
+          var newarray = data.result.map((item) => {
+            return { label: item.First_Name, value: item.User_ID };
+          })
+          setassignteamMemberls(newarray);
+        }
+      })
   }
 
   const SubmitAssignTeam = async () => {
     const token = await AsyncStorage.getItem('token');
-    console.log("datasedntoAssignFile_____",JSON.stringify({
-      FileID:Fileid,
-      SelectedTeamID:assignteam,
-      SelectedTeamMemberID:assignteammember,
+    console.log("datasedntoAssignFile_____", JSON.stringify({
+      FileID: Fileid,
+      SelectedTeamID: assignteam,
+      SelectedTeamMemberID: assignteammember,
       // token:token,
     }))
-    await fetch(Environment.BASE_URL+"/AssignFile",{
-      method:'Post',
-      headers:{
-        'Content-Type':'application/json',
+    await fetch(Environment.BASE_URL + "/AssignFile", {
+      method: 'Post',
+      headers: {
+        'Content-Type': 'application/json',
       },
-      body:JSON.stringify({
-        FileID:Fileid,
-        SelectedTeamID:assignteam,
-        SelectedTeamMemberID:assignteammember,
+      body: JSON.stringify({
+        FileID: Fileid,
+        SelectedTeamID: assignteam,
+        SelectedTeamMemberID: assignteammember,
         // token:token,
       })
     }).then(response => response.json())
-    .then(async (data) => {
+      .then(async (data) => {
 
-      console.log("responseAssignFile________",data);
-      Alert.alert(result.result)
-      // if (data.result) {
-      //   var newarray = data.result.map((item) => {
-      //     return { label: item.First_Name, value: item.User_ID };
-      //   })
+        console.log("responseAssignFile________", data);
+        Alert.alert(result.result)
+        // if (data.result) {
+        //   var newarray = data.result.map((item) => {
+        //     return { label: item.First_Name, value: item.User_ID };
+        //   })
         // setassignteamMemberls(newarray);
-      // }
-    })
+        // }
+      })
 
   }
- 
+
 
   const updatedata = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
-      console.log("datasendtoUpdateFile__________",JSON.stringify({
+      console.log("datasendtoUpdateFile__________", JSON.stringify({
         File_ID: 26,
         token: token,
         File_No: Fileno,
@@ -546,7 +728,7 @@ const AddFile = () => {
         Investment_Type: "TypeA",
         Fees: 100.50,
         Unclaimed_shares: Unclaimedshares,
-        Date_of_Transfer:ProposeddateofTransfer ,
+        Date_of_Transfer: ProposeddateofTransfer,
         Praposed_Date_of_Transfer: ProposeddateofTransfer,
         Pan_Card: Pancard,
         Date_of_Birth: Dateofbirth,
@@ -581,99 +763,99 @@ const AddFile = () => {
         Ops_WorkStatus: Opsworkstatus,
         Ops_CaseType: Opscasetype,
         Ops_Stages: Opsstages,
-        Ops_DividendCredited:Opsdividendcredited,
+        Ops_DividendCredited: Opsdividendcredited,
         Ops_DividendCreditedOn: "2024-01-01",
         Ops_SharesCredited: Opssharescredited,
         Ops_SharesCreditedOn: "2024-01-02",
         Ops_InvoiceIssued: Opsinvoiceissued,
         Ops_InvoiceIssuedOn: "2024-01-03",
-        Ops_PaymentReceived:Opspaymentreceived,
+        Ops_PaymentReceived: Opspaymentreceived,
         Ops_PaymentReceivedOn: "2024-01-04"
-    }))
+      }))
       await fetch(Environment.BASE_URL + "/UpdateFile", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            File_ID: 26,
-            token: token,
-            File_No: "F001",
-            Serial_Number: "S123",
-            Company_Name: "Sample Company",
-            Village_Name: "Sample Village",
-            Sheet_No: "Sheet123",
-            Investor_First_Name: "John",
-            Investor_Middle_Name: "Doe",
-            Investor_Last_Name: "Smith",
-            Investor_Full_Name: "John Doe Smith",
-            Father_First_Name: "Robert",
-            Father_Middle_Name: "William",
-            Father_Last_Name: "Smith",
-            Father_Full_Name: "Robert William Smith",
-            Address: "123 Main St",
-            Country: "CountryName",
-            State: "StateName",
-            District: "DistrictName",
-            PinCode: "123456",
-            ContactDetails: "123-456-7890",
-            RTA_Status: "Active",
-            Consolidated_Address: "Full Address",
-            Folio_Number: "Folio123",
-            Dp_id: "DP123",
-            Investment_Type: "TypeA",
-            Fees: 100.50,
-            Unclaimed_shares: 20,
-            Date_of_Transfer: "01-01-2023",
-            Praposed_Date_of_Transfer: "2023-12-31",
-            Pan_Card: "ABCDE1234F",
-            Date_of_Birth: "1990-01-01",
-            Aadhar_number: "123456789012",
-            Nominee_Name: "Jane Doe",
-            JointHolderName: "Jane Smith",
-            Market_Value: 10000.75,
-            Adv_Advance_Status: "StatusA",
-            Adv_New_Address: "New Address",
-            Adv_Index_Number: "Index123",
-            Refrence_Number: "Ref123",
-            Letter_Tracking_Number: "Track123",
-            Letter_Status: "Sent",
-            Variable_Status: "VarStatusA",
-            BD_Templete_View: "TemplateA",
-            BD_Case_Study: "CaseStudyA",
-            BD_Case_Type: "TypeA",
-            Assign_To_BD: "BD123",
-            BD_Status: "Completed",
-            BD_Confidence_Level: "High",
-            Tel_Nominee_Name: "Nominee A",
-            Tel_Joint_Holder_Name: "Joint A",
-            No_Of_Share: 100,
-            IEPF: "Yes",
-            Physical: "No",
-            Tel_InSuspense: "Yes",
-            Tel_VerificationStatus: "Verified",
-            Tel_No_Of_Certificate: 10,
-            KYC_Compliance: "Compliant",
-            Ops_CertificateNumber: "Cert123",
-            Ops_DistinctiveNumber: "Dist123",
-            Ops_WorkStatus: "Completed",
-            Ops_CaseType: "TypeB",
-            Ops_Stages: "Stage1",
-            Ops_DividendCredited: 150.50,
-            Ops_DividendCreditedOn: "2024-01-01",
-            Ops_SharesCredited: 50,
-            Ops_SharesCreditedOn: "2024-01-02",
-            Ops_InvoiceIssued: "Yes",
-            Ops_InvoiceIssuedOn: "2024-01-03",
-            Ops_PaymentReceived: "Yes",
-            Ops_PaymentReceivedOn: "2024-01-04"
+          File_ID: 26,
+          token: token,
+          File_No: "F001",
+          Serial_Number: "S123",
+          Company_Name: "Sample Company",
+          Village_Name: "Sample Village",
+          Sheet_No: "Sheet123",
+          Investor_First_Name: "John",
+          Investor_Middle_Name: "Doe",
+          Investor_Last_Name: "Smith",
+          Investor_Full_Name: "John Doe Smith",
+          Father_First_Name: "Robert",
+          Father_Middle_Name: "William",
+          Father_Last_Name: "Smith",
+          Father_Full_Name: "Robert William Smith",
+          Address: "123 Main St",
+          Country: "CountryName",
+          State: "StateName",
+          District: "DistrictName",
+          PinCode: "123456",
+          ContactDetails: "123-456-7890",
+          RTA_Status: "Active",
+          Consolidated_Address: "Full Address",
+          Folio_Number: "Folio123",
+          Dp_id: "DP123",
+          Investment_Type: "TypeA",
+          Fees: 100.50,
+          Unclaimed_shares: 20,
+          Date_of_Transfer: "01-01-2023",
+          Praposed_Date_of_Transfer: "2023-12-31",
+          Pan_Card: "ABCDE1234F",
+          Date_of_Birth: "1990-01-01",
+          Aadhar_number: "123456789012",
+          Nominee_Name: "Jane Doe",
+          JointHolderName: "Jane Smith",
+          Market_Value: 10000.75,
+          Adv_Advance_Status: "StatusA",
+          Adv_New_Address: "New Address",
+          Adv_Index_Number: "Index123",
+          Refrence_Number: "Ref123",
+          Letter_Tracking_Number: "Track123",
+          Letter_Status: "Sent",
+          Variable_Status: "VarStatusA",
+          BD_Templete_View: "TemplateA",
+          BD_Case_Study: "CaseStudyA",
+          BD_Case_Type: "TypeA",
+          Assign_To_BD: "BD123",
+          BD_Status: "Completed",
+          BD_Confidence_Level: "High",
+          Tel_Nominee_Name: "Nominee A",
+          Tel_Joint_Holder_Name: "Joint A",
+          No_Of_Share: 100,
+          IEPF: "Yes",
+          Physical: "No",
+          Tel_InSuspense: "Yes",
+          Tel_VerificationStatus: "Verified",
+          Tel_No_Of_Certificate: 10,
+          KYC_Compliance: "Compliant",
+          Ops_CertificateNumber: "Cert123",
+          Ops_DistinctiveNumber: "Dist123",
+          Ops_WorkStatus: "Completed",
+          Ops_CaseType: "TypeB",
+          Ops_Stages: "Stage1",
+          Ops_DividendCredited: 150.50,
+          Ops_DividendCreditedOn: "2024-01-01",
+          Ops_SharesCredited: 50,
+          Ops_SharesCreditedOn: "2024-01-02",
+          Ops_InvoiceIssued: "Yes",
+          Ops_InvoiceIssuedOn: "2024-01-03",
+          Ops_PaymentReceived: "Yes",
+          Ops_PaymentReceivedOn: "2024-01-04"
         }),
       })
         .then(response => response.json())
         .then(async (data) => {
           console.log('UpdateFileresponse:', data);
           if (!data.isException) {
-           Alert.alert(data.result);
+            Alert.alert(data.result);
           }
         })
         .catch(error => {
@@ -701,76 +883,95 @@ const AddFile = () => {
         </Text>
         <Text style={styles.headerUser}>Michaeldavis</Text>
       </View> */}
+      <Spinner
+        visible={isSpinnerVisible}
+        textContent={('Loading')}
+        textStyle={styles.spinnerTextStyle}
+        color="#EF6A32"
+      // customIndicator={<Image style={styles.logoImage} source={require('../../app/Images/Group111.png')} />}
+      />
 
-      <View style={{ padding: 10, borderColor: '#000000', borderWidth: 1, marginTop: 20, borderRadius: 10, marginBottom: 10 }}>
+      <View style={{ padding: 10, borderColor: Appearance.getColorScheme()=='dark'?"white":'#000000', borderWidth: 1, marginTop: 20, borderRadius: 10, marginBottom: 10 }}>
 
         <Text style={styles.sectionTitle}>ASSIGN FILE</Text>
         <View style={{ flexDirection: 'row' }}>
-          <Card style={[styles.card, { width: '48%' }]}>
+          <View style={[styles.card, { width: '48%',borderColor:Appearance.getColorScheme()=='dark'?'white':'black' }]}>
             <Text style={styles.cardTitle}>Assign to Team </Text>
             <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={assignteam}
-                style={{ height: 50, width: '100%', backgroundColor: '#ffffff', borderRadius: 10, fontSize: 10, color: 'green', }}
-                mode={"dropdown"}
-                placeholder={assignteam}
-                // onValueChange={(item) => { setassignteammember(item) }}
-                onValueChange={(items)=>{ handlechangeteam(items)}}
-                >
-                <Picker.Item label={assignteammember} value={assignteammember} />
-                {assignteamls.map((user, index) => (
-                  <Picker.Item label={user.Team_Name} value={user.Team_ID} key={index} />
-                ))}
+          
+
+              <Dropdown
+          style={{width:'100%',color:'gray',borderColor:'blue',borderWidth:1,height:40,borderRadius:5,backgroundColor:'white',padding:5,marginRight:5,marginTop:Platform.OS=='android'?15:30,marginLeft:0}}
+          placeholderStyle={{color:'gray'}}
+          selectedTextStyle={{color:'gray'}}
+          inputSearchStyle={{color:'gray'}}
+          itemTextStyle={{color:'gray'}}
+          // iconStyle={styles.iconStyle}
+          data={assignteamls}
+          search
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={('Select')}
+          searchPlaceholder="Search..."
+          value={assignteam}
+         
+          onChange={(items) => { handlechangeteam(items)}}
+          />
 
 
-              </Picker>
             </View>
 
-          </Card>
-          <Card style={[styles.card, { marginLeft: 10, width: '48%' }]}>
-            <Text style={styles.cardTitle}>Assign to Team Member</Text>
+          </View>
+          <View style={[styles.card, { width: '48%',borderColor:Appearance.getColorScheme()=='dark'?'white':'black' }]}>
+            <Text style={styles.cardTitle}>Assign to Team  Member</Text>
             <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={assignteam}
-                style={{ height: 50, width: '100%', backgroundColor: '#ffffff', borderRadius: 10, fontSize: 10, color: 'green', }}
-                mode={"dropdown"}
-                placeholder={assignteam}
-                onValueChange={(item) => { setassignteammember(item) }
-                }>
-                <Picker.Item label={assignteammember} value={assignteammember} />
-                {assignteamMemberls.map((user, index) => (
-                  <Picker.Item label={user.label} value={user.value} key={index} />
-                ))}
+          
+
+              <Dropdown
+          style={{width:'100%',color:'gray',borderColor:'blue',borderWidth:1,height:40,borderRadius:5,backgroundColor:'white',padding:5,marginRight:5,marginTop:15,marginLeft:0}}
+          placeholderStyle={{color:'gray'}}
+          selectedTextStyle={{color:'gray'}}
+          inputSearchStyle={{color:'gray'}}
+          itemTextStyle={{color:'gray'}}
+          // iconStyle={styles.iconStyle}
+          data={assignteamMemberls}
+          search
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={('Select')}
+          searchPlaceholder="Search..."
+          value={assignteammember}
+         
+          onChange={item => {
+            setassignteammember(item.value);
+          }}          />
 
 
-              </Picker>
             </View>
-          </Card>
+
+          </View>
+
+        
 
         </View>
         <View style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-          <TouchableOpacity 
-          onPress={SubmitAssignTeam}
-          style={{ backgroundColor: '#162732', paddingVertical: 10, paddingHorizontal: 20, alignItems: 'center', marginBottom: 10, width: "50%", borderRadius: 10, }}>
+          <TouchableOpacity
+            onPress={SubmitAssignTeam}
+            style={{ backgroundColor: '#162732', paddingVertical: 10, paddingHorizontal: 20, alignItems: 'center', marginBottom: 10, width: "50%", borderRadius: 10, }}>
             <Text style={styles.updateButtonText}>Submit</Text>
           </TouchableOpacity>
         </View>
-
+       
       </View>
 
-                {/* <View style={{width:'100%',height:'20%'}}>
-                <Text>Username: {Username}</Text>
-                    {imageBase64 ? (
-                      <Image source={{ uri: Imageurl }}  style={{height:200,width:200,borderRadius:10,backgroundColor:'green'}} />
-                    ) : (
-                      <Text>Loading image...</Text>
-                    )}
-                </View> */}
+
 
       {/* <TouchableOpacity style={{ backgroundColor: '#162732', paddingVertical: 10, paddingHorizontal: 20, alignItems: 'center', marginBottom: 10 }}>
         <Text style={styles.updateButtonText}>UPDATE DATA</Text>
       </TouchableOpacity> */}
-      <View style={{ padding: 10, borderColor: '#000000', borderWidth: 1, marginTop: 20, borderRadius: 10, marginBottom: 10, zIndex: 0 }}>
+      <View style={{ padding: 10, borderColor: Appearance.getColorScheme()=='dark'?'white':'#000000', borderWidth: 1, marginTop: 20, borderRadius: 10, marginBottom: 10, zIndex: 0 }}>
         <TouchableOpacity style={styles.updateButton} onPress={togglePersonalModal}>
           <Text style={styles.updateButtonText}>Personal Details</Text>
         </TouchableOpacity>
@@ -784,16 +985,16 @@ const AddFile = () => {
           <Text style={styles.updateButtonText}>Operational Details</Text>
         </TouchableOpacity>
         <View style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-          <TouchableOpacity 
-          onPress={updatedata}
-          style={{ backgroundColor: '#162732', paddingVertical: 10, paddingHorizontal: 20, alignItems: 'center', marginBottom: 10, width: "50%", borderRadius: 10, }}>
+          <TouchableOpacity
+            onPress={updatedata}
+            style={{ backgroundColor: '#162732', paddingVertical: 10, paddingHorizontal: 20, alignItems: 'center', marginBottom: 10, width: "50%", borderRadius: 10, }}>
             <Text style={styles.updateButtonText}>UPDATE DATA</Text>
           </TouchableOpacity>
         </View>
 
       </View>
 
-      <View style={{ padding: 10, borderColor: '#000000', borderWidth: 1, marginTop: 20, borderRadius: 10, marginBottom: 10 }}>
+      <View style={{ padding: 10, borderColor:Appearance.getColorScheme()=='dark'?'white': '#000000', borderWidth: 1, marginTop: 20, borderRadius: 10, marginBottom: 10 }}>
         <Text style={[styles.cardTitle, { height: 30, backgroundColor: "#162732", width: '100%', color: "white", marginBottom: 5, marginTop: 5, borderRadius: 5 }]}>KYC Documents</Text>
         <View style={styles.dropdownContainer}>
           {/* <DropDownPicker
@@ -807,20 +1008,41 @@ const AddFile = () => {
             textStyle={styles.largePickerText}
           /> */}
 
-          <Picker
+          {/* <Picker
             selectedValue={documentType}
             style={{ height: 50, width: '50%', backgroundColor: '#bcbcbc', borderRadius: 20, fontSize: 10, color: 'green', }}
-            mode={"dropdown"}
+            // mode={"dropdown"}
             placeholder={documentType}
             onValueChange={(item) => { setdocumentType(item) }
             }>
             <Picker.Item label={assignteammember} value={assignteammember} />
             {documentTypes.map((user, index) => (
-              <Picker.Item label={user.label} value={user.label} key={index} />
+              <Picker.Item label={user.label} value={user.value} key={index} />
             ))}
 
 
-          </Picker>
+          </Picker> */}
+          <Dropdown
+          style={{width:'50%',color:'gray',borderColor:'blue',borderWidth:1,height:40,borderRadius:5,backgroundColor:'white',padding:5,marginRight:5,marginLeft:0}}
+          placeholderStyle={{color:'gray'}}
+          selectedTextStyle={{color:'gray'}}
+          inputSearchStyle={{color:'gray'}}
+          itemTextStyle={{color:'gray'}}
+          // iconStyle={styles.iconStyle}
+          data={documentTypes}
+          search
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={('Select')}
+          searchPlaceholder="Search..."
+          value={documentType}
+         
+          onChange={item => {
+            setdocumentType(item.value);
+          }}
+         
+        />
 
           {file ?
             <View style={{ marginLeft: 20, marginTop: 10 }}>
@@ -839,33 +1061,88 @@ const AddFile = () => {
         <View style={styles.tableHeader}>
           <View style={{ borderBottomWidth: 1, flexDirection: 'row', borderColor: 'white', padding: 5, width: '100%' }}>
             <Text style={styles.headerCell}>File ID</Text>
-            <Text style={{ width: '50%', color: 'white', marginLeft: 10 }}>Client Master List</Text>
+            <View style={{ width: '50%', padding: 5 }}>
+              <Text style={{ marginLeft: 10, fontWeight: 'bold', color: 'white' }}>{Fileiddd}</Text>
 
+            </View>
           </View>
           <View style={{ borderBottomWidth: 1, flexDirection: 'row', borderColor: 'white', padding: 5, width: '100%' }}>
             <Text style={styles.headerCell}>Aadhar Card</Text>
-            <Text style={{ width: '50%', color: 'white', marginLeft: 10 }}>Client Master List</Text>
+          
 
+            { AdharCardPdf !=""  ?
+            <View style={{ width: '50%', padding: 5, flexDirection: 'row', justifyContent: 'space-evenly' }}>
+              <FontIcon name="eye" onPress={() => { handleViewDocument('AdharCard') }} size={20} color="green" />
+              <FontIcon name="trash" onPress={() => { handleDeleteDocument('adhar_card') }} size={20} color="#EF6A32" />
+
+            </View>
+            :<View style={{width:'50%',justifyContent:"center"}}>
+              <Text style={{color:'red', marginLeft:20}}>
+              Upload Document
+              </Text>
+          </View>}
+
+            {/* <View style={{ width: '50%', padding: 5, flexDirection: 'row', justifyContent: 'space-evenly' }}>
+              <FontIcon name="eye" onPress={() => { handleViewDocument('AdharCard') }} size={20} color="green" />
+              <FontIcon name="trash" onPress={() => { handleDeleteDocument('Adhar_Card') }} size={20} color="#EF6A32" />
+
+            </View> */}
           </View>
           <View style={{ borderBottomWidth: 1, flexDirection: 'row', borderColor: 'white', padding: 5, width: '100%' }}>
             <Text style={styles.headerCell}>Pan Card</Text>
-            <Text style={{ width: '50%', color: 'white', marginLeft: 10 }}>Client Master List</Text>
+           { PanCardPdf ?
+            <View style={{ width: '50%', padding: 5, flexDirection: 'row', justifyContent: 'space-evenly' }}>
+              <FontIcon name="eye" onPress={() => { handleViewDocument('PanCard') }} size={20} color="green" />
+              <FontIcon name="trash"  onPress={() => { handleDeleteDocument('pan_card') }} size={20} color="#EF6A32" />
 
+            </View>
+           :<View style={{width:'50%',justifyContent:"center"}}>
+              <Text style={{color:'red', marginLeft:20}}>
+            Upload Document
+            </Text>
+            </View>}
           </View>
           <View style={{ borderBottomWidth: 1, flexDirection: 'row', borderColor: 'white', padding: 5, width: '100%' }}>
             <Text style={styles.headerCell}>Agreement Copy</Text>
-            <Text style={{ width: '50%', color: 'white', marginLeft: 10 }}>Client Master List</Text>
+            
+            { AgreeentCopyPdf ?<View style={{ width: '50%', padding: 5, flexDirection: 'row', justifyContent: 'space-evenly' }}>
+              <FontIcon name="eye" onPress={() => { handleViewDocument('AgreementCopy') }} size={20} color="green" />
+              <FontIcon name="trash" size={20} onPress={() => { handleDeleteDocument('Agreement_Copy') }} color="#EF6A32" />
 
+            </View>
+            :<View style={{width:'50%',justifyContent:"center"}}>
+              <Text style={{color:'red', marginLeft:20}}>
+            Upload Document
+            </Text>
+            </View>}
           </View>
           <View style={{ borderBottomWidth: 1, flexDirection: 'row', borderColor: 'white', padding: 5, width: '100%' }}>
             <Text style={styles.headerCell}>Client Master List</Text>
-            <Text style={{ width: '50%', color: 'white', marginLeft: 10 }}>Client Master List</Text>
+          { ClientMasterListPdf ?
+            <View style={{ width: '50%', padding: 5, flexDirection: 'row', justifyContent: 'space-evenly' }}>
+              <FontIcon name="eye" onPress={() => { handleViewDocument('ClientMasterList') }} size={20} color="green" />
+              <FontIcon name="trash" size={20}  onPress={() => { handleDeleteDocument('Client_Master_List') }} color="#EF6A32" />
 
+            </View> 
+         :<View style={{width:'50%',justifyContent:"center"}}>
+              <Text style={{color:'red', marginLeft:20}}>
+            Upload Document
+            </Text>
+            </View>}
           </View>
           <View style={{ borderBottomWidth: 1, flexDirection: 'row', borderColor: 'white', padding: 5, width: '100%' }}>
             <Text style={styles.headerCell}>Cancel Cheque </Text>
-            <Text style={{ width: '50%', color: 'white', marginLeft: 10 }}>Client Master List</Text>
+          { CancelChequePdf ?
+            <View style={{ width: '50%', padding: 5, flexDirection: 'row', justifyContent: 'space-evenly' }}>
+              <FontIcon name="eye" onPress={() => { handleViewDocument('CancelCheque') }} size={20} color="green" />
+              <FontIcon name="trash"  onPress={() => { handleDeleteDocument('cancel_cheque') }} size={20} color="#EF6A32" />
 
+            </View> 
+          :<View style={{width:'50%',justifyContent:"center"}}>
+              <Text style={{color:'red', marginLeft:20}}>
+            Upload Document
+            </Text>
+            </View>}
           </View>
 
         </View>
@@ -874,8 +1151,8 @@ const AddFile = () => {
 
 
       <View style={{ padding: 10, borderColor: '#000000', borderWidth: 1, marginTop: 20, borderRadius: 10, marginBottom: 10 }}>
-        <TouchableOpacity onPress={toggleCommentModal}styles={{height:'50%'}}>
-          <Text style={[styles.cardTitle, { backgroundColor: "#162732", width: '100%',height:'30%', color: "white", marginBottom: 5,marginTop:5, borderRadius: 5 }]}>Comments</Text>
+        <TouchableOpacity onPress={toggleCommentModal} styles={{ height: '50%' }}>
+          <Text style={[styles.cardTitle, { backgroundColor: "#162732", width: '100%', height: '30%', color: "white", marginBottom: 5, marginTop: 5, borderRadius: 5 }]}>Comments</Text>
         </TouchableOpacity>
       </View>
 
@@ -897,7 +1174,7 @@ const AddFile = () => {
                 placeholder="Enter Employee ID"
                 value={Fileid}
                 placeholderTextColor="#FFFFFF"
-                onChangeText={(text)=>{setFileid(text)}}
+                onChangeText={(text) => { setFileid(text) }}
 
               />
             </View>
@@ -907,18 +1184,18 @@ const AddFile = () => {
                 placeholder="Enter Employee Name"
                 value={Fileno}
                 placeholderTextColor="#FFFFFF"
-                onChangeText={(text)=>{setFileno(text)}}
+                onChangeText={(text) => { setFileno(text) }}
 
 
               />
             </View>
             <View style={styles.modalItem}>
               <Text style={styles.modalLabel}>Company Name</Text>
-              <TextInput style={styles.modalInput} 
-              value={Companyname}
-              placeholder="Enter Email Address"
+              <TextInput style={styles.modalInput}
+                value={Companyname}
+                placeholder="Enter Email Address"
                 placeholderTextColor="#FFFFFF"
-                onChangeText={(text)=>{setCompanyname(text)}}
+                onChangeText={(text) => { setCompanyname(text) }}
 
 
               />
@@ -926,41 +1203,41 @@ const AddFile = () => {
             <View style={styles.modalItem}>
               <Text style={styles.modalLabel}>Investor First Name:</Text>
               <TextInput style={styles.modalInput}
-              value={Investorfirstname}
-               placeholder="Enter Mobile Number"
+                value={Investorfirstname}
+                placeholder="Enter Mobile Number"
                 placeholderTextColor="#FFFFFF"
-                onChangeText={(text)=>{setInvestorfirstname(text)}}
+                onChangeText={(text) => { setInvestorfirstname(text) }}
 
               />
             </View>
             <View style={styles.modalItem}>
               <Text style={styles.modalLabel}>Investor Middle Name</Text>
-              <TextInput style={styles.modalInput} 
-                    value={Investormiddlename}
-                    placeholder="Enter Employee Name"
-                      placeholderTextColor="#FFFFFF"
-                      onChangeText={(text)=>{setInvestormiddlename(text)}}
+              <TextInput style={styles.modalInput}
+                value={Investormiddlename}
+                placeholder="Enter Employee Name"
+                placeholderTextColor="#FFFFFF"
+                onChangeText={(text) => { setInvestormiddlename(text) }}
 
 
               />
             </View>
             <View style={styles.modalItem}>
               <Text style={styles.modalLabel}>Investor Last Name</Text>
-              <TextInput style={styles.modalInput} 
-              value={Investorlastname}
-              placeholder="Enter Employee Name"
+              <TextInput style={styles.modalInput}
+                value={Investorlastname}
+                placeholder="Enter Employee Name"
                 placeholderTextColor="#FFFFFF"
-                onChangeText={(text)=>{setInvestorlastname(text)}}
+                onChangeText={(text) => { setInvestorlastname(text) }}
 
               />
             </View>
             <View style={styles.modalItem}>
               <Text style={styles.modalLabel}>Investor Full Name</Text>
               <TextInput style={styles.modalInput}
-                        value={Investorfullname}
-                        placeholder="Enter Employee Name"
-                      placeholderTextColor="#FFFFFF"
-                      onChangeText={(text)=>{setInvestorfullname(text)}}
+                value={Investorfullname}
+                placeholder="Enter Employee Name"
+                placeholderTextColor="#FFFFFF"
+                onChangeText={(text) => { setInvestorfullname(text) }}
 
 
               />
@@ -968,43 +1245,43 @@ const AddFile = () => {
             <View style={styles.modalItem}>
               <Text style={styles.modalLabel}>Father First Name</Text>
               <TextInput style={styles.modalInput}
-                        value={Fatherfirstname}
-                        placeholder="Enter Employee Name"
-                        placeholderTextColor="#FFFFFF"
-                        onChangeText={(text)=>{setFatherfirstname(text)}}
+                value={Fatherfirstname}
+                placeholder="Enter Employee Name"
+                placeholderTextColor="#FFFFFF"
+                onChangeText={(text) => { setFatherfirstname(text) }}
 
 
               />
             </View>
             <View style={styles.modalItem}>
               <Text style={styles.modalLabel}>Father Middle Name</Text>
-              <TextInput style={styles.modalInput} 
-                 value={Fathermiddlename}
-              placeholder="Enter Employee Name"
+              <TextInput style={styles.modalInput}
+                value={Fathermiddlename}
+                placeholder="Enter Employee Name"
                 placeholderTextColor="#FFFFFF"
-                onChangeText={(text)=>{setFathermiddlename(text)}}
+                onChangeText={(text) => { setFathermiddlename(text) }}
 
 
               />
             </View>
             <View style={styles.modalItem}>
               <Text style={styles.modalLabel}>Father Last Name</Text>
-              <TextInput style={styles.modalInput} 
+              <TextInput style={styles.modalInput}
                 value={Fatherlastname}
-                 placeholder="Enter Employee Name"
+                placeholder="Enter Employee Name"
                 placeholderTextColor="#FFFFFF"
-                onChangeText={(text)=>{setFatherlastname(text)}}
+                onChangeText={(text) => { setFatherlastname(text) }}
 
 
               />
             </View>
             <View style={styles.modalItem}>
               <Text style={styles.modalLabel}>Father Full Name</Text>
-              <TextInput style={styles.modalInput} 
-              placeholder="Enter Employee Name"
-              value={Fatherfullname}
+              <TextInput style={styles.modalInput}
+                placeholder="Enter Employee Name"
+                value={Fatherfullname}
                 placeholderTextColor="#FFFFFF"
-                onChangeText={(text)=>{setFatherfullname(text)}}
+                onChangeText={(text) => { setFatherfullname(text) }}
 
 
               />
@@ -1012,10 +1289,10 @@ const AddFile = () => {
             <View style={styles.modalItem}>
               <Text style={styles.modalLabel}>Address</Text>
               <TextInput style={styles.modalInput}
-              value={Address}
-               placeholder="Enter Employee Name"
+                value={Address}
+                placeholder="Enter Employee Name"
                 placeholderTextColor="#FFFFFF"
-                onChangeText={(text)=>{setAddress(text)}}
+                onChangeText={(text) => { setAddress(text) }}
 
 
               />
@@ -1023,32 +1300,32 @@ const AddFile = () => {
             <View style={styles.modalItem}>
               <Text style={styles.modalLabel}>Country</Text>
               <TextInput style={styles.modalInput}
-              value={Country}
-              placeholder="Enter Employee Name"
+                value={Country}
+                placeholder="Enter Employee Name"
                 placeholderTextColor="#FFFFFF"
-                onChangeText={(text)=>{setCountry(text)}}
+                onChangeText={(text) => { setCountry(text) }}
 
 
               />
             </View>
             <View style={styles.modalItem}>
               <Text style={styles.modalLabel}>State</Text>
-              <TextInput style={styles.modalInput} 
-              value={State}
-              placeholder="Enter Employee Name"
+              <TextInput style={styles.modalInput}
+                value={State}
+                placeholder="Enter Employee Name"
                 placeholderTextColor="#FFFFFF"
-                onChangeText={(text)=>{setState(text)}}
+                onChangeText={(text) => { setState(text) }}
 
 
               />
             </View>
             <View style={styles.modalItem}>
               <Text style={styles.modalLabel}>District</Text>
-              <TextInput style={styles.modalInput} 
-              value={District}
-              placeholder="Enter Employee Name"
+              <TextInput style={styles.modalInput}
+                value={District}
+                placeholder="Enter Employee Name"
                 placeholderTextColor="#FFFFFF"
-                onChangeText={(text)=>{setDistrict(text)}}
+                onChangeText={(text) => { setDistrict(text) }}
 
 
               />
@@ -1056,10 +1333,10 @@ const AddFile = () => {
             <View style={styles.modalItem}>
               <Text style={styles.modalLabel}>Pin Code</Text>
               <TextInput style={styles.modalInput}
-              value={Pincode}
-               placeholder="Enter Employee Name"
+                value={Pincode}
+                placeholder="Enter Employee Name"
                 placeholderTextColor="#FFFFFF"
-                onChangeText={(text)=>{setPincode(text)}}
+                onChangeText={(text) => { setPincode(text) }}
 
 
               />
@@ -1067,21 +1344,21 @@ const AddFile = () => {
             <View style={styles.modalItem}>
               <Text style={styles.modalLabel}>Full Address Consolodation</Text>
               <TextInput style={styles.modalInput}
-              value={Fulladdressconsolodation}
-              placeholder="Enter Employee Name"
+                value={Fulladdressconsolodation}
+                placeholder="Enter Employee Name"
                 placeholderTextColor="#FFFFFF"
-                onChangeText={(text)=>{setFulladdressconsolodation(text)}}
+                onChangeText={(text) => { setFulladdressconsolodation(text) }}
 
 
               />
             </View>
             <View style={styles.modalItem}>
               <Text style={styles.modalLabel}>Folio Number</Text>
-              <TextInput style={styles.modalInput} 
-              value={Folionumber}
-              placeholder="Enter Employee Name"
+              <TextInput style={styles.modalInput}
+                value={Folionumber}
+                placeholder="Enter Employee Name"
                 placeholderTextColor="#FFFFFF"
-                onChangeText={(text)=>{setFolionumber(text)}}
+                onChangeText={(text) => { setFolionumber(text) }}
 
 
               />
@@ -1089,10 +1366,10 @@ const AddFile = () => {
             <View style={styles.modalItem}>
               <Text style={styles.modalLabel}>DP ID</Text>
               <TextInput style={styles.modalInput}
-              value={DPid}
-               placeholder="Enter Employee Name"
+                value={DPid}
+                placeholder="Enter Employee Name"
                 placeholderTextColor="#FFFFFF"
-                onChangeText={(text)=>{setDPid(text)}}
+                onChangeText={(text) => { setDPid(text) }}
 
 
               />
@@ -1100,32 +1377,32 @@ const AddFile = () => {
             <View style={styles.modalItem}>
               <Text style={styles.modalLabel}>Unclaimed shares</Text>
               <TextInput style={styles.modalInput}
-              value={Unclaimedshares}
-               placeholder="Enter Employee Name"
+                value={Unclaimedshares}
+                placeholder="Enter Employee Name"
                 placeholderTextColor="#FFFFFF"
-                onChangeText={(text)=>{setUnclaimedshares(text)}}
+                onChangeText={(text) => { setUnclaimedshares(text) }}
 
 
               />
             </View>
             <View style={styles.modalItem}>
               <Text style={styles.modalLabel}>Proposed date of Transfer</Text>
-              <TextInput style={styles.modalInput} 
-              value={ProposeddateofTransfer}
-              placeholder="Enter Employee Name"
+              <TextInput style={styles.modalInput}
+                value={ProposeddateofTransfer}
+                placeholder="Enter Employee Name"
                 placeholderTextColor="#FFFFFF"
-                onChangeText={(text)=>{setProposeddateofTransfer(text)}}
+                onChangeText={(text) => { setProposeddateofTransfer(text) }}
 
 
               />
             </View>
             <View style={styles.modalItem}>
               <Text style={styles.modalLabel}>PanCard</Text>
-              <TextInput style={styles.modalInput} 
-              value={Pancard}
-              placeholder="Enter Employee Name"
+              <TextInput style={styles.modalInput}
+                value={Pancard}
+                placeholder="Enter Employee Name"
                 placeholderTextColor="#FFFFFF"
-                onChangeText={(text)=>{setPancard(text)}}
+                onChangeText={(text) => { setPancard(text) }}
 
 
               />
@@ -1133,21 +1410,21 @@ const AddFile = () => {
             <View style={styles.modalItem}>
               <Text style={styles.modalLabel}>Date of Birth</Text>
               <TextInput style={styles.modalInput}
-              value={Dateofbirth}
-              placeholder="Enter Employee Name"
+                value={Dateofbirth}
+                placeholder="Enter Employee Name"
                 placeholderTextColor="#FFFFFF"
-                onChangeText={(text)=>{setDateofbirth(text)}}
+                onChangeText={(text) => { setDateofbirth(text) }}
 
 
               />
             </View>
             <View style={styles.modalItem}>
               <Text style={styles.modalLabel}>Aadhar number</Text>
-              <TextInput style={styles.modalInput} 
-              value={Aadharnumber}
-              placeholder="Enter Employee Name"
+              <TextInput style={styles.modalInput}
+                value={Aadharnumber}
+                placeholder="Enter Employee Name"
                 placeholderTextColor="#FFFFFF"
-                onChangeText={(text)=>{setAadharnumber(text)}}
+                onChangeText={(text) => { setAadharnumber(text) }}
 
 
               />
@@ -1155,33 +1432,33 @@ const AddFile = () => {
             <View style={styles.modalItem}>
               <Text style={styles.modalLabel}>Nominee name</Text>
               <TextInput style={styles.modalInput}
-              value={Nomineename}
-               placeholder="Enter Employee Name"
+                value={Nomineename}
+                placeholder="Enter Employee Name"
                 placeholderTextColor="#FFFFFF"
-                onChangeText={(text)=>{setNomineename(text)}}
+                onChangeText={(text) => { setNomineename(text) }}
 
 
               />
             </View>
-      
+
             <View style={styles.modalItem}>
               <Text style={styles.modalLabel}>Joint holder name</Text>
               <TextInput style={styles.modalInput}
-              value={Jointholdername}
-               placeholder="Enter Employee Name"
+                value={Jointholdername}
+                placeholder="Enter Employee Name"
                 placeholderTextColor="#FFFFFF"
-                onChangeText={(text)=>{setJointholdername(text)}}
+                onChangeText={(text) => { setJointholdername(text) }}
 
 
               />
             </View>
             <View style={styles.modalItem}>
               <Text style={styles.modalLabel}>Market value</Text>
-              <TextInput style={styles.modalInput} 
-              value={Marketvalue}
-              placeholder="Enter Employee Name"
+              <TextInput style={styles.modalInput}
+                value={Marketvalue}
+                placeholder="Enter Employee Name"
                 placeholderTextColor="#FFFFFF"
-                onChangeText={(text)=>{setMarketvalue(text)}}
+                onChangeText={(text) => { setMarketvalue(text) }}
 
 
               />
@@ -1208,7 +1485,7 @@ const AddFile = () => {
                 placeholderTextColor="#FFFFFF"
                 editable={false}
                 value={Bdcasestudy}
-                onChangeText={(text)=>{setBdcasestudy(text)}}
+                onChangeText={(text) => { setBdcasestudy(text) }}
 
 
               />
@@ -1219,7 +1496,7 @@ const AddFile = () => {
                 placeholderTextColor="#FFFFFF"
                 editable={false}
                 value={Bdcasetype}
-                onChangeText={(text)=>{setBdcasetype(text)}}
+                onChangeText={(text) => { setBdcasetype(text) }}
 
               />
             </View>
@@ -1241,7 +1518,7 @@ const AddFile = () => {
                 placeholderTextColor="#FFFFFF"
                 editable={false}
                 value={Bdconfidencelevel}
-                onChangeText={(text)=>{setBdconfidencelevel(text)}}
+                onChangeText={(text) => { setBdconfidencelevel(text) }}
 
               />
             </View>
@@ -1251,7 +1528,7 @@ const AddFile = () => {
                 placeholderTextColor="#FFFFFF"
                 value={Assigntobd}
                 editable={false}
-                onChangeText={(text)=>{setAssigntobd(text)}}
+                onChangeText={(text) => { setAssigntobd(text) }}
 
 
               />
@@ -1278,7 +1555,7 @@ const AddFile = () => {
                 placeholderTextColor="#FFFFFF"
                 editable={false}
                 value={Rtastatus}
-                onChangeText={(text)=>{setRtastatus(text)}}
+                onChangeText={(text) => { setRtastatus(text) }}
 
               />
             </View>
@@ -1288,7 +1565,7 @@ const AddFile = () => {
                 placeholderTextColor="#FFFFFF"
                 editable={false}
                 value={Noofshares}
-                onChangeText={(text)=>{setNoofshares(text)}}
+                onChangeText={(text) => { setNoofshares(text) }}
 
 
               />
@@ -1299,7 +1576,7 @@ const AddFile = () => {
                 placeholderTextColor="#FFFFFF"
                 editable={false}
                 value={Iepf}
-                onChangeText={(text)=>{setIepf(text)}}
+                onChangeText={(text) => { setIepf(text) }}
 
               />
             </View>
@@ -1309,7 +1586,7 @@ const AddFile = () => {
                 placeholderTextColor="#FFFFFF"
                 editable={false}
                 value={Physical}
-                onChangeText={(text)=>{setPhysical(text)}}
+                onChangeText={(text) => { setPhysical(text) }}
 
               />
             </View>
@@ -1319,7 +1596,7 @@ const AddFile = () => {
                 placeholderTextColor="#FFFFFF"
                 editable={false}
                 value={TelinSuspense}
-                onChangeText={(text)=>{setTelinSuspense(text)}}
+                onChangeText={(text) => { setTelinSuspense(text) }}
 
               />
             </View>
@@ -1329,7 +1606,7 @@ const AddFile = () => {
                 placeholderTextColor="#FFFFFF"
                 editable={false}
                 value={Refrencenumber}
-                onChangeText={(text)=>{setRefrencenumber(text)}}
+                onChangeText={(text) => { setRefrencenumber(text) }}
 
               />
             </View>
@@ -1339,7 +1616,7 @@ const AddFile = () => {
                 placeholderTextColor="#FFFFFF"
                 editable={false}
                 value={Lettertrackingnumber}
-                onChangeText={(text)=>{setLettertrackingnumber(text)}}
+                onChangeText={(text) => { setLettertrackingnumber(text) }}
 
               />
             </View>
@@ -1351,7 +1628,7 @@ const AddFile = () => {
                 placeholderTextColor="#FFFFFF"
                 editable={false}
                 value={Letterstatus}
-                onChangeText={(text)=>{setLetterstatus(text)}}
+                onChangeText={(text) => { setLetterstatus(text) }}
 
               />
             </View>
@@ -1361,7 +1638,7 @@ const AddFile = () => {
                 placeholderTextColor="#FFFFFF"
                 editable={false}
                 value={Variablestatus}
-                onChangeText={(text)=>{setVariablestatus(text)}}
+                onChangeText={(text) => { setVariablestatus(text) }}
 
               />
             </View>
@@ -1388,7 +1665,7 @@ const AddFile = () => {
                 placeholderTextColor="#FFFFFF"
                 editable={false}
                 value={Opscertificateumber}
-                onChangeText={(text)=>{setOpscertificateumber(text)}}
+                onChangeText={(text) => { setOpscertificateumber(text) }}
 
               />
             </View>
@@ -1398,7 +1675,7 @@ const AddFile = () => {
                 placeholderTextColor="#FFFFFF"
                 editable={false}
                 value={Opsdistinctivenumber}
-                onChangeText={(text)=>{setOpsdistinctivenumber(text)}}
+                onChangeText={(text) => { setOpsdistinctivenumber(text) }}
 
               />
             </View>
@@ -1408,18 +1685,18 @@ const AddFile = () => {
                 placeholderTextColor="#FFFFFF"
                 editable={false}
                 value={Opsworkstatus}
-                onChangeText={(text)=>{setOpsworkstatus(text)}}
+                onChangeText={(text) => { setOpsworkstatus(text) }}
 
               />
             </View>
-           
+
             <View style={styles.modalItem}>
               <Text style={styles.modalLabel}>Ops Case Type:</Text>
               <TextInput style={[styles.modalInput, { backgroundColor: '#bcbcbc' }]}
                 placeholderTextColor="#FFFFFF"
                 editable={false}
                 value={Opscasetype}
-                onChangeText={(text)=>{setOpscasetype(text)}}
+                onChangeText={(text) => { setOpscasetype(text) }}
 
               />
             </View>
@@ -1429,7 +1706,7 @@ const AddFile = () => {
                 placeholderTextColor="#FFFFFF"
                 editable={false}
                 value={Opsstages}
-                onChangeText={(text)=>{setOpsstages(text)}}
+                onChangeText={(text) => { setOpsstages(text) }}
 
               />
             </View>
@@ -1439,7 +1716,7 @@ const AddFile = () => {
                 placeholderTextColor="#FFFFFF"
                 editable={false}
                 value={Opsdividendcredited}
-                onChangeText={(text)=>{setOpsdividendcredited(text)}}
+                onChangeText={(text) => { setOpsdividendcredited(text) }}
 
               />
             </View>
@@ -1451,7 +1728,7 @@ const AddFile = () => {
                 placeholderTextColor="#FFFFFF"
                 editable={false}
                 value={Opssharescredited}
-                onChangeText={(text)=>{setOpssharescredited(text)}}
+                onChangeText={(text) => { setOpssharescredited(text) }}
 
               />
             </View>
@@ -1461,7 +1738,7 @@ const AddFile = () => {
                 placeholderTextColor="#FFFFFF"
                 editable={false}
                 value={Opsinvoiceissued}
-                onChangeText={(text)=>{setOpsinvoiceissued(text)}}
+                onChangeText={(text) => { setOpsinvoiceissued(text) }}
 
               />
             </View>
@@ -1471,7 +1748,7 @@ const AddFile = () => {
                 placeholderTextColor="#FFFFFF"
                 editable={false}
                 value={Opspaymentreceived}
-                onChangeText={(text)=>{setOpspaymentreceived(text)}}
+                onChangeText={(text) => { setOpspaymentreceived(text) }}
 
               />
             </View>
@@ -1490,7 +1767,7 @@ const AddFile = () => {
         onRequestClose={toggleCommentModal}
       >
         <View style={styles.modalContainer}>
-          <View style={[styles.modalContent,{width:'95%'}]}>
+          <View style={[styles.modalContent, { width: '95%' }]}>
             <Text style={styles.modalTitle}>Comments</Text>
 
             {/* Comments Section */}
@@ -1535,7 +1812,7 @@ const AddFile = () => {
                     return (
                       <View key={index} style={{ flexDirection: direction, marginBottom: 10 }}>
                         <View style={{ borderRadius: 30, width: 30, height: 30, backgroundColor: isSameUser ? "#f6b26b" : '#e6edff' }}>
-                          <Text style={{ paddingLeft: 10, paddingTop: 5, color: '#4700bb' }}>{comment.created_by.slice(0,1)}</Text>
+                          <Text style={{ paddingLeft: 10, paddingTop: 5, color: '#4700bb' }}>{comment.created_by.slice(0, 1)}</Text>
                         </View>
                         <View style={{ backgroundColor: '#d9d9d9', width: '85%', marginLeft: 5, marginRight: 5, borderRadius: 5, padding: 5, position: 'relative' }}>
                           <Text style={{ position: 'absolute', top: 0, ...(isSameUser ? { right: 5 } : { left: 5 }), color: '#2c2929', fontSize: 10, fontWeight: 'bold', marginTop: 6 }}>{comment.created_by}</Text>
@@ -1543,7 +1820,7 @@ const AddFile = () => {
                           <Text style={{ flex: 2, marginLeft: '70%', color: '#2c2929', fontSize: 8 }}>
                             {/* {comment.created_at} */}
                             {convertUTCToLocal(comment.created_at)}
-                            </Text>
+                          </Text>
                         </View>
 
                       </View>
@@ -1613,6 +1890,47 @@ const AddFile = () => {
         </View>
       </Modal>
 
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isPdfModalVisible}
+        onRequestClose={() => setisPdfModalVisible(false)}
+      >
+        <View style={{
+          flex: 1,
+          justifyContent: 'flex-start',
+          alignItems: 'center'
+        }}>
+          <Pdf
+            trustAllCerts={false}
+            source={{ uri: PdfUri }}
+            scale={1.0}
+            minScale={0.5}
+            renderActivityIndicator={(percentage) =>
+            (
+              <Spinner
+                visible={true}
+                textContent={('Loading') + "  " + (percentage * 100).toFixed(2) + " %"}
+                textStyle={styles.loadTextStyle}
+                size={'large'}
+                color="black"
+              />
+
+            )}
+
+            maxScale={2.0}
+            onError={(error) => console.log(error)
+            }
+
+            style={
+              styles.pdf
+
+            }
+          />
+        </View>
+
+      </Modal>
+
     </ScrollView>
   );
 };
@@ -1622,7 +1940,12 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 10,
     paddingBottom: 20,
-    backgroundColor: '#ffffff',
+    backgroundColor: Appearance.getColorScheme()=='dark'?"black": '#ffffff',
+  },
+  pdf: {
+    flex: 1,
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
   },
   header: {
     flexDirection: 'row',
@@ -1660,8 +1983,9 @@ const styles = StyleSheet.create({
   card: {
     padding: 10,
     marginVertical: 10,
+    marginRight:10,
     elevation: 5,
-    borderWidth: 0.2,
+    borderWidth:0.7,
     borderRadius: 10,
   },
   cardTitle: {
@@ -1774,7 +2098,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontWeight: 'bold',
     color: 'white',
-    width: '40%',
+    width: '50%',
     borderRightWidth: 1,
     borderColor: 'white'
 

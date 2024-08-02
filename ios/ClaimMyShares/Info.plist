@@ -25,12 +25,19 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<false/>
-		<key>NSAllowsLocalNetworking</key>
-		<true/>
-	</dict>
+<dict>
+    <key>NSExceptionDomains</key>
+    <dict>
+        <key>13.126.125.20</key>
+        <dict>
+            <key>NSIncludesSubdomains</key>
+            <true/>
+            <key>NSExceptionAllowsInsecureHTTPLoads</key>
+            <true/>
+        </dict>
+    </dict>
+</dict>
+
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>UIAppFonts</key>

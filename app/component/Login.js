@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DeviceInfo from 'react-native-device-info'; // Import the library for fetching device info
+import Spinner from 'react-native-loading-spinner-overlay';
 
 import { DefaultStyle } from '../styles/base';
 
@@ -14,9 +15,12 @@ const Login = () => {
 
   const [username, setUsername] = useState('michaeldavis');
   const [password, setPassword] = useState('Password123');
+  // const [username, setUsername] = useState('');
+  // const [password, setPassword] = useState('');
   const [showpassword, setshowpassword] = useState(true);
   const [deviceId, setDeviceId] = useState('');
-  
+  const [isSpinnerVisible, setisSpinnerVisible] = useState(false);
+
 
   // useEffect(() => {
   //   fetchDeviceId(); // Fetch device ID when component mounts
@@ -37,7 +41,7 @@ const Login = () => {
        Alert.alert("Enter username and password");
        return false;
      } else {
-       
+       setisSpinnerVisible(true);
        await fetch(Environment.BASE_URL + "/LoginUser", {
          method: 'POST',
          headers: {
@@ -58,7 +62,13 @@ const Login = () => {
          } else {
            await AsyncStorage.setItem("token",data.token);
            await AsyncStorage.setItem("Username",data.result.UserName);
+           if (data.result.Img_Path) {
+             await AsyncStorage.setItem("ProfilePath",data.result.Img_Path);
+            
+           }
 
+
+            setisSpinnerVisible(false);
            navigation.navigate('BdDashboard', { UserName: data.result.UserName }); // Pass username as a parameter
          }
        })
@@ -75,6 +85,13 @@ const Login = () => {
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : null}>
+        <Spinner
+        visible={isSpinnerVisible}
+        textContent={('Loading')}
+        textStyle={styles.spinnerTextStyle}
+        color="#EF6A32"
+      // customIndicator={<Image style={styles.logoImage} source={require('../../app/Images/Group111.png')} />}
+      />
       <View style={styles.logoContainer}>
         <Image style={styles.logoImage} source={require('../Images/cms.png')} />
         <Text style={styles.title}>Track Your Status</Text>

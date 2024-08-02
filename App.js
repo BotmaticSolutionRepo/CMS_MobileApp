@@ -76,7 +76,7 @@ const App = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Main">
+      <Stack.Navigator initialRouteName="Login">
         <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="CreateAccount" component={CreateAccountScreen} options={{ title: 'Create Account', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />

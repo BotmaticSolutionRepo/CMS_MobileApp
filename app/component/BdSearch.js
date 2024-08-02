@@ -1,19 +1,115 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
+import React, { useState, useEffect,useCallback } from 'react';
+import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, Alert ,Appearance} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Dropdown } from 'react-native-element-dropdown';
 
 var Environment = require('../../environment.js');
 
 const BdSearch = () => {
   const navigation = useNavigation();
   const [selectedFilter, setSelectedFilter] = useState('');
+  const [filtertext, setfiltertext] = useState('');
   const [entriesPerPage, setEntriesPerPage] = useState('10');
   const [isFilterDropdownVisible, setFilterDropdownVisible] = useState(false);
   const [isEntriesDropdownVisible, setEntriesDropdownVisible] = useState(false);
   const [dashboardData, setDashboardData] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [serchtxt, setserchtxt] = useState('');
+  const [filterarr, setfilterarr] = useState([
+    {key: "Aadhar_number", label: "Aadhar_number"},
+    {key: "Address", label: "Address"},
+    {key: "Adv_Advance_Status", label: "Adv_Advance_Status"},
+    {key: "Adv_Index_Number", label: "Adv_Index_Number"},
+    {key: "Adv_New_Address", label: "Adv_New_Address"},
+    {key: "Assign_To_BD", label: "Assign_To_BD"},
+    {key: "Assign_To_Ops", label: "Assign_To_Ops"},
+    {key: "BD_Case_Study", label: "BD_Case_Study"},
+    {key: "BD_Case_Type", label: "BD_Case_Type"},
+    {key: "BD_Comment", label: "BD_Comment"},
+    {key: "BD_Confidence_Level", label: "BD_Confidence_Level"},
+    {key: "BD_Status", label: "BD_Status"},
+    {key: "BD_Status_Value", label: "BD_Status_Value"},
+    {key: "BD_Templete_View", label: "BD_Templete_View"},
+    {key: "Company_Name", label: "Company_Name"},
+    {key: "Consolidated_Address", label: "Consolidated_Address"},
+    {key: "ContactDetails", label: "ContactDetails"},
+    {key: "Country", label: "Country"},
+    {key: "Curier_Status", label: "Curier_Status"},
+    {key: "Date_of_Birth", label: "Date_of_Birth"},
+    {key: "Date_of_Transfer", label: "Date_of_Transfer"},
+    {key: "District", label: "District"},
+    {key: "Dp_id", label: "Dp_id"},
+    {key: "Father_First_Name", label: "Father_First_Name"},
+    {key: "Father_Full_Name", label: "Father_Full_Name"},
+    {key: "Father_Last_Name", label: "Father_Last_Name"},
+    {key: "Father_Middle_Name", label: "Father_Middle_Name"},
+    {key: "Fees", label: "Fees"},
+    {key: "File_ID", label: "File_ID"},
+    {key: "File_No", label: "File_No"},
+    {key: "Folio_Number", label: "Folio_Number"},
+    {key: "IEPF", label: "IEPF"},
+    {key: "Investment_Type", label: "Investment_Type"},
+    {key: "Investor_First_Name", label: "Investor_First_Name"},
+    {key: "Investor_Full_Name", label: "Investor_Full_Name"},
+    {key: "Investor_Last_Name", label: "Investor_Last_Name"},
+    {key: "Investor_Middle_Name", label: "Investor_Middle_Name"},
+    {key: "JointHolderName", label: "JointHolderName"},
+    {key: "KYC_Compliance", label:"KYC_Compliance"},
+    {key: "Letter_Status", label: "Letter_Status"},
+    {key: "Letter_Tracking_Number", label: "Letter_Tracking_Number"},
+    {key: "Market_Value", label: "Market_Value"},
+    {key: "No_Of_Share", label: "No_Of_Share"},
+    {key: "Nominee_Name", label: "Nominee_Name"},
+    {key: "Ops_CaseType", label: "Ops_CaseType"},
+    {key: "Ops_CertificateNumber", label: "Ops_CertificateNumber"},
+    {key: "Ops_Comment", label: "Ops_Comment"},
+    {key: "Ops_DistinctiveNumber", label: "Ops_DistinctiveNumber"},
+    {key: "Ops_DividendCredited", label: "Ops_DividendCredited"},
+    {key: "Ops_DividendCreditedOn", label: "Ops_DividendCreditedOn"},
+    {key: "Ops_InvoiceIssued", label: "Ops_InvoiceIssued"},
+    {key: "Ops_InvoiceIssuedOn", label: "Ops_InvoiceIssuedOn"},
+    {key: "Ops_PaymentReceived", label: "Ops_PaymentReceived"},
+    {key: "Ops_PaymentReceivedOn", label: "Ops_PaymentReceivedOn"},
+    {key: "Ops_SharesCredited", label: "Ops_SharesCredited"},
+    {key: "Ops_SharesCreditedOn", label: "Ops_SharesCreditedOn"},
+    {key: "Ops_Stages", label: "Ops_Stages"},
+    {key: "Ops_WorkStatus", label: "Ops_WorkStatus"},
+    {key: "Pan_Card", label: "Pan_Card"},
+    {key: "Physical", label: "Physical"},
+    {key: "PinCode", label: "PinCode"},
+    {key: "Praposed_Date_of_Transfer", label: "Praposed_Date_of_Transfer"},
+    {key: "RTA_Status", label: "RTA_Status"},
+    {key: "Refrence_Number", label: "Refrence_Number"},
+    {key: "Region", label: "Region"},
+    {key: "Remarks", label: "Remarks"},
+    {key: "Serial_Number", label: "Serial_Number"},
+    {key: "Sheet_No", label: "Sheet_No"},
+    {key: "State", label: "State"},
+    {key: "Suspense", label: "Suspense"},
+    {key: "TeamMember_Assigned", label: "TeamMember_Assigned"},
+    {key: "TeamMember_Assigned_ID", label: "TeamMember_Assigned_ID"},
+    {key: "Team_Assigned", label: "Team_Assigned"},
+    {key: "Team_Assigned_ID", label: "Team_Assigned_ID"},
+    {key: "Tel_InSuspense", label: "Tel_InSuspense"},
+    {key: "Tel_Joint_Holder_Name", label: "Tel_Joint_Holder_Name"},
+    {key: "Tel_No_Of_Certificate", label: "Tel_No_Of_Certificate"},
+    {key: "Tel_Nominee_Name", label: "Tel_Nominee_Name"},
+    {key: "Tel_VerificationStatus", label: "Tel_VerificationStatus"},
+    {key: "Tele_Comment", label: "Tele_Comment"},
+    {key: "TraceLetter_Comment", label: "TraceLetter_Comment"},
+    {key: "Unclaimed_shares", label: "Unclaimed_shares"},
+    {key: "User_ID", label: "User_ID"},
+    {key: "Variable_Status", label: "Variable_Status"},
+    {key: "Village_Name", label: "Village_Name"},
+    {key: "dataDropdown", label: "dataDropdown"},
+    {key: "ec", label: "ec"}
+]
+);
+
+ 
+
 
   useEffect(() => {
     fetchDashboardData();
@@ -51,6 +147,19 @@ const BdSearch = () => {
   const handleEntriesDropdownToggle = () => {
     setEntriesDropdownVisible(!isEntriesDropdownVisible);
   };
+  const search = useCallback(() => {
+    if (serchtxt === "" && filtertext === "") {
+      Alert.alert("Please select a filter and enter text to search");
+    } else {
+      const filtered = dashboardData.filter(item => item[serchtxt] === filtertext);
+      console.log("rutiiiiikkkk____",filtered)
+
+      // console.log("Filtered Data: ", filteredData);
+      // Update state or handle filtered data as needed
+    }
+  }, [serchtxt, filtertext, dashboardData]);
+  
+  
 
   const handleFilterSelect = (filter) => {
     setSelectedFilter(filter);
@@ -87,18 +196,39 @@ const BdSearch = () => {
 
   return (
     <View style={styles.container}>
-      <View style={{ borderWidth: 0.2, marginTop: 4, borderRadius: 10, marginTop: 15, backgroundColor: "#F5F5F5" }}>
+      <View style={{ borderWidth: 0.2, marginTop: 4, borderRadius: 10, marginTop: 15, backgroundColor:  Appearance.getColorScheme()=='dark'?"gray":"#F5F5F5" }}>
         <View style={styles.filterRow}>
-          <TouchableOpacity style={styles.inputContainer} onPress={handleFilterDropdownToggle}>
-            <TextInput
-              style={styles.filterInput}
-              placeholder="Select Filter"
-              value={selectedFilter}
-              editable={false}
+         
+        <Dropdown
+          style={{width:'100%',color:'gray',borderColor:'black',borderWidth:1,height:40,borderRadius:5,backgroundColor:'white',padding:5,marginRight:5,marginLeft:0}}
+          placeholderStyle={{color:'gray'}}
+          selectedTextStyle={{color:'gray'}}
+          inputSearchStyle={{color:'gray'}}
+          itemTextStyle={{color:'gray'}}
+          // iconStyle={styles.iconStyle}
+          data={filterarr}
+          search
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={('Select')}
+          searchPlaceholder="Search..."
+          value={filtertext}
+         
+          onChange={item => {
+            setfiltertext(item.label);
+          }}
+         
+        />
+          <TextInput
+              style={{borderColor:'black',color:'gray',backgroundColor:'white',borderRadius:5,height:35,padding:3,width:"100%"}}
+              placeholder="Enter Text"
+              placeholderTextColor={"gray"}
+              value={serchtxt}
+              onChangeText={(text)=>{setserchtxt(text)}}
+              // editable={false}
               pointerEvents="none"
             />
-            <Icon name="chevron-down" size={20} color="#000" style={styles.icon} />
-          </TouchableOpacity>
           {isFilterDropdownVisible && (
             <View style={styles.dropdownList}>
               {['Filter 1', 'Filter 2', 'Filter 3'].map((item) => (
@@ -108,11 +238,11 @@ const BdSearch = () => {
               ))}
             </View>
           )}
-          <TextInput
+          {/* <TextInput
             style={[styles.filterInput, { width: '50%', marginRight: 10 }]}
             placeholder="Enter..."
-          />
-          <TouchableOpacity style={styles.searchButton}>
+          /> */}
+          <TouchableOpacity  onPress={search} style={[styles.searchButton,{marginLeft:10}]}>
             <Text style={styles.searchButtonText}>🔍</Text>
           </TouchableOpacity>
         </View>
@@ -136,7 +266,7 @@ const BdSearch = () => {
             editable={false}
             pointerEvents="none"
           />
-          <Icon name="chevron-down" size={20} color="#000" style={styles.icon} />
+          <Icon name="chevron-down" size={20} color= {Appearance.getColorScheme()=='dark'?"gray":"#000"} style={styles.icon} />
         </TouchableOpacity>
         {isEntriesDropdownVisible && (
           <View style={styles.dropdownList}>
@@ -161,13 +291,7 @@ const BdSearch = () => {
           <Text style={styles.paginationText}>NEXT</Text>
         </TouchableOpacity>
       </View>
-
-      <FlatList
-        data={filteredData}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        ListHeaderComponent={() => (
-          <View style={styles.tableHeader}>
+      <View style={styles.tableHeader}>
             <Text style={styles.headerCell}>File ID</Text>
             <View style={styles.verticalDivider}></View>
             <Text style={styles.headerCell}>File no.</Text>
@@ -176,7 +300,22 @@ const BdSearch = () => {
             <View style={styles.verticalDivider}></View>
             <Text style={styles.headerCell}>Country</Text>
           </View>
-        )}
+
+      <FlatList
+        data={filteredData}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        // ListHeaderComponent={() => (
+        //   // <View style={styles.tableHeader}>
+        //   //   <Text style={styles.headerCell}>File ID</Text>
+        //   //   <View style={styles.verticalDivider}></View>
+        //   //   <Text style={styles.headerCell}>File no.</Text>
+        //   //   <View style={styles.verticalDivider}></View>
+        //   //   <Text style={styles.headerCell}>Company Name</Text>
+        //   //   <View style={styles.verticalDivider}></View>
+        //   //   <Text style={styles.headerCell}>Country</Text>
+        //   // </View>
+        // )}
       />
     </View>
   );
@@ -186,7 +325,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
-    backgroundColor: '#fff',
+    backgroundColor:  Appearance.getColorScheme()=='dark'?"black":'#fff',
   },
   filterRow: {
     flexDirection: 'row',
@@ -247,10 +386,11 @@ const styles = StyleSheet.create({
     width: 50,
     marginRight: 5,
     padding: 5,
+    backgroundColor: Appearance.getColorScheme()=='dark'?"gray":"white"
   },
   searchInput: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Appearance.getColorScheme()=='dark'?"gray": "#FFFFFF",
     borderColor: '#ccc',
     borderWidth: 1,
     elevation: 5,
@@ -290,6 +430,7 @@ const styles = StyleSheet.create({
   },
   cell: {
     flex: 1,
+    color:Appearance.getColorScheme()=='dark'?'gray':'black',
     textAlign: 'center',
   },
   verticalDivider: {
@@ -304,7 +445,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 40,
     width: '100%',
-    backgroundColor: 'white',
+    backgroundColor: Appearance.getColorScheme()=='dark'?"gray": 'white',
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
