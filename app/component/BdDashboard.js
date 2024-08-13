@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView,SafeAreaView, TextInput, Image,Alert, Modal, FlatList, Appearance, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView,SafeAreaView, TextInput, Image,Alert, FlatList, Appearance, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DefaultStyle } from '../styles/base';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Spinner from 'react-native-loading-spinner-overlay';
+import Modal from 'react-native-modal';
 
 var Environment = require('../../environment.js');
 
@@ -48,7 +49,7 @@ const BdDashboard = ({ route }) => {
         .then(response => response.json())
         .then(async (data) => {
           // Handle the response from the login API
-          console.log('GetDashboardDetails............:', data);
+          console.log('GetDashboardDetails............:', data.result.AssignedFiles);
           console.log('GetDashboardDetailssssssssssssssssssssssssssss............:', data.result.bdStatusCounts);
 
           if (!data.isException) {
@@ -84,9 +85,15 @@ const BdDashboard = ({ route }) => {
     </TouchableOpacity>
   );
 
+  // const filteredAssignFiles = AssignFiles.filter(item =>
+  //   item.updated_by.toLowerCase().includes(assignedBySearchQuery.toLowerCase())
+  // );
   const filteredAssignFiles = AssignFiles.filter(item =>
-    item.updated_by.toLowerCase().includes(assignedBySearchQuery.toLowerCase())
+    item.updated_by.toLowerCase().includes(assignedBySearchQuery.toLowerCase()) ||
+    JSON.stringify(item.File_ID).includes(assignedBySearchQuery) ||
+    JSON.stringify(item.BD_Status_String).toLowerCase().includes(assignedBySearchQuery.toLocaleLowerCase())
   );
+  
 
   const chooseFile = async () => {
     console.log("rutikkkkkkkk")
@@ -98,13 +105,72 @@ const BdDashboard = ({ route }) => {
       let obj = result.assets[0];
       let {fileName: fileName,fileSize: size,type,uri} = obj;
       let fileObj = [{fileName,size,type,uri}];
-      setFile(obj);
+      await setFile(obj);
+
+
+       // setisSpinnerVisible(true);
+    console.log("datasendtoChangeProfile______");
+
+    let body = new FormData();
+    body.append('Img', {
+      name: result.assets[0].fileName,
+      type: `image/jpeg`,
+      uri: result.assets[0].uri,
+    });
+   
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        // "Content-Type": "application/json",
+        'Content-Type': 'multipart/form-data',
+      },
+      body: body,
+    };
+    console.log("datasendtoChangeProfile______",body);
+
+    await fetch(Environment.BASE_URL + '/ChangeProfile', requestOptions)
+      .then(response => response.json())
+      .then(async result => {
+        console.log(
+          'ChangeProfileResponse==================================------',
+          result,
+        );
+    
+        if (result.isException) {
+          Alert.alert(result.result);
+        } else {
+
+          let rutik = Environment.BASE_URL+result.result.ImgPath;
+          setUserpfrofile(rutik);
+          Alert.alert(
+            (('Success')),
+            (`${result.result.Msg}`),
+            // [
+            //   // { text: (t('Cancel')), style: 'cancel' },
+            //   { text: (('OK')), onPress : () => {
+            //      setisSpinnerVisible(true);
+            //     fetchFileData();} 
+            //   },
+            // ],
+            // { cancelable: false }
+          );
+        }
+       
+      });
+
+
+
+
+
+
+
+
     }
 
       setProfilemodalVisible(false);
       console.log('File selected:', File);
       if (File) {
-        ChangeProfile();
+        //  await ChangeProfile();
       }
 
     } catch (err) {
@@ -222,9 +288,12 @@ const BdDashboard = ({ route }) => {
         if (result.isException) {
           Alert.alert(result.result);
         } else {
+
+          let rutik = Environment.BASE_URL+result.result.ImgPath;
+          setUserpfrofile(rutik);
           Alert.alert(
             (('Success')),
-            (`${result.result}`),
+            (`${result.result.Msg}`),
             // [
             //   // { text: (t('Cancel')), style: 'cancel' },
             //   { text: (('OK')), onPress : () => {
@@ -330,40 +399,49 @@ const BdDashboard = ({ route }) => {
         </TouchableOpacity>
       </View>
 
-      <View style={{ marginLeft: 10, marginTop: 10 }}>
-        <Text style={{ fontWeight: 'bold', fontSize: 20, color: 'black' }}>Assigned Files</Text>
-      </View>
-      <View style={{ width: '90%', flexDirection: 'row' }}>
-        <TouchableOpacity
+      {/* <View style={{ marginLeft: 10, marginTop: 10 }}>
+        <Text style={{ fontWeight: 'bold', fontSize: 20, color: 'gray' }}>Assigned Files</Text>
+      </View> */}
+      <View style={{ width: '100%', justifyContent:'space-between',flexDirection: 'row' ,marginTop:0,marginBottom:5 }}>
+        {/* <TouchableOpacity
           style={styles.entriesPerPageContainer}
           onPress={() => setModalVisible(true)}
         >
           <Text style={styles.entriesPerPageText}>{selectedValue}</Text>
           <Icon name="chevron-down-outline" size={20} color="#000" style={styles.icon} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         {/* <Text style={styles.entriesPerPageLabel}> entries per page</Text> */}
+        <Text style={{ fontWeight: 'bold', fontSize: 20, color: 'gray', justifyContent:'center',marginTop:15,marginLeft:15 }}>Assigned Files</Text>
+        <View style={[styles.inputBox,{flexDirection:'row'}]}>
         <TextInput
-          style={styles.inputBox}
+          // style={styles.inputBox}
           placeholder="Search "
           placeholderTextColor="#000000"
           value={assignedBySearchQuery}
           onChangeText={(text) => setAssignedBySearchQuery(text)}
           
         />
-         <Icon name="search-outline" size={20} color="#000000" style={{marginLeft:-25,marginTop:25}}/>
+         <Icon name="search-outline" size={20} color="white" 
+        //  style={[styles.TextInput,{marginLeft:-35,marginRight:30,marginTop:22}]}
+         style={{marginLeft:80,marginTop:10}}
+         />
+
+        </View>
       </View>
 
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.table}>
           <View style={[styles.tableRow, styles.tableHeaderRow]}>
-            <Text style={[styles.columnHeader, styles.borderRight]}>S.No</Text>
+            <Text style={[styles.columnHeader, styles.borderRight]}>Sr.No</Text>
+            <Text style={[styles.columnHeader, styles.borderRight]}>File Id</Text>
             <Text style={[styles.columnHeader, styles.borderRight]}>Assigned By</Text>
             <Text style={styles.columnHeader}>BD Status</Text>
           </View>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.table}>
           {filteredAssignFiles.map((item, index) => (
             <TouchableOpacity key={index}  onPress={() => navigation.navigate('AddFile', { fileId: item.File_ID,})} style={styles.tableRow}>
 
               <Text style={[styles.tableCell, styles.borderRight]}>{index + 1}</Text>
+              <Text style={[styles.tableCell, styles.borderRight]}>{item.File_ID}</Text>
               <Text style={[styles.tableCell, styles.borderRight]}>{item.updated_by}</Text>
               <Text style={styles.tableCell}>{item.BD_Status_String}</Text>
             </TouchableOpacity>
@@ -391,24 +469,32 @@ const BdDashboard = ({ route }) => {
         </TouchableOpacity>
       </Modal>
 
-      <Modal
+      {/* <Modal
         transparent={true}
         visible={ProfilemodalVisible}
         animationType="fade"
         onRequestClose={() => setProfilemodalVisible(false)}
-      >
-        <View style={[styles.modalBackground, { justifyContent: 'flex-start', alignItems: 'flex-end', padding: 10 , marginTop:Platform.OS=='ios'?43:0 }]}>
+      > */}
+          <Modal
+            isVisible={ProfilemodalVisible}
+            onBackdropPress={()=>setProfilemodalVisible(false)}
+            onBackButtonPress={()=>setProfilemodalVisible(false)}
+            onSwipeComplete={()=>setProfilemodalVisible(false)}
+            backdropOpacity={0.5}>
+        {/* <View style={[styles.modalBackground, { justifyContent: 'flex-start',height:300, alignItems: 'flex-end', padding: 10 , marginTop:Platform.OS=='ios'?43:0 }]}> */}
+        <View style={{height:300,width:"90%",position:'absolute',top:25,right:0 ,left:140}}> 
           <View style={{ backgroundColor: Appearance.getColorScheme()=='dark'?"gray":'white', height: 300, width: "70%", borderRadius: 10, padding: 10, justifyContent: 'flex-start', }}>
             <View style={{ alignItems: 'center' }}>
             {Userpfrofile ? 
               <Image
               source={ Userpfrofile ? { uri: Userpfrofile }:require('../Images/cms.png')}
-              style={[styles.profileImageModal,{resizeMode:'contain'}]}
+              style={[styles.profileImageModal,{resizeMode:'cover'}]}
               />:
               <Icon name="person-circle-outline" size={50} color="#000"
-              style={{marginLeft:10,marginTop:20,color:'gray'}}
+              style={{marginLeft:10,marginTop:20,color:'black'}}
             />
             }
+            
               <Text style={{ fontWeight: 'bold', fontSize: 18 ,marginTop:5}}>{UserName}</Text>
             </View>
             <View style={{ marginTop: 20, borderBottomWidth: 1, borderColor: 'red', width: '100%', alignItems: 'center', marginBottom: 10 }}>
@@ -584,16 +670,16 @@ const styles = StyleSheet.create({
     height: DefaultStyle.DEVICE_HEIGHT / 18,
   },
   scrollView: {
-    margin: 10,
+    margin: 3,
   },
   table: {
     backgroundColor:Appearance.getColorScheme()=='dark'?"gray": '#fff',
-    borderRadius: 15,
-    padding: 10,
+    borderRadius: 4,
+    // padding: 10,
     elevation: 5,
     borderWidth: 0.2,
     borderColor: 'lightgray',
-    margin: 10,
+    // margin: 10,
   },
   tableHeaderRow: {
     flexDirection: 'row',

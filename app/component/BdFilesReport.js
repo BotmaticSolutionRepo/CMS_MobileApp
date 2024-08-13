@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, TextInput, FlatList, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, FlatList, StyleSheet, ScrollView, Appearance } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 
@@ -52,11 +52,13 @@ const BdFilesReport = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>BD Files Report</Text>
+      {/* <Text style={styles.header}>BD Files Report</Text> */}
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.bdStatusContainer}>
           <Text style={styles.subHeader}>BD Status</Text>
-          <View style={styles.topRow}>
+        {/*
+        
+         <View style={styles.topRow}>
             <View style={styles.dropdownContainer}>
               <TouchableOpacity onPress={handleDropdownToggle} style={styles.dropdown}>
                 <Text style={styles.dropdownText}>{entriesPerPage}</Text>
@@ -82,6 +84,7 @@ const BdFilesReport = ({ route }) => {
               />
             </View>
           </View>
+           */}
           <FlatList
             data={data}
             numColumns={2}
@@ -105,7 +108,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#F5F5F5'
+    backgroundColor: Appearance.getColorScheme()=='dark'?'black':'#F5F5F5'
   },
   header: {
     fontSize: 24,
@@ -119,8 +122,9 @@ const styles = StyleSheet.create({
   bdStatusContainer: {
     padding: 10,
     borderRadius: 10,
-    backgroundColor: '#fff',
-    borderWidth: 0.2,
+    backgroundColor: Appearance.getColorScheme()=='dark'?'black':'#fff',
+    borderColor:'gray',
+    borderWidth: 0.9,
     elevation: 5,
     shadowColor: '#87CEEB',
     shadowOffset: { width: 0, height: 2 },
@@ -129,10 +133,10 @@ const styles = StyleSheet.create({
     marginBottom: 20
   },
   subHeader: {
-    fontSize: 18,
+    fontSize: 23,
     fontWeight: 'bold',
     marginVertical: 10,
-    textAlign: 'left'
+    textAlign: 'center'
   },
   topRow: {
     flexDirection: 'row',

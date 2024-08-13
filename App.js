@@ -93,7 +93,7 @@ const App = () => {
         <Stack.Screen name="Dashboard" component={Dashboard} options={{ headerShown:false }} />
         <Stack.Screen name="BdDashboard" component={BdDashboard} options={{ headerShown:false }} />
         <Stack.Screen name="BdFilesReport" component={BdFilesReport} options={{title: 'Bd Files Report', headerShown:true , }} />
-        <Stack.Screen name="BdSearch" component={BdSearch} options={{title: 'Files', headerShown:true , }} />
+        <Stack.Screen name="BdSearch" component={BdSearch} options={{title: ' All Files', headerShown:true , }} />
         <Stack.Screen name="AddFile" component={AddFile} options={{title: 'File Details', headerShown:true , }} />
         <Stack.Screen name="Details" component={Details} options={{ headerShown:false }} />
         <Stack.Screen name="OtherDetails" component={OtherDetails} options={{ headerShown:false }} />

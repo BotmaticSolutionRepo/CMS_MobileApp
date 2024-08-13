@@ -83,6 +83,7 @@ const AddFile = ({ route }) => {
   const [Bdcasestudy, setBdcasestudy] = useState('');
   const [Bdcasetype, setBdcasetype] = useState('');
   const [Bdstatus, setBdstatus] = useState('');
+  const [Bdstatuslabel, setBdstatuslabel] = useState('');
   const [Bdconfidencelevel, setBdconfidencelevel] = useState('');
 
   const [Assigntobd, setAssigntobd] = useState('');
@@ -248,7 +249,6 @@ const AddFile = ({ route }) => {
             setMarketvalue(updatedFileData.Record.Market_Value)
             setBdcasestudy(updatedFileData.Record.BD_Case_Study)
             setBdcasetype(updatedFileData.Record.BD_Case_Type)
-            setBdstatus(updatedFileData.Record.BD_Status)
             setBdconfidencelevel(updatedFileData.Record.BD_Confidence_Level)
             setAssigntobd(updatedFileData.Record.Assign_To_BD)
             setRtastatus(updatedFileData.Record.RTA_Status)
@@ -286,7 +286,15 @@ const AddFile = ({ route }) => {
                 return { label: item.BD_Status, value: item.Id };
               })
               setBdstatusList(newarray);
-              // console.log("newwwwwwwww____",newarray) 
+              console.log("bdstaturlist_______",data.result?.BdStatusList,"rutiiik",BdstatusList)
+              // setBdstatus(updatedFileData.Record.BD_Status)
+              if (updatedFileData.Record.BD_Status) {
+                var rutik =   newarray.filter((item)=>{
+                    return item.label==updatedFileData.Record.BD_Status
+                  })
+                  console.log("newwwwwwwww____",rutik,"apivalue",updatedFileData.Record.BD_Status) 
+                 setBdstatus(rutik[0].value)
+              }
             }
             // setBdstatusList(data.result?.BdStatusList)
           }
@@ -524,7 +532,9 @@ const AddFile = ({ route }) => {
     setisSpinnerVisible(false);
   };
 
-
+  const handlebdstatus = ()=>{
+    // setBdstatus()
+  }
 
   const toggleBDModal = () => {
     setBDModalVisible(!isBDModalVisible);
@@ -608,7 +618,7 @@ const AddFile = ({ route }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          File_ID: 26,
+          File_ID: Fileid,
           token: token
         }),
       })
@@ -694,13 +704,19 @@ const AddFile = ({ route }) => {
       })
 
   }
-
+  const getLabelFromValue = (value) => {
+    const item = BdstatusList.find(item => item.value === value);
+    return item ? item.label : '';
+  };
 
   const updatedata = async () => {
     try {
+      // console.log("bdstatus_________",Bdstatus);return false;
       const token = await AsyncStorage.getItem('token');
+      const selectedLabel = getLabelFromValue(Bdstatus);
+      
       console.log("datasendtoUpdateFile__________", JSON.stringify({
-        File_ID: 26,
+        File_ID: Fileid,
         token: token,
         File_No: Fileno,
         Serial_Number: "S123",
@@ -747,7 +763,7 @@ const AddFile = ({ route }) => {
         BD_Case_Study: Bdcasestudy,
         BD_Case_Type: Bdcasetype,
         Assign_To_BD: Assigntobd,
-        BD_Status: Bdstatus,
+        BD_Status: selectedLabel,
         BD_Confidence_Level: Bdconfidencelevel,
         Tel_Nominee_Name: "Nominee A",
         Tel_Joint_Holder_Name: "Joint A",
@@ -772,82 +788,83 @@ const AddFile = ({ route }) => {
         Ops_PaymentReceived: Opspaymentreceived,
         Ops_PaymentReceivedOn: "2024-01-04"
       }))
+      // return false;
       await fetch(Environment.BASE_URL + "/UpdateFile", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          File_ID: 26,
+          File_ID: Fileid,
           token: token,
-          File_No: "F001",
+          File_No: Fileno,
           Serial_Number: "S123",
-          Company_Name: "Sample Company",
-          Village_Name: "Sample Village",
+          Company_Name: Companyname,
+          Village_Name: Address,
           Sheet_No: "Sheet123",
-          Investor_First_Name: "John",
-          Investor_Middle_Name: "Doe",
-          Investor_Last_Name: "Smith",
-          Investor_Full_Name: "John Doe Smith",
-          Father_First_Name: "Robert",
-          Father_Middle_Name: "William",
-          Father_Last_Name: "Smith",
-          Father_Full_Name: "Robert William Smith",
-          Address: "123 Main St",
-          Country: "CountryName",
-          State: "StateName",
-          District: "DistrictName",
-          PinCode: "123456",
+          Investor_First_Name: Investorfirstname,
+          Investor_Middle_Name: Investormiddlename,
+          Investor_Last_Name: Investorlastname,
+          Investor_Full_Name: Investorfullname,
+          Father_First_Name: Fatherfirstname,
+          Father_Middle_Name: Fathermiddlename,
+          Father_Last_Name: Fatherlastname,
+          Father_Full_Name: Fatherfullname,
+          Address: Address,
+          Country: Country,
+          State: State,
+          District: District,
+          PinCode: Pincode,
           ContactDetails: "123-456-7890",
-          RTA_Status: "Active",
-          Consolidated_Address: "Full Address",
-          Folio_Number: "Folio123",
-          Dp_id: "DP123",
+          RTA_Status: Rtastatus,
+          Consolidated_Address: Fulladdressconsolodation,
+          Folio_Number: Folionumber,
+          Dp_id: DPid,
           Investment_Type: "TypeA",
           Fees: 100.50,
-          Unclaimed_shares: 20,
-          Date_of_Transfer: "01-01-2023",
-          Praposed_Date_of_Transfer: "2023-12-31",
-          Pan_Card: "ABCDE1234F",
-          Date_of_Birth: "1990-01-01",
-          Aadhar_number: "123456789012",
-          Nominee_Name: "Jane Doe",
-          JointHolderName: "Jane Smith",
-          Market_Value: 10000.75,
+          Unclaimed_shares: Unclaimedshares,
+          Date_of_Transfer: ProposeddateofTransfer,
+          Praposed_Date_of_Transfer: ProposeddateofTransfer,
+          Pan_Card: Pancard,
+          Date_of_Birth: Dateofbirth,
+          Aadhar_number: Aadharnumber,
+          Nominee_Name: Nomineename,
+          JointHolderName: Jointholdername,
+          Market_Value: Marketvalue,
           Adv_Advance_Status: "StatusA",
           Adv_New_Address: "New Address",
           Adv_Index_Number: "Index123",
-          Refrence_Number: "Ref123",
-          Letter_Tracking_Number: "Track123",
-          Letter_Status: "Sent",
-          Variable_Status: "VarStatusA",
+          Refrence_Number: Refrencenumber,
+          Letter_Tracking_Number: Lettertrackingnumber,
+          Letter_Status: Letterstatus,
+          Variable_Status: Variablestatus,
           BD_Templete_View: "TemplateA",
-          BD_Case_Study: "CaseStudyA",
-          BD_Case_Type: "TypeA",
-          Assign_To_BD: "BD123",
-          BD_Status: "Completed",
-          BD_Confidence_Level: "High",
+          BD_Case_Study: Bdcasestudy,
+          BD_Case_Type: Bdcasetype,
+          Assign_To_BD: Assigntobd,
+          BD_Status: selectedLabel,
+          BD_Confidence_Level: Bdconfidencelevel,
           Tel_Nominee_Name: "Nominee A",
           Tel_Joint_Holder_Name: "Joint A",
-          No_Of_Share: 100,
-          IEPF: "Yes",
-          Physical: "No",
-          Tel_InSuspense: "Yes",
+          No_Of_Share: Noofshares,
+          IEPF: Iepf,
+          Physical: Physical,
+          Tel_InSuspense: TelinSuspense,
           Tel_VerificationStatus: "Verified",
           Tel_No_Of_Certificate: 10,
           KYC_Compliance: "Compliant",
-          Ops_CertificateNumber: "Cert123",
-          Ops_DistinctiveNumber: "Dist123",
-          Ops_WorkStatus: "Completed",
-          Ops_CaseType: "TypeB",
-          Ops_Stages: "Stage1",
-          Ops_DividendCredited: 150.50,
+          Ops_CertificateNumber: Opscertificateumber,
+          Ops_DistinctiveNumber: Opsdistinctivenumber,
+          Ops_WorkStatus: Opsworkstatus,
+          Ops_CaseType: Opscasetype,
+          Ops_Stages: Opsstages,
+          Ops_DividendCredited: Opsdividendcredited,
           Ops_DividendCreditedOn: "2024-01-01",
-          Ops_SharesCredited: 50,
+          Ops_SharesCredited: Opssharescredited,
           Ops_SharesCreditedOn: "2024-01-02",
-          Ops_InvoiceIssued: "Yes",
+          Ops_InvoiceIssued: Opsinvoiceissued,
           Ops_InvoiceIssuedOn: "2024-01-03",
-          Ops_PaymentReceived: "Yes",
+          Ops_PaymentReceived: Opspaymentreceived,
           Ops_PaymentReceivedOn: "2024-01-04"
         }),
       })
@@ -885,23 +902,28 @@ const AddFile = ({ route }) => {
       </View> */}
       <Spinner
         visible={isSpinnerVisible}
-        textContent={('Loading')}
-        textStyle={styles.spinnerTextStyle}
+        // textContent={('Loading')}
+        // textStyle={styles.spinnerTextStyle}
         color="#EF6A32"
       // customIndicator={<Image style={styles.logoImage} source={require('../../app/Images/Group111.png')} />}
       />
 
-      <View style={{ padding: 10, borderColor: Appearance.getColorScheme()=='dark'?"white":'#000000', borderWidth: 1, marginTop: 20, borderRadius: 10, marginBottom: 10 }}>
+      
+        { AdharCardPdf && PanCardPdf && AgreeentCopyPdf && ClientMasterListPdf && CancelChequePdf ?  
+       <View style={{ padding: 10, borderColor: Appearance.getColorScheme()=='dark'?"white":'#000000', borderWidth: 1, marginTop: 20, borderRadius: 10, marginBottom: 10 }}>
 
-        <Text style={styles.sectionTitle}>ASSIGN FILE</Text>
-        <View style={{ flexDirection: 'row' }}>
-          <View style={[styles.card, { width: '48%',borderColor:Appearance.getColorScheme()=='dark'?'white':'black' }]}>
+        <Text style={[styles.sectionTitle,{textAlign:'center'}]}>ASSIGN FILE</Text>
+    
+       <View style={{ 
+          // flexDirection: 'row'
+           }}>
+          <View style={[styles.card, { width: '100%',borderColor:Appearance.getColorScheme()=='dark'?'white':'black' }]}>
             <Text style={styles.cardTitle}>Assign to Team </Text>
             <View style={styles.pickerContainer}>
           
 
               <Dropdown
-          style={{width:'100%',color:'gray',borderColor:'blue',borderWidth:1,height:40,borderRadius:5,backgroundColor:'white',padding:5,marginRight:5,marginTop:Platform.OS=='android'?15:30,marginLeft:0}}
+          style={{width:'100%',color:'gray',borderColor:'blue',borderWidth:1,height:40,borderRadius:5,backgroundColor:'white',padding:5,marginRight:5,marginTop:Platform.OS=='android'?5:30,marginLeft:0}}
           placeholderStyle={{color:'gray'}}
           selectedTextStyle={{color:'gray'}}
           inputSearchStyle={{color:'gray'}}
@@ -923,13 +945,13 @@ const AddFile = ({ route }) => {
             </View>
 
           </View>
-          <View style={[styles.card, { width: '48%',borderColor:Appearance.getColorScheme()=='dark'?'white':'black' }]}>
+          <View style={[styles.card, { width: '100%',borderColor:Appearance.getColorScheme()=='dark'?'white':'black' }]}>
             <Text style={styles.cardTitle}>Assign to Team  Member</Text>
             <View style={styles.pickerContainer}>
           
 
               <Dropdown
-          style={{width:'100%',color:'gray',borderColor:'blue',borderWidth:1,height:40,borderRadius:5,backgroundColor:'white',padding:5,marginRight:5,marginTop:15,marginLeft:0}}
+          style={{width:'100%',color:'gray',borderColor:'blue',borderWidth:1,height:40,borderRadius:5,backgroundColor:'white',padding:5,marginRight:5,marginTop:5,marginLeft:0}}
           placeholderStyle={{color:'gray'}}
           selectedTextStyle={{color:'gray'}}
           inputSearchStyle={{color:'gray'}}
@@ -955,7 +977,7 @@ const AddFile = ({ route }) => {
 
         
 
-        </View>
+        </View>:
         <View style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
           <TouchableOpacity
             onPress={SubmitAssignTeam}
@@ -964,7 +986,7 @@ const AddFile = ({ route }) => {
           </TouchableOpacity>
         </View>
        
-      </View>
+      </View>:null}
 
 
 
@@ -1048,14 +1070,18 @@ const AddFile = ({ route }) => {
             <View style={{ marginLeft: 20, marginTop: 10 }}>
               <Text style={{ color: 'blue', marginBottom: 1 }}>{file.name}</Text>
             </View> :
-            <TouchableOpacity style={[styles.button, { marginLeft: 10 }]} onPress={chooseFile}>
+            <TouchableOpacity style={[styles.button, { marginLeft: 10, flexDirection:'row' }]} onPress={chooseFile}>
               <Text style={styles.buttonText}>Choose File</Text>
+             
             </TouchableOpacity>}
         </View>
-        <View style={{ flexDirection: 'row', marginLeft: 10, marginTop: 10 }}>
+        <View style={{ flexDirection: 'row', marginLeft: 10, marginTop: 10, marginBottom:10   }}>
 
-          <TouchableOpacity style={[styles.button, { flex: 2, zIndex: 0 }]} onPress={uploadFile}>
-            <Text style={styles.buttonText}>Upload</Text>
+          <TouchableOpacity style={[styles.button, { flex: 2, zIndex: 0  , flexDirection:'row',alignItems:'center',alignContent:'center'}]} onPress={uploadFile}>
+            <Text style={[styles.buttonText,{marginLeft:'40%'}]}>Upload</Text>
+            <Icon name="cloud-upload" size={25} color="#000"
+              style={{marginLeft:10,marginTop:3,color:'white'}}
+            />
           </TouchableOpacity>
         </View>
         <View style={styles.tableHeader}>
@@ -1510,6 +1536,8 @@ const AddFile = ({ route }) => {
                 setValue={setBdstatus}
                 setItems={setBdstatusList}
                 containerStyle={styles.picker}
+                listMode="SCROLLVIEW"  // Ensure the list is scrollable
+                maxHeight={250} 
               />
             </View>
             <View style={styles.modalItem}>
@@ -1989,7 +2017,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   cardTitle: {
-    fontSize: 13,
+    fontSize: 15,
     fontWeight: 'bold',
     marginBottom: 10,
     textAlign: 'center'

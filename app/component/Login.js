@@ -13,10 +13,13 @@ var Environment = require('../../environment.js');
 const Login = () => {
   const navigation = useNavigation();
 
-  const [username, setUsername] = useState('michaeldavis');
-  const [password, setPassword] = useState('Password123');
-  // const [username, setUsername] = useState('');
-  // const [password, setPassword] = useState('');
+  // const [username, setUsername] = useState('michaeldavis');
+  // const [password, setPassword] = useState('Password123');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [usernameerr, setUsernameerr] = useState('');
+  const [passworderr, setPassworderr] = useState('');
+
   const [showpassword, setshowpassword] = useState(true);
   const [deviceId, setDeviceId] = useState('');
   const [isSpinnerVisible, setisSpinnerVisible] = useState(false);
@@ -37,10 +40,28 @@ const Login = () => {
   const handleLogin = async () => { 
     console.log('loginnnnnnnnnnnnnnnn',Environment.BASE_URL)
    try {
-     if (username === "" || password === "") {
-       Alert.alert("Enter username and password");
-       return false;
-     } else {
+
+    let error = 0 ;
+    
+    if (username == "") {
+      setUsernameerr("Please Enter Username");
+      error= error+1;
+    } else {
+      setUsernameerr("");
+    }
+    if (password == "") {
+      setPassworderr("Please Enter Password");
+      error=error+1;
+    } else {
+      setPassworderr("");
+    }
+
+      if (error>0) {
+        return false;
+      }
+
+
+   
        setisSpinnerVisible(true);
        await fetch(Environment.BASE_URL + "/LoginUser", {
          method: 'POST',
@@ -48,7 +69,7 @@ const Login = () => {
            'Content-Type': 'application/json',
          },
          body: JSON.stringify({
-           Username:username,
+           Username:username.trim(),
            Password:password,
       
                  }),
@@ -77,10 +98,12 @@ const Login = () => {
            console.error('Error during login:', error);
          
          });
-     }
+     
    } catch (error) {
     console.log("errror",error)
    }
+   setisSpinnerVisible(false);
+
   };
 
   return (
@@ -109,6 +132,11 @@ const Login = () => {
           <Icon name='envelope' size={20} color='green' />
         </View>
       </View>
+      {usernameerr ?
+      <Text style={styles.errorText} onPress={() => navigation.navigate('Forgot Password')}>
+        {usernameerr}
+      </Text>:null
+      }
 
       <View style={styles.inputContainer}>
         <TextInput
@@ -123,10 +151,16 @@ const Login = () => {
           <Icon name={showpassword ? "eye-slash" : "eye"} size={20} color="green" />
         </TouchableOpacity>
       </View>
-
+      {passworderr ?
+      <Text style={styles.errorText} onPress={() => navigation.navigate('Forgot Password')}>
+        {passworderr}
+      </Text>:null
+      }
       <Text style={styles.forgotpass} onPress={() => navigation.navigate('Forgot Password')}>
         Forgot Password?
       </Text>
+
+   
 
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.loginButtonText}>Login</Text>
@@ -162,6 +196,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 10,
+  },
+  errorText: {
+    width: '90%',
+    paddingHorizontal: 5,
+    marginTop:5,
+    fontSize: 14,
+    alignSelf: 'center',
+    color: 'red',
   },
   inputbox: {
     flex: 1,

@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Dropdown } from 'react-native-element-dropdown';
+import Modal from 'react-native-modal';
 
 var Environment = require('../../environment.js');
 
@@ -14,101 +15,114 @@ const BdSearch = () => {
   const [entriesPerPage, setEntriesPerPage] = useState('10');
   const [isFilterDropdownVisible, setFilterDropdownVisible] = useState(false);
   const [isEntriesDropdownVisible, setEntriesDropdownVisible] = useState(false);
+  const [multiplesearchmodal, setmultiplesearchmodal] = useState(false);
   const [dashboardData, setDashboardData] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [serchtxt, setserchtxt] = useState('');
+  const [singlesrchfilter, setsinglesrchfilter] = useState('');
+  const [singlesrchfiltererr, setsinglesrchfiltererr] = useState('');
+  const [singlesrchtxt, setsinglesrchtxt] = useState('');
+  const [singlesrchtxterr, setsinglesrchtxterr] = useState('');
+
+
+  const [multiplesrcfilter, setmultiplesrcfilter] = useState('');
+  const [multiplesrctxt, setmultiplesrctxt] = useState('');
+
   const [filterarr, setfilterarr] = useState([
-    {key: "Aadhar_number", label: "Aadhar_number"},
-    {key: "Address", label: "Address"},
-    {key: "Adv_Advance_Status", label: "Adv_Advance_Status"},
-    {key: "Adv_Index_Number", label: "Adv_Index_Number"},
-    {key: "Adv_New_Address", label: "Adv_New_Address"},
-    {key: "Assign_To_BD", label: "Assign_To_BD"},
-    {key: "Assign_To_Ops", label: "Assign_To_Ops"},
-    {key: "BD_Case_Study", label: "BD_Case_Study"},
-    {key: "BD_Case_Type", label: "BD_Case_Type"},
-    {key: "BD_Comment", label: "BD_Comment"},
-    {key: "BD_Confidence_Level", label: "BD_Confidence_Level"},
-    {key: "BD_Status", label: "BD_Status"},
-    {key: "BD_Status_Value", label: "BD_Status_Value"},
-    {key: "BD_Templete_View", label: "BD_Templete_View"},
-    {key: "Company_Name", label: "Company_Name"},
-    {key: "Consolidated_Address", label: "Consolidated_Address"},
-    {key: "ContactDetails", label: "ContactDetails"},
-    {key: "Country", label: "Country"},
-    {key: "Curier_Status", label: "Curier_Status"},
-    {key: "Date_of_Birth", label: "Date_of_Birth"},
-    {key: "Date_of_Transfer", label: "Date_of_Transfer"},
-    {key: "District", label: "District"},
-    {key: "Dp_id", label: "Dp_id"},
-    {key: "Father_First_Name", label: "Father_First_Name"},
-    {key: "Father_Full_Name", label: "Father_Full_Name"},
-    {key: "Father_Last_Name", label: "Father_Last_Name"},
-    {key: "Father_Middle_Name", label: "Father_Middle_Name"},
-    {key: "Fees", label: "Fees"},
-    {key: "File_ID", label: "File_ID"},
-    {key: "File_No", label: "File_No"},
-    {key: "Folio_Number", label: "Folio_Number"},
-    {key: "IEPF", label: "IEPF"},
-    {key: "Investment_Type", label: "Investment_Type"},
-    {key: "Investor_First_Name", label: "Investor_First_Name"},
-    {key: "Investor_Full_Name", label: "Investor_Full_Name"},
-    {key: "Investor_Last_Name", label: "Investor_Last_Name"},
-    {key: "Investor_Middle_Name", label: "Investor_Middle_Name"},
-    {key: "JointHolderName", label: "JointHolderName"},
-    {key: "KYC_Compliance", label:"KYC_Compliance"},
-    {key: "Letter_Status", label: "Letter_Status"},
-    {key: "Letter_Tracking_Number", label: "Letter_Tracking_Number"},
-    {key: "Market_Value", label: "Market_Value"},
-    {key: "No_Of_Share", label: "No_Of_Share"},
-    {key: "Nominee_Name", label: "Nominee_Name"},
-    {key: "Ops_CaseType", label: "Ops_CaseType"},
-    {key: "Ops_CertificateNumber", label: "Ops_CertificateNumber"},
-    {key: "Ops_Comment", label: "Ops_Comment"},
-    {key: "Ops_DistinctiveNumber", label: "Ops_DistinctiveNumber"},
-    {key: "Ops_DividendCredited", label: "Ops_DividendCredited"},
-    {key: "Ops_DividendCreditedOn", label: "Ops_DividendCreditedOn"},
-    {key: "Ops_InvoiceIssued", label: "Ops_InvoiceIssued"},
-    {key: "Ops_InvoiceIssuedOn", label: "Ops_InvoiceIssuedOn"},
-    {key: "Ops_PaymentReceived", label: "Ops_PaymentReceived"},
-    {key: "Ops_PaymentReceivedOn", label: "Ops_PaymentReceivedOn"},
-    {key: "Ops_SharesCredited", label: "Ops_SharesCredited"},
-    {key: "Ops_SharesCreditedOn", label: "Ops_SharesCreditedOn"},
-    {key: "Ops_Stages", label: "Ops_Stages"},
-    {key: "Ops_WorkStatus", label: "Ops_WorkStatus"},
-    {key: "Pan_Card", label: "Pan_Card"},
-    {key: "Physical", label: "Physical"},
-    {key: "PinCode", label: "PinCode"},
-    {key: "Praposed_Date_of_Transfer", label: "Praposed_Date_of_Transfer"},
-    {key: "RTA_Status", label: "RTA_Status"},
-    {key: "Refrence_Number", label: "Refrence_Number"},
-    {key: "Region", label: "Region"},
-    {key: "Remarks", label: "Remarks"},
-    {key: "Serial_Number", label: "Serial_Number"},
-    {key: "Sheet_No", label: "Sheet_No"},
-    {key: "State", label: "State"},
-    {key: "Suspense", label: "Suspense"},
-    {key: "TeamMember_Assigned", label: "TeamMember_Assigned"},
-    {key: "TeamMember_Assigned_ID", label: "TeamMember_Assigned_ID"},
-    {key: "Team_Assigned", label: "Team_Assigned"},
-    {key: "Team_Assigned_ID", label: "Team_Assigned_ID"},
-    {key: "Tel_InSuspense", label: "Tel_InSuspense"},
-    {key: "Tel_Joint_Holder_Name", label: "Tel_Joint_Holder_Name"},
-    {key: "Tel_No_Of_Certificate", label: "Tel_No_Of_Certificate"},
-    {key: "Tel_Nominee_Name", label: "Tel_Nominee_Name"},
-    {key: "Tel_VerificationStatus", label: "Tel_VerificationStatus"},
-    {key: "Tele_Comment", label: "Tele_Comment"},
-    {key: "TraceLetter_Comment", label: "TraceLetter_Comment"},
-    {key: "Unclaimed_shares", label: "Unclaimed_shares"},
-    {key: "User_ID", label: "User_ID"},
-    {key: "Variable_Status", label: "Variable_Status"},
-    {key: "Village_Name", label: "Village_Name"},
-    {key: "dataDropdown", label: "dataDropdown"},
-    {key: "ec", label: "ec"}
+    {value: "Aadhar_number", label: "Aadhar_number"},
+    {value: "Address", label: "Address"},
+    {value: "Adv_Advance_Status", label: "Adv_Advance_Status"},
+    {value: "Adv_Index_Number", label: "Adv_Index_Number"},
+    {value: "Adv_New_Address", label: "Adv_New_Address"},
+    {value: "Assign_To_BD", label: "Assign_To_BD"},
+    {value: "Assign_To_Ops", label: "Assign_To_Ops"},
+    {value: "BD_Case_Study", label: "BD_Case_Study"},
+    {value: "BD_Case_Type", label: "BD_Case_Type"},
+    {value: "BD_Comment", label: "BD_Comment"},
+    {value: "BD_Confidence_Level", label: "BD_Confidence_Level"},
+    {value: "BD_Status", label: "BD_Status"},
+    {value: "BD_Status_Value", label: "BD_Status_Value"},
+    {value: "BD_Templete_View", label: "BD_Templete_View"},
+    {value: "Company_Name", label: "Company_Name"},
+    {value: "Consolidated_Address", label: "Consolidated_Address"},
+    {value: "ContactDetails", label: "ContactDetails"},
+    {value: "Country", label: "Country"},
+    {value: "Curier_Status", label: "Curier_Status"},
+    {value: "Date_of_Birth", label: "Date_of_Birth"},
+    {value: "Date_of_Transfer", label: "Date_of_Transfer"},
+    {value: "District", label: "District"},
+    {value: "Dp_id", label: "Dp_id"},
+    {value: "Father_First_Name", label: "Father_First_Name"},
+    {value: "Father_Full_Name", label: "Father_Full_Name"},
+    {value: "Father_Last_Name", label: "Father_Last_Name"},
+    {value: "Father_Middle_Name", label: "Father_Middle_Name"},
+    {value: "Fees", label: "Fees"},
+    {value: "File_ID", label: "File_ID"},
+    {value: "File_No", label: "File_No"},
+    {value: "Folio_Number", label: "Folio_Number"},
+    {value: "IEPF", label: "IEPF"},
+    {value: "Investment_Type", label: "Investment_Type"},
+    {value: "Investor_First_Name", label: "Investor_First_Name"},
+    {value: "Investor_Full_Name", label: "Investor_Full_Name"},
+    {value: "Investor_Last_Name", label: "Investor_Last_Name"},
+    {value: "Investor_Middle_Name", label: "Investor_Middle_Name"},
+    {value: "JointHolderName", label: "JointHolderName"},
+    {value: "KYC_Compliance", label:"KYC_Compliance"},
+    {value: "Letter_Status", label: "Letter_Status"},
+    {value: "Letter_Tracking_Number", label: "Letter_Tracking_Number"},
+    {value: "Market_Value", label: "Market_Value"},
+    {value: "No_Of_Share", label: "No_Of_Share"},
+    {value: "Nominee_Name", label: "Nominee_Name"},
+    {value: "Ops_CaseType", label: "Ops_CaseType"},
+    {value: "Ops_CertificateNumber", label: "Ops_CertificateNumber"},
+    {value: "Ops_Comment", label: "Ops_Comment"},
+    {value: "Ops_DistinctiveNumber", label: "Ops_DistinctiveNumber"},
+    {value: "Ops_DividendCredited", label: "Ops_DividendCredited"},
+    {value: "Ops_DividendCreditedOn", label: "Ops_DividendCreditedOn"},
+    {value: "Ops_InvoiceIssued", label: "Ops_InvoiceIssued"},
+    {value: "Ops_InvoiceIssuedOn", label: "Ops_InvoiceIssuedOn"},
+    {value: "Ops_PaymentReceived", label: "Ops_PaymentReceived"},
+    {value: "Ops_PaymentReceivedOn", label: "Ops_PaymentReceivedOn"},
+    {value: "Ops_SharesCredited", label: "Ops_SharesCredited"},
+    {value: "Ops_SharesCreditedOn", label: "Ops_SharesCreditedOn"},
+    {value: "Ops_Stages", label: "Ops_Stages"},
+    {value: "Ops_WorkStatus", label: "Ops_WorkStatus"},
+    {value: "Pan_Card", label: "Pan_Card"},
+    {value: "Physical", label: "Physical"},
+    {value: "PinCode", label: "PinCode"},
+    {value: "Praposed_Date_of_Transfer", label: "Praposed_Date_of_Transfer"},
+    {value: "RTA_Status", label: "RTA_Status"},
+    {value: "Refrence_Number", label: "Refrence_Number"},
+    {value: "Region", label: "Region"},
+    {value: "Remarks", label: "Remarks"},
+    {value: "Serial_Number", label: "Serial_Number"},
+    {value: "Sheet_No", label: "Sheet_No"},
+    {value: "State", label: "State"},
+    {value: "Suspense", label: "Suspense"},
+    {value: "TeamMember_Assigned", label: "TeamMember_Assigned"},
+    {value: "TeamMember_Assigned_ID", label: "TeamMember_Assigned_ID"},
+    {value: "Team_Assigned", label: "Team_Assigned"},
+    {value: "Team_Assigned_ID", label: "Team_Assigned_ID"},
+    {value: "Tel_InSuspense", label: "Tel_InSuspense"},
+    {value: "Tel_Joint_Holder_Name", label: "Tel_Joint_Holder_Name"},
+    {value: "Tel_No_Of_Certificate", label: "Tel_No_Of_Certificate"},
+    {value: "Tel_Nominee_Name", label: "Tel_Nominee_Name"},
+    {value: "Tel_VerificationStatus", label: "Tel_VerificationStatus"},
+    {value: "Tele_Comment", label: "Tele_Comment"},
+    {value: "TraceLetter_Comment", label: "TraceLetter_Comment"},
+    {value: "Unclaimed_shares", label: "Unclaimed_shares"},
+    {value: "User_ID", label: "User_ID"},
+    {value: "Variable_Status", label: "Variable_Status"},
+    {value: "Village_Name", label: "Village_Name"},
+    {value: "dataDropdown", label: "dataDropdown"},
+    {value: "ec", label: "ec"}
 ]
 );
 
- 
+const [filters, setFilters] = useState([]);
+
+
+
 
 
   useEffect(() => {
@@ -159,7 +173,91 @@ const BdSearch = () => {
     }
   }, [serchtxt, filtertext, dashboardData]);
   
+  const handlesinglesearch = async()=>{
+    console.log("rutikkkkkkk",singlesrchfilter,singlesrchtxt);
+    let errror = 0 ;
+     if (singlesrchtxt == "") {
+      setsinglesrchtxterr("Required")
+      errror=errror+1;
+     } else {
+      setsinglesrchtxterr("");
+     }
+     if (singlesrchfilter == "") {
+      setsinglesrchfiltererr("Required")
+      errror=errror+1;
+     } else {
+      setsinglesrchfiltererr("");
+     }
+     if (errror>0) {
+      return false
+     }
+
+     await fetch(Environment.BASE_URL +'/SingleSearch',{
+         method:'POST',
+         headers:{
+          'Content-Type':'application/json'
+         } ,
+         body:JSON.stringify({
+           search:singlesrchtxt,
+           searchtext:singlesrchfilter
+         }),
+    }).then(response=>response.json())
+    .then(async(result)=>{
+      console.log("singlesearchresult_______",result);
+      if (!result.isException) {
+        setDashboardData(result.result)
+      }
+    });
+  }
   
+
+const addFilter = () => {
+  setFilters([...filters, { DropdownId: '', TextId: '' }]);
+};
+
+const updateFilter = (index, value) => {
+  const newFilters = [...filters];
+  newFilters[index].DropdownId = value;
+  setFilters(newFilters);
+  console.log(filters);
+};
+
+const updateSearchText = (index, text) => {
+  const newFilters = [...filters];
+  newFilters[index].TextId = text;
+  setFilters(newFilters);
+};
+
+const handlemultiplesearch = async()=>{
+  console.log("rutik bhau ky challay_____",filters)
+  if (filters.length == 0) {
+    alert("please select a filter and fill the information ");
+    return false;
+  }
+  await fetch(Environment.BASE_URL+'/MultipleSearch',{
+    method:'POST',
+    headers:{
+      'Content-Type': 'application/json',
+    },
+    body:JSON.stringify(filters),
+  }).then(response=>response.json())
+    .then(async(result)=>{
+      console.log("multiplesearchresponse_________",result);
+      if (!result.isException) {
+        setDashboardData(result.result);
+        setmultiplesearchmodal(false);
+      }
+    } )
+}
+ 
+const handledelete = async()=>{
+  setFilters([]);
+}
+const handleclearall = async()=>{
+  
+  await fetchDashboardData();
+
+}
 
   const handleFilterSelect = (filter) => {
     setSelectedFilter(filter);
@@ -182,7 +280,7 @@ const BdSearch = () => {
   const renderItem = ({ item ,key}) => (
 <TouchableOpacity onPress={() => navigation.navigate('AddFile', { fileId: item.File_ID, aadharCard: item.Aadhar_number, panCard: item.Pan_Card })}>
 
-    <View style={styles.tableRow}>
+    <View style={styles.tableRow} key={key}>
       <Text style={styles.cell}>{item.File_ID}</Text>
       <View style={styles.verticalDivider}></View>
       <Text style={styles.cell}>{item.File_No}</Text>
@@ -200,7 +298,7 @@ const BdSearch = () => {
         <View style={styles.filterRow}>
          
         <Dropdown
-          style={{width:'100%',color:'gray',borderColor:'black',borderWidth:1,height:40,borderRadius:5,backgroundColor:'white',padding:5,marginRight:5,marginLeft:0}}
+          style={{color:'gray',width:'50%',borderColor:'black',borderWidth:1,height:40,borderRadius:5,backgroundColor:'white',padding:5,marginRight:5,marginLeft:0}}
           placeholderStyle={{color:'gray'}}
           selectedTextStyle={{color:'gray'}}
           inputSearchStyle={{color:'gray'}}
@@ -213,51 +311,54 @@ const BdSearch = () => {
           valueField="value"
           placeholder={('Select')}
           searchPlaceholder="Search..."
-          value={filtertext}
+          value={singlesrchfilter}
          
           onChange={item => {
-            setfiltertext(item.label);
+           setsinglesrchfilter(item.value);
           }}
          
         />
+        {/* {singlesrchfiltererr ?
+      <Text style={styles.errorText} onPress={() => navigation.navigate('Forgot Password')}>
+        {singlesrchfiltererr}
+      </Text>:null
+      } */}
           <TextInput
-              style={{borderColor:'black',color:'gray',backgroundColor:'white',borderRadius:5,height:35,padding:3,width:"100%"}}
+              style={{borderColor:'black',width:'45%',color:'gray',backgroundColor:'white',borderRadius:5,height:35,padding:3,}}
               placeholder="Enter Text"
               placeholderTextColor={"gray"}
-              value={serchtxt}
-              onChangeText={(text)=>{setserchtxt(text)}}
+              value={singlesrchtxt}
+              onChangeText={(text)=>{setsinglesrchtxt(text)}}
               // editable={false}
               pointerEvents="none"
             />
-          {isFilterDropdownVisible && (
-            <View style={styles.dropdownList}>
-              {['Filter 1', 'Filter 2', 'Filter 3'].map((item) => (
-                <TouchableOpacity key={item} onPress={() => handleFilterSelect(item)} style={styles.dropdownItem}>
-                  <Text style={styles.dropdownItemText}>{item}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )}
-          {/* <TextInput
-            style={[styles.filterInput, { width: '50%', marginRight: 10 }]}
-            placeholder="Enter..."
-          /> */}
-          <TouchableOpacity  onPress={search} style={[styles.searchButton,{marginLeft:10}]}>
-            <Text style={styles.searchButtonText}>🔍</Text>
+         {/* {singlesrchtxterr ?
+      <Text style={styles.errorText} onPress={() => navigation.navigate('Forgot Password')}>
+        {singlesrchtxterr}
+      </Text>:null
+      } */}
+        </View>
+        <View style={{alignItems:'center',justifyContent:'center',marginBottom:10}}>
+        <TouchableOpacity  onPress={handlesinglesearch} style={[styles.searchButtonText,{flexDirection:'row',paddingTop:7}]}>
+            <Text style={{fontWeight:'bold',color:'white',fontSize:17}}>Search</Text>
+            <Icon name="search" size={20} color="#000"
+              style={{marginLeft:10,marginTop:3,color:'white'}}
+            />
           </TouchableOpacity>
+
         </View>
       </View>
 
       <View style={styles.buttonRow}>
-      <TouchableOpacity style={styles.button} >
+      <TouchableOpacity style={styles.button} onPress={()=>{setmultiplesearchmodal(true)}} >
       <Text style={styles.buttonText}>Multiple Search</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity  onPress={handleclearall} style={styles.button}>
           <Text style={styles.buttonText}>Clear All</Text>
         </TouchableOpacity>
       </View>
 
-      <View style={styles.paginationRow}>
+      {/* <View style={styles.paginationRow}>
         <TouchableOpacity style={styles.inputContainer} onPress={handleEntriesDropdownToggle}>
           <TextInput
             style={styles.entriesInput}
@@ -290,6 +391,14 @@ const BdSearch = () => {
         <TouchableOpacity style={styles.paginationButton}>
           <Text style={styles.paginationText}>NEXT</Text>
         </TouchableOpacity>
+      </View> */}
+      <View style ={{height:40,marginBottom:10}}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search Company Name"
+          value={searchQuery}
+          onChangeText={handleSearch}
+        />
       </View>
       <View style={styles.tableHeader}>
             <Text style={styles.headerCell}>File ID</Text>
@@ -317,6 +426,80 @@ const BdSearch = () => {
         //   // </View>
         // )}
       />
+         <Modal
+        isVisible={multiplesearchmodal}
+        onBackdropPress={() => setmultiplesearchmodal(false)}
+        onBackButtonPress={() => setmultiplesearchmodal(false)}
+        onSwipeComplete={() => setmultiplesearchmodal(false)}
+        backdropOpacity={0.5}
+      >
+        <View style={{ height: 'auto', width: "150%", position: 'absolute', top: 50 }}>
+          <View style={{ backgroundColor: Appearance.getColorScheme() === 'dark' ? "gray" : 'white', height: 'auto', width: "70%", borderRadius: 10, padding: 10, justifyContent: 'flex-start' }}>
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+              <TouchableOpacity
+                style={{ width: '50%',flexDirection:'row', height: 40, backgroundColor: 'green', justifyContent: 'center', alignItems: 'center', borderRadius: 10 }}
+                onPress={addFilter}
+              >
+                 <Text style={{fontWeight:'bold',color:'white',fontSize:17}}>Select Filter</Text>
+                 <Icon name="plus" size={20} color="#000"
+              style={{marginLeft:10,marginTop:3,color:'white'}}
+            />
+              </TouchableOpacity>
+              {filters.map((filter, index) => (
+                <View key={index} style={{ width: '100%', flexDirection: 'row', marginTop: 5 }}>
+                  <Dropdown
+                    style={{ width: '50%', color: 'gray', borderColor: 'black', borderWidth: 1, height: 40, borderRadius: 5, backgroundColor: 'white', padding: 5, marginRight: 5 }}
+                    placeholderStyle={{ color: 'gray' }}
+                    selectedTextStyle={{ color: 'gray' }}
+                    inputSearchStyle={{ color: 'gray' }}
+                    itemTextStyle={{ color: 'gray' }}
+                    data={filterarr}
+                    search
+                    maxHeight={300}
+                    labelField="label"
+                    valueField="value"
+                    placeholder="Select"
+                    searchPlaceholder="Search..."
+                    value={filter.filter}
+                    // key={`dropdown-${index}`}
+                    onChange={(item) =>{ updateFilter(index, item.value)}}
+                    
+                  />
+                  <View style={{ width: '50%' }}>
+                    <TextInput
+                      style={{ borderColor: 'black', borderWidth: 1, color: 'gray', backgroundColor: 'white', borderRadius: 5, height: 40, padding: 3, width: "100%" }}
+                      placeholder="Enter Text"
+                      placeholderTextColor={"gray"}
+                      value={filter.searchText}
+                      onChangeText={text => updateSearchText(index, text)}
+                    />
+                  </View>
+                </View>
+              ))}
+              <View style={{flexDirection:'row' ,justifyContent:'space-between'}}>
+              <TouchableOpacity
+              onPress={handlemultiplesearch}
+                style={{ width: '40%',flexDirection:'row', height: 40, backgroundColor: 'green', marginTop: 10, justifyContent: 'center', alignItems: 'center', borderRadius: 10 }}
+              >
+               <Text style={{fontWeight:'bold',color:'white',fontSize:17}}>  Search</Text>
+               <Icon name="search" size={20} color="#000"
+              style={{marginLeft:10,marginTop:3,color:'white'}}
+            />
+              </TouchableOpacity>
+              <TouchableOpacity
+              onPress={handledelete}
+                style={{ width: '40%',flexDirection:'row', height: 40, backgroundColor: 'red', marginTop: 10,marginLeft:10, justifyContent: 'center', alignItems: 'center', borderRadius: 10 }}
+              >
+                <Text style={{fontWeight:'bold',color:'white',fontSize:17}}> Delete</Text>
+                <Icon name="trash" size={20} color="#000"
+              style={{marginLeft:10,marginTop:3,color:'white'}}
+            />
+              </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -332,7 +515,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 10,
     marginTop: 10,
-    width: "40%",
+    width: "100%",
     marginLeft: 10,
     marginRight: 10,
   },
@@ -356,6 +539,8 @@ const styles = StyleSheet.create({
   },
   searchButtonText: {
     color: 'white',
+    backgroundColor: '#162732',height:40,
+    width:"50%",borderRadius:5,justifyContent:'center',textAlign:'center'
   },
   buttonRow: {
     flexDirection: 'row',
@@ -374,6 +559,14 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
+  },
+  errorText: {
+    width: '90%',
+    paddingHorizontal: 5,
+    marginTop:5,
+    fontSize: 14,
+    alignSelf: 'center',
+    color: 'red',
   },
   paginationRow: {
     flexDirection: 'row',
