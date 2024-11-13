@@ -174,7 +174,9 @@ const CreateAccount = () => {
       {/* Continue with Google and Phone */}
       <Text style={{ marginLeft: 40,marginTop:15 }}>_____________________ or_______________________</Text>
       <View style={{ padding: '5%', justifyContent: 'flex-start', alignItems: 'center', paddingTop: 10 }}>
-        <TouchableOpacity style={styles.buttonContainer} onPress={handleProfilePress}>
+        <TouchableOpacity style={styles.buttonContainer}
+        //  onPress={handleProfilePress}
+         >
           <Text style={styles.buttonText}>Continue with Google</Text>
           <Icon name="google" size={20} color="red" style={styles.icon} />
         </TouchableOpacity>

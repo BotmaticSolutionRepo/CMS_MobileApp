@@ -23,14 +23,14 @@ const SupportTeam = () => {
                     <MaterialIcons name="chevron-right" size={30} color={Appearance.getColorScheme() === 'dark' ? '#fff' : 'blue'} style={{ marginLeft: 30 }} />
                 </TouchableOpacity>
                 <View style={styles.mailContainer}>
-                    <MaterialIcons name="email" size={60} color={Appearance.getColorScheme() === 'dark' ? '#CC8529' : '#000'} style={{ marginBottom: 10 }} />
+                    <MaterialIcons name="email" size={60} color={Appearance.getColorScheme() === 'dark' ? '#CC8529' : 'orange'} style={{ marginBottom: 10 }} />
                     <Text style={[styles.mailText, { color: Appearance.getColorScheme() === 'dark' ? '#fff' : '#000' }]}>Send us an email:</Text>
-                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: Appearance.getColorScheme() === 'dark' ? '#fff' : '#000' }}>botmatic@solution.in</Text>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: Appearance.getColorScheme() === 'dark' ? '#fff' : '#000' }}>basweshwar.g@botmaticsolution.in</Text>
                 </View>
                 <View style={styles.contactContainer}>
-                    <MaterialIcons name="phone" size={60} color={Appearance.getColorScheme() === 'dark' ? '#04B800' : '#000'} style={{ marginBottom: 10 }} />
+                    <MaterialIcons name="phone" size={60} color={Appearance.getColorScheme() === 'dark' ? '#04B800' : 'green'} style={{ marginBottom: 10 }} />
                     <Text style={[styles.mailText, { color: Appearance.getColorScheme() === 'dark' ? '#fff' : '#000' }]}>Contact us on:</Text>
-                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: Appearance.getColorScheme() === 'dark' ? '#fff' : '#000' }}>+91930718158</Text>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: Appearance.getColorScheme() === 'dark' ? '#fff' : '#000' }}>+918530617353</Text>
                 </View>
             </View>
         </View>

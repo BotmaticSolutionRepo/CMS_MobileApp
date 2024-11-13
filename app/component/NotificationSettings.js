@@ -48,7 +48,7 @@ const NotificationSettings = () => {
     }
   }, [mailNotificationsEnabled]);
   const handlesave = (buttonName) => {
-    navigation.navigate('Profile');
+    // navigation.navigate('Profile');
     console.log('Button pressed:', buttonName);
   };
 
@@ -197,6 +197,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingVertical: 15,
     alignItems: 'center',
+    marginBottom:20,
   },
   saveButtonText: {
     color: '#fff',

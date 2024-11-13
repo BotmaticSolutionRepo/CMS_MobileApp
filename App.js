@@ -76,7 +76,7 @@ const App = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator initialRouteName="Main">
         <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="CreateAccount" component={CreateAccountScreen} options={{ title: 'Create Account', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
@@ -84,12 +84,12 @@ const App = () => {
         <Stack.Screen name="Forgot Password" component={ForgotPassword} options={{ title: 'Forgot Password', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
         <Stack.Screen name="ChangePassword" component={ChangePassword} options={{ title: 'Change Password', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
         <Stack.Screen name="PersonalInformation" component={PersonalInformation} options={{ title: 'Personal Information', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
-        <Stack.Screen name="WeeklyProgress" component={WeeklyProgress} options={{ title: 'WeeklyProgressTwo', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
+        <Stack.Screen name="WeeklyProgress" component={WeeklyProgress} options={{ title: 'Legal Process', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
         <Stack.Screen name="UpdateKYC" component={UpdateKYC} options={{title: 'Update KYC', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9',  }}  />
         <Stack.Screen name="SupportChat" component={SupportChat} options={{ title: 'Support Chat', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
         <Stack.Screen name="Notification" component={Notification} options={{ title: 'Notification', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
         <Stack.Screen name="SupportTeam" component={SupportTeam} options={{ title: 'SupportTeam', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
-        <Stack.Screen name="WeeklyProgressTwo" component={WeeklyProgressTwo} options={{ title: 'WeeklyProgressTwo', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
+        <Stack.Screen name="WeeklyProgressTwo" component={WeeklyProgressTwo} options={{ title: 'Weekly Progress', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
         <Stack.Screen name="Dashboard" component={Dashboard} options={{ headerShown:false }} />
         <Stack.Screen name="BdDashboard" component={BdDashboard} options={{ headerShown:false }} />
         <Stack.Screen name="BdFilesReport" component={BdFilesReport} options={{title: 'Bd Files Report', headerShown:true , }} />

@@ -9,7 +9,7 @@ const MainScreen = ({ navigation }) => {
         <View style={styles.container}>
             <Image style={styles.logoImage} source={require('../Images/cms.png')} />
             {/* <Text style={styles.title}>Botmatic</Text> */}
-            <View style={{ marginTop: "60%" }}>
+            <View style={{ marginTop: "50%" }}>
                 <TouchableOpacity
                     style={styles.buttonContainer}
                     onPress={() => navigation.navigate('Login')}
@@ -19,7 +19,7 @@ const MainScreen = ({ navigation }) => {
 
                 <TouchableOpacity
                     style={styles.createaccount}
-                    onPress={() => navigation.navigate('Details')}
+                    onPress={() => navigation.navigate('CreateAccount')}
                 >
                     <Text style={styles.createaccounttext}>Create Account</Text>
                 </TouchableOpacity>

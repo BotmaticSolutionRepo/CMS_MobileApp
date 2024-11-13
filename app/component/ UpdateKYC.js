@@ -102,7 +102,8 @@ const UpdateKYC = () => {
             <Text style={styles.inputText}>************</Text>
           </View>
         </View>
-        <TouchableOpacity style={styles.updateButton}>
+        <TouchableOpacity style={styles.updateButton} onPress={() => {
+          navigation.navigate('Dashboard',{UserName:"Basweshwar "})}}>
           <Text style={styles.updateButtonText}>Update</Text>
         </TouchableOpacity>
       </View>

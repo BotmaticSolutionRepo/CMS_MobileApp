@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Appearance, Platform } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'; 
+import { useNavigation } from '@react-navigation/native';
 
 const WeeklyProgressTwo = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  
+  const navigation = useNavigation();
   return (
     <View style={[styles.container, { backgroundColor: Appearance.getColorScheme() === 'dark' ? '#000' : '#fff' }]}>
       {/* Search Input */}
@@ -41,7 +42,8 @@ const WeeklyProgressTwo = () => {
                 {index === 10 && 'ISR 4'}
               </Text>
               <TextInput style={styles.taskTextInput} placeholder="1 day" />
-              <TouchableOpacity>
+              <TouchableOpacity  onPress={() => {
+          navigation.navigate('UpdateKYC')}}>
                 <MaterialIcons name="add" size={30} color="#0079FB"   /> 
               </TouchableOpacity>
             </View>

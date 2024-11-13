@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, FlatList, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const SupportChat = () => {
   const [message, setMessage] = useState('');
@@ -51,13 +52,19 @@ const SupportChat = () => {
                   <Text style={styles.message}>{item.message}</Text>
                   <Text style={styles.timestamp}>{formatTime(item.timestamp)}</Text>
                 </View>
-                <Image source={require('../Images/cms.png')} style={styles.profileImage} />
+                <Icon name="person-circle-outline" size={30} color="gray"
+           style={{marginLeft:5,}}
+         />
+                {/* <Image source={require('../Images/cms.png')} style={styles.profileImage} /> */}
               </View>
             )}
             {item.sender === "support" && (
-              <View style={styles.supportMessageContent}>
-                <Text style={styles.supportMessage}>{item.message}</Text>
-                <Text style={styles.timestamp}>{formatTime(item.timestamp)}</Text>
+              <View style={styles.userMessageContent}>
+                <Image source={require('../Images/cms.png')} style={styles.profileImage} />
+                <View style={styles.supportMessageContent}>
+                  <Text style={styles.supportMessage}>{item.message}</Text>
+                  <Text style={styles.timestamp}>{formatTime(item.timestamp)}</Text>
+                </View>
               </View>
             )}
           </View>
@@ -119,7 +126,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'lightblue', // Adjust background color for user messages
     borderRadius: 5,
     padding: 10,
-    elevation:5,
+    elevation: 5,
     marginRight: 10,
   },
   message: {

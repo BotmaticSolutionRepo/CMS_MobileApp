@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 14,
     color: '#555',
+    fontWeight:'bold',
     paddingBottom: 3,
   },
   profileImage: {

@@ -13,7 +13,7 @@ var Environment = require('../../environment.js');
 const Login = () => {
   const navigation = useNavigation();
 
-  // const [username, setUsername] = useState('michaeldavis');
+  // const [username, setUsername] = useState('Bussiness');
   // const [password, setPassword] = useState('Password123');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -38,6 +38,7 @@ const Login = () => {
   };
 
   const handleLogin = async () => { 
+    // navigation.navigate('Dashboard',{UserName:"Basweshwar "})
     console.log('loginnnnnnnnnnnnnnnn',Environment.BASE_URL)
    try {
 
@@ -126,6 +127,7 @@ const Login = () => {
           placeholder="Username or Email"
           placeholderTextColor='#A9A9A9'
           value={username}
+          maxLength={30}
           onChangeText={text => setUsername(text)}
         />
         <View style={styles.icon}>
@@ -145,6 +147,7 @@ const Login = () => {
           placeholderTextColor='#A9A9A9'
           secureTextEntry={showpassword}
           value={password}
+          maxLength={30}
           onChangeText={text => setPassword(text)}
         />
         <TouchableOpacity style={styles.icon} onPress={() => setshowpassword(!showpassword)}>

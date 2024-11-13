@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Alert, ScrollView, Button, Image, StyleSheet,Appearance, Platform,TouchableOpacity, Dimensions, FlatList, Modal } from 'react-native';
+import { View, Text, TextInput, Alert, ScrollView, Button, Image, StyleSheet, Appearance, Platform, TouchableOpacity, Dimensions, FlatList, Modal } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Picker } from '@react-native-picker/picker';
 import { Card, IconButton } from 'react-native-paper';
@@ -199,10 +199,12 @@ const AddFile = ({ route }) => {
       const token = await AsyncStorage.getItem('token');
       const usern = await AsyncStorage.getItem('Username');
       setUsername(usern);
+      console.log("datasendtoeditfile________",JSON.stringify({
+        File_ID: Fileiddd,
+        token: token
+      }),)
       await fetch(Environment.BASE_URL + "/EditFile", {
         method: 'POST',
-
-
         headers: {
           'Content-Type': 'application/json',
         },
@@ -286,14 +288,14 @@ const AddFile = ({ route }) => {
                 return { label: item.BD_Status, value: item.Id };
               })
               setBdstatusList(newarray);
-              console.log("bdstaturlist_______",data.result?.BdStatusList,"rutiiik",BdstatusList)
+              console.log("bdstaturlist_______", data.result?.BdStatusList, "rutiiik", BdstatusList)
               // setBdstatus(updatedFileData.Record.BD_Status)
               if (updatedFileData.Record.BD_Status) {
-                var rutik =   newarray.filter((item)=>{
-                    return item.label==updatedFileData.Record.BD_Status
-                  })
-                  console.log("newwwwwwwww____",rutik,"apivalue",updatedFileData.Record.BD_Status) 
-                 setBdstatus(rutik[0].value)
+                var rutik = newarray.filter((item) => {
+                  return item.label == updatedFileData.Record.BD_Status
+                })
+                console.log("newwwwwwwww____", rutik, "apivalue", updatedFileData.Record.BD_Status)
+                setBdstatus(rutik[0].value)
               }
             }
             // setBdstatusList(data.result?.BdStatusList)
@@ -301,54 +303,83 @@ const AddFile = ({ route }) => {
 
           // console.log("filedetailsssgggssss", updatedFileData.Record.File_ID);
 
-          // console.log("Document______", data?.result?.KycDocumentList[0]?.Adhar_Card.slice(0,1000));
+          console.log("Document______", data?.result?.KycDocumentList);
 
-          if (data?.result?.KycDocumentList[0]?.Adhar_Card) {
-            const adharCardBytes = data.result.KycDocumentList[0].Adhar_Card;
-            const pdfBase64 = `data:application/pdf;base64,${adharCardBytes}`;
-            console.log('Base64 PDF Length:', pdfBase64.length);
+          if ( data?.result?.KycDocumentList) {
+            const  Adhar =  data?.result?.KycDocumentList[0].Adhar_Card;
+            const  Pan =  data?.result?.KycDocumentList[0].Pan_Card;
+            const  Cancelcheq =  data?.result?.KycDocumentList[0].Cancel_Cheque;
+            const  Clientmasterlist =  data?.result?.KycDocumentList[0].Client_Master_List;
+            const  Aggrementcopy =  data?.result?.KycDocumentList[0].Agreement_Copy;
 
-            SetAdharCardPdf(pdfBase64);
-          } else {
-            console.log('No Adhar_Card found in the data');
-          }
-          if (data?.result?.KycDocumentList[0]?.Pan_Card) {
-            const adharCardBytes = data.result.KycDocumentList[0].Pan_Card;
-            const pdfBase64 = `data:application/pdf;base64,${adharCardBytes}`;
-            console.log('Pan_Card Pdf Length:', pdfBase64.length);
-
-            SetPanCardPdf(pdfBase64);
-          } else {
-            console.log('No PanCard found in the data');
-          }
-          if (data?.result?.KycDocumentList[0]?.Agreement_Copy) {
-            const adharCardBytes = data.result.KycDocumentList[0].Agreement_Copy;
-            const pdfBase64 = `data:application/pdf;base64,${adharCardBytes}`;
-            console.log('Agreement_Copy PDF Length:', pdfBase64.length);
-
-            SetAgreeentCopyPdf(pdfBase64);
-          } else {
-            console.log('No Agreement_Copy found in the data');
-          }
-          if (data?.result?.KycDocumentList[0]?.Client_Master_List) {
-            const adharCardBytes = data.result.KycDocumentList[0].Client_Master_List;
-            const pdfBase64 = `data:application/pdf;base64,${adharCardBytes}`;
-            console.log('Client_Master_List PDF Length:', pdfBase64.length);
-
-            SetClientMasterListPdf(pdfBase64);
-          } else {
-            console.log('No Client_Master_List found in the data');
+            if (Adhar) {
+              SetAdharCardPdf(Environment.BASE_URL+Adhar);
+              
+            }
+            if (Cancelcheq) {
+              SetCancelChequePdf(Environment.BASE_URL+Cancelcheq);
+              
+            } 
+            if (Clientmasterlist) {
+              SetClientMasterListPdf(Environment.BASE_URL+Clientmasterlist);
+              
+            } 
+            if (Aggrementcopy) {
+              SetAgreeentCopyPdf(Environment.BASE_URL+Aggrementcopy);
+              
+            } 
+            if (Pan) {
+              SetPanCardPdf(Environment.BASE_URL+Pan);
+              
+            }
           }
 
-          if (data?.result?.KycDocumentList[0]?.Cancel_Cheque) {
-            const adharCardBytes = data.result.KycDocumentList[0].Cancel_Cheque;
-            const pdfBase64 = `data:application/pdf;base64,${adharCardBytes}`;
-            console.log('Cancel_Cheque PDF Length:', pdfBase64.length);
+          // if (data?.result?.KycDocumentList[0]?.Adhar_Card) {
+          //   const adharCardBytes = data.result.KycDocumentList[0].Adhar_Card;
+          //   const pdfBase64 = `data:application/pdf;base64,${adharCardBytes}`;
+          //   console.log('Base64 PDF Length:', pdfBase64.length);
 
-            SetCancelChequePdf(pdfBase64);
-          } else {
-            console.log('No Cancel_Cheque found in the data');
-          }
+          //   SetAdharCardPdf(pdfBase64);
+          // } else {
+          //   console.log('No Adhar_Card found in the data');
+          // }
+          // if (data?.result?.KycDocumentList[0]?.Pan_Card) {
+          //   const adharCardBytes = data.result.KycDocumentList[0].Pan_Card;
+          //   const pdfBase64 = `data:application/pdf;base64,${adharCardBytes}`;
+          //   console.log('Pan_Card Pdf Length:', pdfBase64.length);
+
+          //   SetPanCardPdf(pdfBase64);
+          // } else {
+          //   console.log('No PanCard found in the data');
+          // }
+          // if (data?.result?.KycDocumentList[0]?.Agreement_Copy) {
+          //   const adharCardBytes = data.result.KycDocumentList[0].Agreement_Copy;
+          //   const pdfBase64 = `data:application/pdf;base64,${adharCardBytes}`;
+          //   console.log('Agreement_Copy PDF Length:', pdfBase64.length);
+
+          //   SetAgreeentCopyPdf(pdfBase64);
+          // } else {
+          //   console.log('No Agreement_Copy found in the data');
+          // }
+          // if (data?.result?.KycDocumentList[0]?.Client_Master_List) {
+          //   const adharCardBytes = data.result.KycDocumentList[0].Client_Master_List;
+          //   const pdfBase64 = `data:application/pdf;base64,${adharCardBytes}`;
+          //   console.log('Client_Master_List PDF Length:', pdfBase64.length);
+
+          //   SetClientMasterListPdf(pdfBase64);
+          // } else {
+          //   console.log('No Client_Master_List found in the data');
+          // }
+
+          // if (data?.result?.KycDocumentList[0]?.Cancel_Cheque) {
+          //   const adharCardBytes = data.result.KycDocumentList[0].Cancel_Cheque;
+          //   const pdfBase64 = `data:application/pdf;base64,${adharCardBytes}`;
+          //   console.log('Cancel_Cheque PDF Length:', pdfBase64.length);
+
+          //   SetCancelChequePdf(pdfBase64);
+          // } else {
+          //   console.log('No Cancel_Cheque found in the data');
+          // }
           // console.log("rutik_______",AdharCardPdf)
           setisSpinnerVisible(false);
         })
@@ -369,72 +400,74 @@ const AddFile = ({ route }) => {
 
   const handleDeleteDocument = async (document) => {
     setisSpinnerVisible(true);
-    console.log("datasendtodeletekycdocument__________",JSON.stringify({
-      Document_Type:document,
-      FileID:Fileid,
-            }),)
-            // return false;
+    console.log("datasendtodeletekycdocument__________", JSON.stringify({
+      Document_Type: document,
+      FileID: Fileid,
+    }),)
+    // return false;
     await fetch(Environment.BASE_URL + "/DeleteKycDocument", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        Document_Type:document,
-        FileID:Fileid,
-   
-              }),
-    })
-    .then(response => response.json())
-    .then(async(data) => {
-      // Handle the response from the login API
-      console.log('DeleteKycDocumentresponse............:', data);
-      setisSpinnerVisible(false);
+        Document_Type: document,
+        FileID: Fileid,
 
-      if (data.isException) {
-        Alert.alert(data.result);
-      } else {
-        Alert.alert(
-          (('Success')),
-          (`${data.result}`),
-          [
-            // { text: (t('Cancel')), style: 'cancel' },
-            { text: (('OK')), onPress : () => {
-               setisSpinnerVisible(true);
-              fetchFileData();} 
-            },
-          ],
-          { cancelable: false }
-        );
-        switch (document) {
-          case "adhar_card":
-            SetAdharCardPdf("");
-            break;
-          case "pan_card":
-            SetPanCardPdf("");
-            break;
-          case "Agreement_Copy":
-            SetAgreeentCopyPdf("");
-            break;
-          case "Client_Master_List":
-            SetClientMasterListPdf("");
-            break;
-          case "cancel_cheque":
-            SetCancelChequePdf("");
-            break;
-          default:
-            // Handle default case, e.g., display an error message
-            console.error("Invalid document type",document);
-            break;
-        }
-      }
-    
+      }),
     })
-    
+      .then(response => response.json())
+      .then(async (data) => {
+        // Handle the response from the login API
+        console.log('DeleteKycDocumentresponse............:', data);
+        setisSpinnerVisible(false);
+
+        if (data.isException) {
+          Alert.alert(data.result);
+        } else {
+          Alert.alert(
+            (('Success')),
+            (`${data.result}`),
+            [
+              // { text: (t('Cancel')), style: 'cancel' },
+              {
+                text: (('OK')), onPress: () => {
+                  setisSpinnerVisible(true);
+                  fetchFileData();
+                }
+              },
+            ],
+            { cancelable: false }
+          );
+          switch (document) {
+            case "adhar_card":
+              SetAdharCardPdf("");
+              break;
+            case "pan_card":
+              SetPanCardPdf("");
+              break;
+            case "Agreement_Copy":
+              SetAgreeentCopyPdf("");
+              break;
+            case "Client_Master_List":
+              SetClientMasterListPdf("");
+              break;
+            case "cancel_cheque":
+              SetCancelChequePdf("");
+              break;
+            default:
+              // Handle default case, e.g., display an error message
+              console.error("Invalid document type", document);
+              break;
+          }
+        }
+
+      })
+
       .catch(error => {
         console.error('Error during login:', error);
         setisSpinnerVisible(false);
-      
+
       });
 
   }
@@ -471,7 +504,7 @@ const AddFile = ({ route }) => {
       },
       body: body,
     };
-    console.log("datasendtoUploadKycDocument______",body);
+    console.log("datasendtoUploadKycDocument______", body);
 
     fetch(Environment.BASE_URL + '/UploadKycDocument', requestOptions)
       .then(response => response.json())
@@ -491,15 +524,17 @@ const AddFile = ({ route }) => {
             (`${result.result}`),
             [
               // { text: (t('Cancel')), style: 'cancel' },
-              { text: (('OK')), onPress : () => {
-                 setisSpinnerVisible(true);
-                fetchFileData();} 
+              {
+                text: (('OK')), onPress: () => {
+                  setisSpinnerVisible(true);
+                  fetchFileData();
+                }
               },
             ],
             { cancelable: false }
           );
         }
-       
+
       });
 
 
@@ -532,7 +567,7 @@ const AddFile = ({ route }) => {
     setisSpinnerVisible(false);
   };
 
-  const handlebdstatus = ()=>{
+  const handlebdstatus = () => {
     // setBdstatus()
   }
 
@@ -714,7 +749,7 @@ const AddFile = ({ route }) => {
       // console.log("bdstatus_________",Bdstatus);return false;
       const token = await AsyncStorage.getItem('token');
       const selectedLabel = getLabelFromValue(Bdstatus);
-      
+
       console.log("datasendtoUpdateFile__________", JSON.stringify({
         File_ID: Fileid,
         token: token,
@@ -908,92 +943,92 @@ const AddFile = ({ route }) => {
       // customIndicator={<Image style={styles.logoImage} source={require('../../app/Images/Group111.png')} />}
       />
 
-      
-        { AdharCardPdf && PanCardPdf && AgreeentCopyPdf && ClientMasterListPdf && CancelChequePdf ?  
-       <View style={{ padding: 10, borderColor: Appearance.getColorScheme()=='dark'?"white":'#000000', borderWidth: 1, marginTop: 20, borderRadius: 10, marginBottom: 10 }}>
 
-        <Text style={[styles.sectionTitle,{textAlign:'center'}]}>ASSIGN FILE</Text>
-    
-       <View style={{ 
-          // flexDirection: 'row'
-           }}>
-          <View style={[styles.card, { width: '100%',borderColor:Appearance.getColorScheme()=='dark'?'white':'black' }]}>
-            <Text style={styles.cardTitle}>Assign to Team </Text>
-            <View style={styles.pickerContainer}>
-          
+      {AdharCardPdf  !="" && PanCardPdf !="" && AgreeentCopyPdf !="" && ClientMasterListPdf !="" && CancelChequePdf  !="" &&
+        (<View style={{ padding: 10, borderColor: Appearance.getColorScheme() == 'dark' ? "white" : '#000000', borderWidth: 1, marginTop: 20, borderRadius: 10, marginBottom: 10 }}>
 
-              <Dropdown
-          style={{width:'100%',color:'gray',borderColor:'blue',borderWidth:1,height:40,borderRadius:5,backgroundColor:'white',padding:5,marginRight:5,marginTop:Platform.OS=='android'?5:30,marginLeft:0}}
-          placeholderStyle={{color:'gray'}}
-          selectedTextStyle={{color:'gray'}}
-          inputSearchStyle={{color:'gray'}}
-          itemTextStyle={{color:'gray'}}
-          // iconStyle={styles.iconStyle}
-          data={assignteamls}
-          search
-          maxHeight={300}
-          labelField="label"
-          valueField="value"
-          placeholder={('Select')}
-          searchPlaceholder="Search..."
-          value={assignteam}
-         
-          onChange={(items) => { handlechangeteam(items)}}
-          />
+          <Text style={[styles.sectionTitle, { textAlign: 'center' }]}>ASSIGN FILE</Text>
 
+          <View style={{
+            // flexDirection: 'row'
+          }}>
+            <View style={[styles.card, { width: '100%', borderColor: Appearance.getColorScheme() == 'dark' ? 'white' : 'black' }]}>
+              <Text style={styles.cardTitle}>Assign to Team </Text>
+              <View style={styles.pickerContainer}>
+
+
+                <Dropdown
+                  style={{ width: '100%', color: 'gray', borderColor: 'blue', borderWidth: 1, height: 40, borderRadius: 5, backgroundColor: 'white', padding: 5, marginRight: 5, marginTop: Platform.OS == 'android' ? 5 : 30, marginLeft: 0 }}
+                  placeholderStyle={{ color: 'gray' }}
+                  selectedTextStyle={{ color: 'gray' }}
+                  inputSearchStyle={{ color: 'gray' }}
+                  itemTextStyle={{ color: 'gray' }}
+                  // iconStyle={styles.iconStyle}
+                  data={assignteamls}
+                  search
+                  maxHeight={300}
+                  labelField="label"
+                  valueField="value"
+                  placeholder={('Select')}
+                  searchPlaceholder="Search..."
+                  value={assignteam}
+
+                  onChange={(items) => { handlechangeteam(items) }}
+                />
+
+
+              </View>
+
+            </View>
+            <View style={[styles.card, { width: '100%', borderColor: Appearance.getColorScheme() == 'dark' ? 'white' : 'black' }]}>
+              <Text style={styles.cardTitle}>Assign to Team  Member</Text>
+              <View style={styles.pickerContainer}>
+
+
+                <Dropdown
+                  style={{ width: '100%', color: 'gray', borderColor: 'blue', borderWidth: 1, height: 40, borderRadius: 5, backgroundColor: 'white', padding: 5, marginRight: 5, marginTop: 5, marginLeft: 0 }}
+                  placeholderStyle={{ color: 'gray' }}
+                  selectedTextStyle={{ color: 'gray' }}
+                  inputSearchStyle={{ color: 'gray' }}
+                  itemTextStyle={{ color: 'gray' }}
+                  // iconStyle={styles.iconStyle}
+                  data={assignteamMemberls}
+                  search
+                  maxHeight={300}
+                  labelField="label"
+                  valueField="value"
+                  placeholder={('Select')}
+                  searchPlaceholder="Search..."
+                  value={assignteammember}
+
+                  onChange={item => {
+                    setassignteammember(item.value);
+                  }} />
+
+
+              </View>
 
             </View>
 
-          </View>
-          <View style={[styles.card, { width: '100%',borderColor:Appearance.getColorScheme()=='dark'?'white':'black' }]}>
-            <Text style={styles.cardTitle}>Assign to Team  Member</Text>
-            <View style={styles.pickerContainer}>
-          
-
-              <Dropdown
-          style={{width:'100%',color:'gray',borderColor:'blue',borderWidth:1,height:40,borderRadius:5,backgroundColor:'white',padding:5,marginRight:5,marginTop:5,marginLeft:0}}
-          placeholderStyle={{color:'gray'}}
-          selectedTextStyle={{color:'gray'}}
-          inputSearchStyle={{color:'gray'}}
-          itemTextStyle={{color:'gray'}}
-          // iconStyle={styles.iconStyle}
-          data={assignteamMemberls}
-          search
-          maxHeight={300}
-          labelField="label"
-          valueField="value"
-          placeholder={('Select')}
-          searchPlaceholder="Search..."
-          value={assignteammember}
-         
-          onChange={item => {
-            setassignteammember(item.value);
-          }}          />
 
 
-            </View>
-
+          </View>:
+          <View style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+            <TouchableOpacity
+              onPress={SubmitAssignTeam}
+              style={{ backgroundColor: '#162732', paddingVertical: 10, paddingHorizontal: 20, alignItems: 'center', marginBottom: 10, width: "50%", borderRadius: 10, }}>
+              <Text style={styles.updateButtonText}>Submit</Text>
+            </TouchableOpacity>
           </View>
 
-        
-
-        </View>:
-        <View style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-          <TouchableOpacity
-            onPress={SubmitAssignTeam}
-            style={{ backgroundColor: '#162732', paddingVertical: 10, paddingHorizontal: 20, alignItems: 'center', marginBottom: 10, width: "50%", borderRadius: 10, }}>
-            <Text style={styles.updateButtonText}>Submit</Text>
-          </TouchableOpacity>
-        </View>
-       
-      </View>:null}
+        </View>)}
 
 
 
       {/* <TouchableOpacity style={{ backgroundColor: '#162732', paddingVertical: 10, paddingHorizontal: 20, alignItems: 'center', marginBottom: 10 }}>
         <Text style={styles.updateButtonText}>UPDATE DATA</Text>
       </TouchableOpacity> */}
-      <View style={{ padding: 10, borderColor: Appearance.getColorScheme()=='dark'?'white':'#000000', borderWidth: 1, marginTop: 20, borderRadius: 10, marginBottom: 10, zIndex: 0 }}>
+      <View style={{ padding: 10, borderColor: Appearance.getColorScheme() == 'dark' ? 'white' : '#000000', borderWidth: 1, marginTop: 20, borderRadius: 10, marginBottom: 10, zIndex: 0 }}>
         <TouchableOpacity style={styles.updateButton} onPress={togglePersonalModal}>
           <Text style={styles.updateButtonText}>Personal Details</Text>
         </TouchableOpacity>
@@ -1016,7 +1051,7 @@ const AddFile = ({ route }) => {
 
       </View>
 
-      <View style={{ padding: 10, borderColor:Appearance.getColorScheme()=='dark'?'white': '#000000', borderWidth: 1, marginTop: 20, borderRadius: 10, marginBottom: 10 }}>
+      <View style={{ padding: 10, borderColor: Appearance.getColorScheme() == 'dark' ? 'white' : '#000000', borderWidth: 1, marginTop: 20, borderRadius: 10, marginBottom: 10 }}>
         <Text style={[styles.cardTitle, { height: 30, backgroundColor: "#162732", width: '100%', color: "white", marginBottom: 5, marginTop: 5, borderRadius: 5 }]}>KYC Documents</Text>
         <View style={styles.dropdownContainer}>
           {/* <DropDownPicker
@@ -1045,42 +1080,42 @@ const AddFile = ({ route }) => {
 
           </Picker> */}
           <Dropdown
-          style={{width:'50%',color:'gray',borderColor:'blue',borderWidth:1,height:40,borderRadius:5,backgroundColor:'white',padding:5,marginRight:5,marginLeft:0}}
-          placeholderStyle={{color:'gray'}}
-          selectedTextStyle={{color:'gray'}}
-          inputSearchStyle={{color:'gray'}}
-          itemTextStyle={{color:'gray'}}
-          // iconStyle={styles.iconStyle}
-          data={documentTypes}
-          search
-          maxHeight={300}
-          labelField="label"
-          valueField="value"
-          placeholder={('Select')}
-          searchPlaceholder="Search..."
-          value={documentType}
-         
-          onChange={item => {
-            setdocumentType(item.value);
-          }}
-         
-        />
+            style={{ width: '50%', color: 'gray', borderColor: 'blue', borderWidth: 1, height: 40, borderRadius: 5, backgroundColor: 'white', padding: 5, marginRight: 5, marginLeft: 0 }}
+            placeholderStyle={{ color: 'gray' }}
+            selectedTextStyle={{ color: 'gray' }}
+            inputSearchStyle={{ color: 'gray' }}
+            itemTextStyle={{ color: 'gray' }}
+            // iconStyle={styles.iconStyle}
+            data={documentTypes}
+            search
+            maxHeight={300}
+            labelField="label"
+            valueField="value"
+            placeholder={('Select')}
+            searchPlaceholder="Search..."
+            value={documentType}
+
+            onChange={item => {
+              setdocumentType(item.value);
+            }}
+
+          />
 
           {file ?
             <View style={{ marginLeft: 20, marginTop: 10 }}>
               <Text style={{ color: 'blue', marginBottom: 1 }}>{file.name}</Text>
             </View> :
-            <TouchableOpacity style={[styles.button, { marginLeft: 10, flexDirection:'row' }]} onPress={chooseFile}>
+            <TouchableOpacity style={[styles.button, { marginLeft: 10, flexDirection: 'row' }]} onPress={chooseFile}>
               <Text style={styles.buttonText}>Choose File</Text>
-             
+
             </TouchableOpacity>}
         </View>
-        <View style={{ flexDirection: 'row', marginLeft: 10, marginTop: 10, marginBottom:10   }}>
+        <View style={{ flexDirection: 'row', marginLeft: 10, marginTop: 10, marginBottom: 10 }}>
 
-          <TouchableOpacity style={[styles.button, { flex: 2, zIndex: 0  , flexDirection:'row',alignItems:'center',alignContent:'center'}]} onPress={uploadFile}>
-            <Text style={[styles.buttonText,{marginLeft:'40%'}]}>Upload</Text>
+          <TouchableOpacity style={[styles.button, { flex: 2, zIndex: 0, flexDirection: 'row', alignItems: 'center', alignContent: 'center' }]} onPress={uploadFile}>
+            <Text style={[styles.buttonText, { marginLeft: '40%' }]}>Upload</Text>
             <Icon name="cloud-upload" size={25} color="#000"
-              style={{marginLeft:10,marginTop:3,color:'white'}}
+              style={{ marginLeft: 10, marginTop: 3, color: 'white' }}
             />
           </TouchableOpacity>
         </View>
@@ -1094,19 +1129,19 @@ const AddFile = ({ route }) => {
           </View>
           <View style={{ borderBottomWidth: 1, flexDirection: 'row', borderColor: 'white', padding: 5, width: '100%' }}>
             <Text style={styles.headerCell}>Aadhar Card</Text>
-          
 
-            { AdharCardPdf !=""  ?
-            <View style={{ width: '50%', padding: 5, flexDirection: 'row', justifyContent: 'space-evenly' }}>
-              <FontIcon name="eye" onPress={() => { handleViewDocument('AdharCard') }} size={20} color="green" />
-              <FontIcon name="trash" onPress={() => { handleDeleteDocument('adhar_card') }} size={20} color="#EF6A32" />
 
-            </View>
-            :<View style={{width:'50%',justifyContent:"center"}}>
-              <Text style={{color:'red', marginLeft:20}}>
-              Upload Document
-              </Text>
-          </View>}
+            {AdharCardPdf != "" ?
+              <View style={{ width: '50%', padding: 5, flexDirection: 'row', justifyContent: 'space-evenly' }}>
+                <FontIcon name="eye" onPress={() => { handleViewDocument('AdharCard') }} size={20} color="green" />
+                <FontIcon name="trash" onPress={() => { handleDeleteDocument('adhar_card') }} size={20} color="#EF6A32" />
+
+              </View>
+              : <View style={{ width: '50%', justifyContent: "center" }}>
+                <Text style={{ color: 'red', marginLeft: 20 }}>
+                  Upload Document
+                </Text>
+              </View>}
 
             {/* <View style={{ width: '50%', padding: 5, flexDirection: 'row', justifyContent: 'space-evenly' }}>
               <FontIcon name="eye" onPress={() => { handleViewDocument('AdharCard') }} size={20} color="green" />
@@ -1116,59 +1151,60 @@ const AddFile = ({ route }) => {
           </View>
           <View style={{ borderBottomWidth: 1, flexDirection: 'row', borderColor: 'white', padding: 5, width: '100%' }}>
             <Text style={styles.headerCell}>Pan Card</Text>
-           { PanCardPdf ?
-            <View style={{ width: '50%', padding: 5, flexDirection: 'row', justifyContent: 'space-evenly' }}>
-              <FontIcon name="eye" onPress={() => { handleViewDocument('PanCard') }} size={20} color="green" />
-              <FontIcon name="trash"  onPress={() => { handleDeleteDocument('pan_card') }} size={20} color="#EF6A32" />
+            {PanCardPdf !="" ?
+              <View style={{ width: '50%', padding: 5, flexDirection: 'row', justifyContent: 'space-evenly' }}>
+                <FontIcon name="eye" onPress={() => { handleViewDocument('PanCard') }} size={20} color="green" />
+                <FontIcon name="trash" onPress={() => { handleDeleteDocument('pan_card') }} size={20} color="#EF6A32" />
 
-            </View>
-           :<View style={{width:'50%',justifyContent:"center"}}>
-              <Text style={{color:'red', marginLeft:20}}>
-            Upload Document
-            </Text>
-            </View>}
+              </View>
+              : <View style={{ width: '50%', justifyContent: "center" }}>
+                <Text style={{ color: 'red', marginLeft: 20 }}>
+                  Upload Document
+                </Text>
+              </View>}
           </View>
           <View style={{ borderBottomWidth: 1, flexDirection: 'row', borderColor: 'white', padding: 5, width: '100%' }}>
             <Text style={styles.headerCell}>Agreement Copy</Text>
-            
-            { AgreeentCopyPdf ?<View style={{ width: '50%', padding: 5, flexDirection: 'row', justifyContent: 'space-evenly' }}>
+
+            {AgreeentCopyPdf !=""?
+             <View style={{ width: '50%', padding: 5, flexDirection: 'row', justifyContent: 'space-evenly' }}>
               <FontIcon name="eye" onPress={() => { handleViewDocument('AgreementCopy') }} size={20} color="green" />
               <FontIcon name="trash" size={20} onPress={() => { handleDeleteDocument('Agreement_Copy') }} color="#EF6A32" />
 
             </View>
-            :<View style={{width:'50%',justifyContent:"center"}}>
-              <Text style={{color:'red', marginLeft:20}}>
-            Upload Document
-            </Text>
-            </View>}
+              : <View style={{ width: '50%', justifyContent: "center" }}>
+                <Text style={{ color: 'red', marginLeft: 20 }}>
+                  Upload Document
+                </Text>
+              </View>}
           </View>
           <View style={{ borderBottomWidth: 1, flexDirection: 'row', borderColor: 'white', padding: 5, width: '100%' }}>
             <Text style={styles.headerCell}>Client Master List</Text>
-          { ClientMasterListPdf ?
-            <View style={{ width: '50%', padding: 5, flexDirection: 'row', justifyContent: 'space-evenly' }}>
-              <FontIcon name="eye" onPress={() => { handleViewDocument('ClientMasterList') }} size={20} color="green" />
-              <FontIcon name="trash" size={20}  onPress={() => { handleDeleteDocument('Client_Master_List') }} color="#EF6A32" />
+            {ClientMasterListPdf  != ""?
+              <View style={{ width: '50%', padding: 5, flexDirection: 'row', justifyContent: 'space-evenly' }}>
+                <FontIcon name="eye" onPress={() => { handleViewDocument('ClientMasterList') }} size={20} color="green" />
+                <FontIcon name="trash" size={20} onPress={() => { handleDeleteDocument('Client_Master_List') }} color="#EF6A32" />
 
-            </View> 
-         :<View style={{width:'50%',justifyContent:"center"}}>
-              <Text style={{color:'red', marginLeft:20}}>
-            Upload Document
-            </Text>
-            </View>}
+              </View>
+              : <View style={{ width: '50%', justifyContent: "center" }}>
+                <Text style={{ color: 'red', marginLeft: 20 }}>
+                  Upload Document
+                </Text>
+              </View>}
           </View>
           <View style={{ borderBottomWidth: 1, flexDirection: 'row', borderColor: 'white', padding: 5, width: '100%' }}>
             <Text style={styles.headerCell}>Cancel Cheque </Text>
-          { CancelChequePdf ?
-            <View style={{ width: '50%', padding: 5, flexDirection: 'row', justifyContent: 'space-evenly' }}>
-              <FontIcon name="eye" onPress={() => { handleViewDocument('CancelCheque') }} size={20} color="green" />
-              <FontIcon name="trash"  onPress={() => { handleDeleteDocument('cancel_cheque') }} size={20} color="#EF6A32" />
+            {CancelChequePdf !="" ?
+             ( <View style={{ width: '50%', padding: 5, flexDirection: 'row', justifyContent: 'space-evenly' }}>
+                <FontIcon name="eye" onPress={() => { handleViewDocument('CancelCheque') }} size={20} color="green" />
+                <FontIcon name="trash" onPress={() => { handleDeleteDocument('cancel_cheque') }} size={20} color="#EF6A32" />
 
-            </View> 
-          :<View style={{width:'50%',justifyContent:"center"}}>
-              <Text style={{color:'red', marginLeft:20}}>
-            Upload Document
-            </Text>
-            </View>}
+              </View>)
+              : (<View style={{ width: '50%', justifyContent: "center" }}>
+                <Text style={{ color: 'red', marginLeft: 20 }}>
+                  Upload Document
+                </Text>
+              </View>)}
           </View>
 
         </View>
@@ -1537,7 +1573,7 @@ const AddFile = ({ route }) => {
                 setItems={setBdstatusList}
                 containerStyle={styles.picker}
                 listMode="SCROLLVIEW"  // Ensure the list is scrollable
-                maxHeight={250} 
+                maxHeight={250}
               />
             </View>
             <View style={styles.modalItem}>
@@ -1968,7 +2004,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 10,
     paddingBottom: 20,
-    backgroundColor: Appearance.getColorScheme()=='dark'?"black": '#ffffff',
+    backgroundColor: Appearance.getColorScheme() == 'dark' ? "black" : '#ffffff',
   },
   pdf: {
     flex: 1,
@@ -2011,9 +2047,9 @@ const styles = StyleSheet.create({
   card: {
     padding: 10,
     marginVertical: 10,
-    marginRight:10,
+    marginRight: 10,
     elevation: 5,
-    borderWidth:0.7,
+    borderWidth: 0.7,
     borderRadius: 10,
   },
   cardTitle: {

@@ -8,7 +8,7 @@ const FAQ = () => {
     const navigation = useNavigation(); 
     const colorScheme = useColorScheme();
     const handlesend = (buttonName) => {
-        navigation.navigate('Profile');
+        // navigation.navigate('Profile');
         console.log('Button pressed:', buttonName);
       };
   return (
