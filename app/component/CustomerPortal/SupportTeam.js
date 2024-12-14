@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Platform, Appearance } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const SupportTeam = () => {
     const navigation = useNavigation();
@@ -12,12 +13,13 @@ const SupportTeam = () => {
 
     return (
         <View style={[styles.container, { backgroundColor: Appearance.getColorScheme() === 'dark' ? '#000' : '#fff' }]}>
-            <View style={styles.iconContainer}>
+      <ScrollView style={{ }} showsVerticalScrollIndicator={false}>
+      <View style={styles.iconContainer}>
                 <MaterialIcons name="headset-mic" size={100} color={Appearance.getColorScheme() === 'dark' ? '#fff' : '#007BFF'} />
                 <Text style={[styles.helpText, { color: Appearance.getColorScheme() === 'dark' ? '#fff' : '#000' }]}>How can we help you?</Text>
             </View>
             <View style={styles.inputContainer}>
-                <TouchableOpacity style={[styles.supportIcon, { backgroundColor: Appearance.getColorScheme() === 'dark' ? '#111' : '#fff' }]} onPress={handleChat}>
+                <TouchableOpacity style={[styles.supportIcon, { backgroundColor: Appearance.getColorScheme() === 'dark' ? 'gray' : '#fff' }]} onPress={handleChat}>
                     <MaterialIcons name="headset-mic" size={30} color={Appearance.getColorScheme() === 'dark' ? '#fff' : '#000'} style={{ marginRight: 15 }} />
                     <Text style={[styles.supportText, { color: Appearance.getColorScheme() === 'dark' ? '#fff' : 'gray' }]}>Contact live chat</Text>
                     <MaterialIcons name="chevron-right" size={30} color={Appearance.getColorScheme() === 'dark' ? '#fff' : 'blue'} style={{ marginLeft: 30 }} />
@@ -33,6 +35,8 @@ const SupportTeam = () => {
                     <Text style={{ fontSize: 19, fontWeight: 'bold', color: Appearance.getColorScheme() === 'dark' ? '#fff' : '#000' }}>+918530617353</Text>
                 </View>
             </View>
+
+         </ScrollView>
         </View>
     );
 };
@@ -42,7 +46,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'flex-start',
         alignItems: 'center',
-        paddingTop: 50,
+        paddingTop: 10,
     },
     iconContainer: {
         alignItems: 'center',

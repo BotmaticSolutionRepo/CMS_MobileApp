@@ -17,14 +17,14 @@ import Profile from './app/component/Profile';
 import ForgotPassword from './app/component/ForgotPassword';
 import ChangePassword from './app/component/ChangePassword';
 import PersonalInformation from './app/component/PersonalInformation';
-import WeeklyProgress from './app/component/WeeklyProgress';
-import UpdateKYC from './app/component/ UpdateKYC';
-import SupportChat from './app/component/SupportChat';
+import WeeklyProgress from './app/component/CustomerPortal/WeeklyProgress';
+import UpdateKYC from './app/component/CustomerPortal/ UpdateKYC';
+import SupportChat from './app/component/CustomerPortal/SupportChat';
 import Notification from './app/component/Notification';
 import Faq from './app/component/Faq';
-import SupportTeam from './app/component/SupportTeam';
-import WeeklyProgressTwo from './app/component/WeeklyProgressTwo';
-import Dashboard from './app/component/Dashboard';
+import SupportTeam from './app/component/CustomerPortal/SupportTeam';
+import WeeklyProgressTwo from './app/component/CustomerPortal/WeeklyProgressTwo';
+import Dashboard from './app/component/CustomerPortal/Dashboard';
 import BdDashboard from './app/component/BdDashboard';
 import BdFilesReport from './app/component/BdFilesReport';
 import BdSearch from './app/component/BdSearch';
@@ -33,8 +33,16 @@ import Details from './app/component/Details';
 import OtherDetails from './app/component/OtherDetails';
 import PersonalDetails from './app/component/PersonalDetails';
 import MultipleSearch from './app/component/MultipleSearch';
+import FileProgress from './app/component/FileProgress';
 
-
+import Documents from './app/component/CustomerPortal/Documents';
+import MyInvestment from './app/component/CustomerPortal/MyInvestment';
+import InvestmentDetails from './app/component/CustomerPortal/InvestmentDetails';
+import AddInvestment from './app/component/CustomerPortal/AddInvestment';
+import ClosedFiles from './app/component/CustomerPortal/ClosedFiles';
+import Home from './app/component/CustomerPortal/Home';
+import SectionNotification from './app/component/CustomerPortal/SectionNotification';
+import Upload from './app/component/CustomerPortal/Upload';
 
 
 
@@ -99,9 +107,18 @@ const App = () => {
         <Stack.Screen name="OtherDetails" component={OtherDetails} options={{ headerShown:false }} />
         <Stack.Screen name="PersonalDetails" component={PersonalDetails} options={{ headerShown:false }} />
         <Stack.Screen name="MultipleSearch" component={MultipleSearch} options={{title: 'Multiple Search', headerShown:true , }} />
+        <Stack.Screen name="FileProgress" component={FileProgress} options={{title: 'File Progress', headerShown:true , }} />
+        <Stack.Screen name="Documents" component={Documents} options={{title: 'Documents', headerShown:true , }} />
+        <Stack.Screen name="MyInvestment" component={MyInvestment} options={{title: 'My Investment', headerShown:true , }} />
+        <Stack.Screen name="InvestmentDetails" component={InvestmentDetails} options={{title: 'Investment Details', headerShown:true , }} />
+        <Stack.Screen name="AddInvestment" component={AddInvestment} options={{title: 'Add Investment', headerShown:true , }} />
+        <Stack.Screen name="ClosedFiles" component={ClosedFiles} options={{title: 'Closed Files', headerShown:true , }} />
+        <Stack.Screen name="Home" component={Home} options={{ headerShown:false , }} />
+        <Stack.Screen name="SectionNotification" component={SectionNotification} options={{title: 'Section Notification', headerShown:true , }} />
+        <Stack.Screen name="Upload" component={Upload} options={{ headerShown:false , }} />
+        
 
-
-
+        
 
 
         <Stack.Screen name="NotificationSettings" component={NotificationSettings} options={{ title: 'Notification Settings', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />

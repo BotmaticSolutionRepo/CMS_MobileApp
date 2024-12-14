@@ -38,7 +38,7 @@ const Login = () => {
   };
 
   const handleLogin = async () => { 
-    // navigation.navigate('Dashboard',{UserName:"Basweshwar "})
+    navigation.navigate('Dashboard',{UserName:"Basweshwar "})
     console.log('loginnnnnnnnnnnnnnnn',Environment.BASE_URL)
    try {
 

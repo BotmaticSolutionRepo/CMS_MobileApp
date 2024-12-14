@@ -60,7 +60,7 @@ const SupportChat = () => {
             )}
             {item.sender === "support" && (
               <View style={styles.userMessageContent}>
-                <Image source={require('../Images/cms.png')} style={styles.profileImage} />
+                <Image source={require('/Users/apple/Desktop/dummy/ClaimMyShares/app/Images/cms.png')} style={styles.profileImage} />
                 <View style={styles.supportMessageContent}>
                   <Text style={styles.supportMessage}>{item.message}</Text>
                   <Text style={styles.timestamp}>{formatTime(item.timestamp)}</Text>

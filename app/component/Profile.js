@@ -1,16 +1,16 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, Appearance } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity,ScrollView, Appearance } from 'react-native';
 import { DefaultStyle } from '../styles/base';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 
 
-const Profile = ({ route }) => {
+const Profile = ({ UserName }) => {
   const navigation = useNavigation(); 
    // Access the route object to get parameters
 
   // Extract the username from the route params
-  const { UserName } = route.params;
+  // const { UserName } = route.params;
 
   // Sample user data
   const user = {
@@ -48,6 +48,8 @@ const Profile = ({ route }) => {
   return (
     <View style={styles.container}>
       {/* User Info Section */}
+      <ScrollView  showsVerticalScrollIndicator={false}>
+
       <View style={styles.userInfo}>
         <Image style={styles.profileImage} source={user.profileImage} />
         <View style={styles.userDetails}>
@@ -89,13 +91,14 @@ const Profile = ({ route }) => {
           <Text style={styles.logoutButtonText}>Logout</Text>
         </TouchableOpacity>
       </View>
+      </ScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    padding: '5%',
+    padding: '2%',
     backgroundColor: Appearance.getColorScheme()=='dark'?"black":'white',
     height: '100%',
   },
@@ -144,13 +147,23 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 10,
     marginTop:10,
-    shadowColor: Appearance.getColorScheme()=='dark'? null: '#cde5fe',
-    shadowOffset: {
-      width: -2,
-      height: -2,
-    },
-    shadowOpacity: 1,
-    shadowRadius: 10,
+    ...Platform.select({
+      ios: {
+          // iOS-specific styles for elevation effect
+          shadowColor: '#4bbbf2',
+          shadowOffset: {
+              width: 0,
+              height: 2,
+          },
+          shadowOpacity: 0.25,
+          shadowRadius: 3.84,
+      },
+      android: {
+          // Android-specific elevation
+          elevation: 10,
+          shadowColor: '#4bbbf2',
+      },
+  }),
   },
   buttonText: {
     color: Appearance.getColorScheme()=='dark'?'white':'black',

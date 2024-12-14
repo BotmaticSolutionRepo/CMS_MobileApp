@@ -25,6 +25,11 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
+	<key>NSCameraUsageDescription</key>
+<string>We need access to your camera to record videos.</string>
+<key>NSMicrophoneUsageDescription</key>
+<string>We need access to your microphone to record audio.</string>
+
 <dict>
     <key>NSExceptionDomains</key>
     <dict>
