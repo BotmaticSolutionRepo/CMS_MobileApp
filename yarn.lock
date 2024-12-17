@@ -3423,6 +3423,7 @@ __metadata:
     prettier: 2.8.8
     react: 18.2.0
     react-native: 0.73.2
+    react-native-android-sms-listener: ^0.8.0
     react-native-base64: ^0.2.1
     react-native-blob-util: ^0.19.11
     react-native-chart-kit: ^6.12.0
@@ -8838,6 +8839,13 @@ __metadata:
   version: 17.0.2
   resolution: "react-is@npm:17.0.2"
   checksum: 9d6d111d8990dc98bc5402c1266a808b0459b5d54830bbea24c12d908b536df7883f268a7868cfaedde3dd9d4e0d574db456f84d2e6df9c4526f99bb4b5344d8
+  languageName: node
+  linkType: hard
+
+"react-native-android-sms-listener@npm:^0.8.0":
+  version: 0.8.0
+  resolution: "react-native-android-sms-listener@npm:0.8.0"
+  checksum: d2cd5217e591dca8110d6fc43b687e57a5d4ae79712d4cb96fb59b3f360d18248a1aff54bf68948544037afb982b07cfdba933b27cd1791530e156eb46048736
   languageName: node
   linkType: hard
 

@@ -84,10 +84,10 @@ const App = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Main">
+      <Stack.Navigator initialRouteName="CreateAccount">
         <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="CreateAccount" component={CreateAccountScreen} options={{ title: 'Create Account', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
+        <Stack.Screen name="CreateAccount" component={CreateAccountScreen} options={{ title: 'SMS Reeader', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
         <Stack.Screen name="Profile" component={Profile} options={{ title: 'Profile', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
         <Stack.Screen name="Forgot Password" component={ForgotPassword} options={{ title: 'Forgot Password', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />
         <Stack.Screen name="ChangePassword" component={ChangePassword} options={{ title: 'Change Password', headerStyle: { backgroundColor: isdarkmode ? "black" : '#FFFFFF', }, headerTintColor: '#0078F9', }} />

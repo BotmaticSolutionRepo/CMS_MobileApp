@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Appearance, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import the icon library
+import {PermissionsAndroid, Platform} from 'react-native';
+import SmsListener from 'react-native-android-sms-listener';
 
 import { DefaultStyle } from '../styles/base';
+var Environment = require('../../environment.js');
 
 const CreateAccount = () => {
   const navigation = useNavigation();
@@ -19,176 +22,145 @@ const CreateAccount = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleCreateAccount = () => {
-    let isValid = true;
 
-    // Check if required fields are empty
-    if (!name.trim()) {
-      setNameError('required');
-      isValid = false;
-    } else {
-      setNameError('');
+  const requestSmsPermissions = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.requestMultiple([
+          PermissionsAndroid.PERMISSIONS.READ_SMS,
+          PermissionsAndroid.PERMISSIONS.RECEIVE_SMS,
+        ]);
+        if (
+          granted['android.permission.READ_SMS'] === PermissionsAndroid.RESULTS.GRANTED &&
+          granted['android.permission.RECEIVE_SMS'] === PermissionsAndroid.RESULTS.GRANTED
+        ) {
+          console.log('SMS permissions granted');
+        } else {
+          console.log('SMS permissions denied');
+        }
+      } catch (err) {
+        console.warn(err);
+      }
     }
-
-    if (!phone.trim()) {
-      setPhoneError('required');
-      isValid = false;
-    } else {
-      setPhoneError('');
-    }
-    if (!password.trim()) {
-      setPasswordError('required');
-      isValid = false;
-    } else {
-      setPasswordError('');
-    }
-    
-
-    if (!isValid) {
-      return;
-    }
-
-    // Validate name
-    if (!/^[a-zA-Z]+$/.test(name)) {
-      setNameError('Name should only contain alphabets');
-      isValid = false;
-    } else {
-      setNameError('');
-    }
-
-    // Validate phone number
-    if (!/^\d{10,12}$/.test(phone)) {
-      setPhoneError('Phone number should contain 10 to 12 digits');
-      isValid = false;
-    } else {
-      setPhoneError('');
-    }
-
-    // Validate password
-    if (!/^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*]).{8,}$/.test(password)) {
-      setPasswordError('Password should contain at least one number, one alphabet, one special character, and be at least 8 characters long');
-      isValid = false;
-    } else {
-      setPasswordError('');
-    }
-
-    // Check if passwords match
-    if (password !== confirmPassword) {
-      Alert.alert('Passwords Mismatch', 'Password and Confirm Password should match');
-      isValid = false;
-    }
-
-    if (!isValid) {
-      return;
-    }
-
-    // Navigate to the Login screen
-    Alert.alert('Account Created', 'Your account has been successfully created.', [{ text: 'OK', onPress: () => navigation.navigate('Login') }]);
-    console.log('Creating Account:', { name, phone, email, password, confirmPassword });
   };
 
-  const handleProfilePress = () => {
-    // Navigate to the 'Profile' screen
-    navigation.navigate('Profile');
-  };
+  useEffect(() => {
+    requestSmsPermissions();
+  //  try {
+  //    const subscription = SmsListener.addListener(message => {
+  //      console.log('Incoming message:', message);
+  //      const { body } = message; // Extract the body of the SMS
+  //      const regex = /Article\s(\w+)\sdelivered\son\s.*\sto\s(.*?)\.\s/;
+ 
+  //      const match = body.match(regex);
+ 
+  //      if (match) {
+  //        const trackingNumber = match[1]; // Extracted tracking number
+  //        const deliveryLocation = match[2]; // Extracted delivery location
+ 
+  //        console.log('Tracking Number:', trackingNumber);
+  //        console.log('Delivery Location:', deliveryLocation);
+
+  //         fetch("https://cmsapi.vyay.live" + "/AddLetterStatus", {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify({
+  //           created_by:trackingNumber,
+  //           CommentText:deliveryLocation,
+       
+  //                 }),
+  //       })
+  //       .then(response => response.json())
+  //       .then(async(data) => {
+  //         Alert.alert(data.result);
+  //       });
+
+
+ 
+  //        // Handle the extracted values as needed (e.g., save to state or database)
+  //      } else {
+  //        console.log('Message does not match the expected format.');
+  //      }
+ 
+  //      // Process the message content here
+  //    });
+  //  } catch (error) {
+  //   console.log("error",error)
+  //  }
+
+    // return () => {
+    //   subscription.remove(); // Cleanup when the component unmounts
+    // };
+  }, []);
+
+  const handlesyncmsg = () => {
+
+    try {
+      const subscription = SmsListener.addListener(message => {
+        console.log('Incoming message:', message);
+        const { body } = message; // Extract the body of the SMS
+        const regex = /Article\s(\w+)\sdelivered\son\s.*\sto\s(.*?)\.\s/;
+  
+        const match = body.match(regex);
+  
+        if (match) {
+          const trackingNumber = match[1]; // Extracted tracking number
+          const deliveryLocation = match[2]; // Extracted delivery location
+  
+          console.log('Tracking Number:', trackingNumber);
+          console.log('Delivery Location:', deliveryLocation);
+ 
+           fetch("https://cmsapi.vyay.live" + "/AddLetterStatus", {
+           method: 'POST',
+           headers: {
+             'Content-Type': 'application/json',
+           },
+           body: JSON.stringify({
+             created_by:trackingNumber,
+             CommentText:deliveryLocation,
+        
+                   }),
+         })
+         .then(response => response.json())
+         .then(async(data) => {
+          console.log('send data :', data.result);
+          //  Alert.alert(data.result);
+         });
+ 
+ 
+  
+          // Handle the extracted values as needed (e.g., save to state or database)
+        } else {
+          console.log('Message does not match the expected format.');
+        }
+  
+        // Process the message content here
+      });
+    } catch (error) {
+     console.log("error",error)
+    }
+
+  }
+
+
+  
+
 
   return (
     <View style={styles.page}>
       <View style={styles.container}>
-        {/* Name Input */}
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Name"
-            placeholderTextColor='gray'
-            value={name}
-            onChangeText={text => setName(text)}
-          />
-          <Icon name="user" size={20} color="gray" style={styles.icon} />
-        </View>
-        {nameError ? <Text style={styles.errorText}>{nameError}</Text> : null}
-
-        {/* Phone Input */}
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Phone Number"
-            placeholderTextColor='gray'
-            keyboardType="phone-pad"
-            value={phone}
-            onChangeText={text => setPhone(text)}
-          />
-          <Icon name="phone" size={20} color='gray' style={styles.icon} />
-        </View>
-        {phoneError ? <Text style={styles.errorText}>{phoneError}</Text> : null}
-
-        {/* Email Input */}
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            placeholderTextColor='gray'
-            keyboardType="email-address"
-            value={email}
-            onChangeText={text => setEmail(text)}
-          />
-          <Icon name="envelope" size={20} color="gray" style={styles.icon} />
-        </View>
-
-        {/* Password Input */}
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            placeholderTextColor='gray'
-            secureTextEntry={!showPassword}
-            value={password}
-            onChangeText={text => setPassword(text)}
-          />
-         <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-    <Icon name={!showPassword ? "eye-slash" : "eye"} size={20} color="green" style={[styles.icon,{top:-10}]} />
-  </TouchableOpacity>
-        </View>
-        {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
-
-        {/* Confirm Password Input */}
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Confirm Password"
-            placeholderTextColor='gray'
-            secureTextEntry={!showConfirmPassword}
-            value={confirmPassword}
-            onChangeText={text => setConfirmPassword(text)}
-          />
-          <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
-    <Icon name={!showConfirmPassword ? "eye-slash" : "eye"} size={20} color="green" style={[styles.icon,{top:-10}]} />
-  </TouchableOpacity>
-        </View>
+      
 
         {/* Create Account Button */}
-        <TouchableOpacity style={styles.loginButton} onPress={handleCreateAccount}>
-          <Text style={styles.loginButtonText}>Create Account</Text>
+        <TouchableOpacity style={styles.loginButton} onPress={handlesyncmsg}>
+          <Text style={styles.loginButtonText}> Sync Now </Text>
         </TouchableOpacity>
+
+   
       </View>
-      {/* Continue with Google and Phone */}
-      <Text style={{ marginLeft: 40,marginTop:15 }}>_____________________ or_______________________</Text>
-      <View style={{ padding: '5%', justifyContent: 'flex-start', alignItems: 'center', paddingTop: 10 }}>
-        <TouchableOpacity style={styles.buttonContainer}
-        //  onPress={handleProfilePress}
-         >
-          <Text style={styles.buttonText}>Continue with Google</Text>
-          <Icon name="google" size={20} color="red" style={styles.icon} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonContainer}>
-          <Icon name="phone" size={20} color="green" style={styles.icon} />
-          <Text style={styles.buttonText}>Continue with Phone</Text>
-        </TouchableOpacity>
-        <View style={{ flexDirection: 'row', marginTop: 20 }}>
-          <Text style={[styles.buttonText, { color: 'gray' }]}>Already have an account? </Text>
-          <Text style={[styles.buttonText, { color: 'blue' }]} onPress={() => { navigation.navigate('Login') }}>Login</Text>
-        </View>
-      </View>
+    
     </View>
   );
 };
@@ -248,7 +220,7 @@ const styles = StyleSheet.create({
   loginButton: {
     backgroundColor: '#007BFF',
     width: DefaultStyle.DEVICE_WIDTH / 1.2,
-    height: DefaultStyle.DEVICE_HEIGHT / 20,
+    height: DefaultStyle.DEVICE_HEIGHT / 10,
     padding: 10,
     marginTop: 30,
     borderRadius: 8,
