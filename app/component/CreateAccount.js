@@ -4,24 +4,14 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import the icon library
 import {PermissionsAndroid, Platform} from 'react-native';
 import SmsListener from 'react-native-android-sms-listener';
-
+import SmsAndroid from 'react-native-get-sms-android'; // Import the SMS library
 import { DefaultStyle } from '../styles/base';
 var Environment = require('../../environment.js');
 
 const CreateAccount = () => {
   const navigation = useNavigation();
 
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [nameError, setNameError] = useState('');
-  const [phoneError, setPhoneError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
+ 
 
   const requestSmsPermissions = async () => {
     if (Platform.OS === 'android') {
@@ -95,7 +85,7 @@ const CreateAccount = () => {
     // };
   }, []);
 
-  const handlesyncmsg = () => {
+  const handlesendmsgfromnow = () => {
 
     try {
       const subscription = SmsListener.addListener(message => {
@@ -144,7 +134,59 @@ const CreateAccount = () => {
 
   }
 
+  const handlesyncmsg = async () => {
+    // Define SMS filter
+    const filter = {
+      box: 'inbox', // Read inbox messages
+      minDate: new Date().getTime() - 7 * 24 * 60 * 60 * 1000, // Messages from the last 7 days
+    };
 
+    SmsAndroid.list(
+      JSON.stringify(filter),
+      (fail) => {
+        console.log('Failed to fetch SMS: ', fail);
+
+        Alert.alert('Failed to fetch SMS: ', fail); 
+      },
+      (count, smsList) => {
+        console.log('smsList SMS: ', smsList);
+
+        const messages = JSON.parse(smsList);
+
+        messages.forEach((message) => {
+          const regex = /Article\s(\w+)\sdelivered\son\s.*\sto\s(.*?)\.\s/;
+          const match = message.body.match(regex);
+
+          if (match) {
+            const trackingNumber = match[1]; // Extracted tracking number
+            const deliveryLocation = match[2]; // Extracted delivery location
+
+            console.log('Tracking Number:', trackingNumber);
+            console.log('Delivery Location:', deliveryLocation);
+
+            // Send data to the API
+            fetch('https://cmsapi.vyay.live/AddLetterStatus', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                created_by: trackingNumber,
+                CommentText: deliveryLocation,
+              }),
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                Alert.alert(data.result); // Show success message
+              })
+              .catch((error) => {
+                console.error('Error:', error); // Log errors
+              });
+          }
+        });
+      }
+    );
+  };
   
 
 
@@ -154,10 +196,12 @@ const CreateAccount = () => {
       
 
         {/* Create Account Button */}
+        <TouchableOpacity style={styles.loginButton} onPress={handlesendmsgfromnow}>
+          <Text style={styles.loginButtonText}> Send message from now </Text>
+        </TouchableOpacity>
         <TouchableOpacity style={styles.loginButton} onPress={handlesyncmsg}>
           <Text style={styles.loginButtonText}> Sync Now </Text>
         </TouchableOpacity>
-
    
       </View>
     
