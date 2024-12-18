@@ -268,9 +268,18 @@ const CreateAccount = () => {
           <Text style={styles.loginButtonText}> Send message from now </Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.loginButton} onPress={handlesyncmsg}>
-          <Text style={styles.loginButtonText}> Sync Now </Text>
+          <Text style={styles.loginButtonText}> Sync Previous </Text>
         </TouchableOpacity>
    
+
+
+
+
+
+
+
+
+
         <TouchableOpacity style={styles.loginButton} onPress={createexcelfile}>
           <Text style={styles.loginButtonText}> Download Excel </Text>
         </TouchableOpacity>
