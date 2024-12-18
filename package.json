@@ -25,6 +25,7 @@
     "react-native-document-picker": "^9.3.0",
     "react-native-dropdown-picker": "^5.4.6",
     "react-native-element-dropdown": "^2.12.1",
+    "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "^2.14.0",
     "react-native-get-sms-android": "^2.1.0",
     "react-native-image-picker": "^7.1.2",
@@ -42,7 +43,8 @@
     "react-native-vector-icons": "^10.0.3",
     "react-native-video": "^6.8.2",
     "react-native-webview": "^13.12.5",
-    "react-native-youtube-iframe": "^2.3.0"
+    "react-native-youtube-iframe": "^2.3.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

@@ -6,6 +6,8 @@ import {PermissionsAndroid, Platform} from 'react-native';
 import SmsListener from 'react-native-android-sms-listener';
 import SmsAndroid from 'react-native-get-sms-android'; // Import the SMS library
 import { DefaultStyle } from '../styles/base';
+import RNFS from 'react-native-fs';
+import XLSX from 'xlsx'; // Import XLSX library
 var Environment = require('../../environment.js');
 
 const CreateAccount = () => {
@@ -19,7 +21,14 @@ const CreateAccount = () => {
         const granted = await PermissionsAndroid.requestMultiple([
           PermissionsAndroid.PERMISSIONS.READ_SMS,
           PermissionsAndroid.PERMISSIONS.RECEIVE_SMS,
+        
         ]);
+        const filestoreage = await PermissionsAndroid.requestMultiple([
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+          // PermissionsAndroid.PERMISSIONS.MANAGE_EXTERNAL_STORAGE,
+        ]);
+
         if (
           granted['android.permission.READ_SMS'] === PermissionsAndroid.RESULTS.GRANTED &&
           granted['android.permission.RECEIVE_SMS'] === PermissionsAndroid.RESULTS.GRANTED
@@ -133,6 +142,7 @@ const CreateAccount = () => {
     }
 
   }
+  
 
   const handlesyncmsg = async () => {
     // Define SMS filter
@@ -187,7 +197,65 @@ const CreateAccount = () => {
       }
     );
   };
-  
+
+
+  const createexcelfile = async () => {
+    // const sampleData = [
+    //   {
+    //     Sr_No: 1,
+    //     Ticket_Id: 'EM352376909IN',
+    //     Delivered_to: 'JPD DATA S',
+    //     Status: 'Not Delivered',
+    //   },
+    //   {
+    //     Sr_No: 2,
+    //     Ticket_Id: 'EM352376957IN',
+    //     Delivered_to: 'BIJAY KUMA',
+    //     Status: 'Delivered',
+    //   },
+    // ];
+
+    let sampleData =[];
+
+    await fetch("https://cmsapi.vyay.live" + "/GetStatusofLetters", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      // body: JSON.stringify({
+      //   created_by:trackingNumber,
+      //   CommentText:deliveryLocation,
+   
+      //         }),
+    })
+    .then(response => response.json())
+    .then(async(data) => {
+     console.log('send data :', data.result);
+     sampleData = data.result ;
+     //  Alert.alert(data.result);
+    });
+
+    // Create a worksheet from JSON data
+    const ws = XLSX.utils.json_to_sheet(sampleData);
+
+    // Create a workbook and append the worksheet
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'LetterStatus');
+
+    // Generate binary string
+    const wbout = XLSX.write(wb, { type: 'binary', bookType: 'xlsx' });
+
+    // Save to device
+    const path = `${RNFS.DownloadDirectoryPath}/LetterStatus.xlsx`;
+
+    try {
+      await RNFS.writeFile(path, wbout, 'ascii');
+      Alert.alert('Success', `Excel file created at ${path}`);
+    } catch (error) {
+      console.error('Error saving Excel file:', error);
+      Alert.alert('Error', 'Failed to create Excel file');
+    }
+  };
 
 
   return (
@@ -203,6 +271,11 @@ const CreateAccount = () => {
           <Text style={styles.loginButtonText}> Sync Now </Text>
         </TouchableOpacity>
    
+        <TouchableOpacity style={styles.loginButton} onPress={createexcelfile}>
+          <Text style={styles.loginButtonText}> Download Excel </Text>
+        </TouchableOpacity>
+
+
       </View>
     
     </View>
