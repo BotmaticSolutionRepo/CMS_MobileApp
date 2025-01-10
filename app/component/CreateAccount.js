@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TextInput, TouchableOpacity, Appearance, Alert 
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import the icon library
 import {PermissionsAndroid, Platform} from 'react-native';
+import Spinner from 'react-native-loading-spinner-overlay';
 import SmsListener from 'react-native-android-sms-listener';
 import SmsAndroid from 'react-native-get-sms-android'; // Import the SMS library
 import { DefaultStyle } from '../styles/base';
@@ -12,6 +13,7 @@ var Environment = require('../../environment.js');
 
 const CreateAccount = () => {
   const navigation = useNavigation();
+  const [isSpinnerVisible, setisSpinnerVisible] = useState(false);
 
  
 
@@ -145,11 +147,13 @@ const CreateAccount = () => {
   
 
   const handlesyncmsg = async () => {
+    setisSpinnerVisible(true);
     // Define SMS filter
     const filter = {
       box: 'inbox', // Read inbox messages
       minDate: new Date().getTime() - 7 * 24 * 60 * 60 * 1000, // Messages from the last 7 days
     };
+    let res = 'Sync Complete';
 
     SmsAndroid.list(
       JSON.stringify(filter),
@@ -159,20 +163,28 @@ const CreateAccount = () => {
         Alert.alert('Failed to fetch SMS: ', fail); 
       },
       (count, smsList) => {
+
+        
+
+
         console.log('smsList SMS: ', smsList);
 
         const messages = JSON.parse(smsList);
 
         messages.forEach((message) => {
-          const regex = /Article\s(\w+)\sdelivered\son\s.*\sto\s(.*?)\.\s/;
+     
+          const regex = /Article\s(\w+)\sdelivered\son\s(\d{2}\/\d{2}\/\d{4})\s+to\s(.*?)\./;
           const match = message.body.match(regex);
-
           if (match) {
-            const trackingNumber = match[1]; // Extracted tracking number
-            const deliveryLocation = match[2]; // Extracted delivery location
-
+            const trackingNumber = match[1];
+            const deliveryDate = match[2];
+            const deliveryAddress = match[3]; 
+          
             console.log('Tracking Number:', trackingNumber);
-            console.log('Delivery Location:', deliveryLocation);
+            console.log('Delivery Date:', deliveryDate);
+            console.log('Delivery Address:', deliveryAddress);
+
+            
 
             // Send data to the API
             fetch('https://cmsapi.vyay.live/AddLetterStatus', {
@@ -182,24 +194,33 @@ const CreateAccount = () => {
               },
               body: JSON.stringify({
                 created_by: trackingNumber,
-                CommentText: deliveryLocation,
+                CommentText: deliveryAddress,
+                updated_by:deliveryDate
               }),
             })
               .then((response) => response.json())
               .then((data) => {
-                Alert.alert(data.result); // Show success message
+                // Alert.alert(data.result); // Show success message
+                res = data.result;
               })
               .catch((error) => {
                 console.error('Error:', error); // Log errors
               });
           }
         });
+      
       }
     );
+    setisSpinnerVisible(false);
+
+   alert(res);
+
   };
 
 
   const createexcelfile = async () => {
+    setisSpinnerVisible(true);
+
     // const sampleData = [
     //   {
     //     Sr_No: 1,
@@ -250,6 +271,7 @@ const CreateAccount = () => {
 
     try {
       await RNFS.writeFile(path, wbout, 'ascii');
+      setisSpinnerVisible(false);
       Alert.alert('Success', `Excel file created at ${path}`);
     } catch (error) {
       console.error('Error saving Excel file:', error);
@@ -261,12 +283,18 @@ const CreateAccount = () => {
   return (
     <View style={styles.page}>
       <View style={styles.container}>
-      
+      <Spinner
+        visible={isSpinnerVisible}
+        textContent={('Loading')}
+        textStyle={styles.spinnerTextStyle}
+        color="#EF6A32"
+      // customIndicator={<Image style={styles.logoImage} source={require('../../app/Images/Group111.png')} />}
+      />
 
         {/* Create Account Button */}
-        <TouchableOpacity style={styles.loginButton} onPress={handlesendmsgfromnow}>
+        {/* <TouchableOpacity style={styles.loginButton} onPress={handlesendmsgfromnow}>
           <Text style={styles.loginButtonText}> Send message from now </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <TouchableOpacity style={styles.loginButton} onPress={handlesyncmsg}>
           <Text style={styles.loginButtonText}> Sync Previous </Text>
         </TouchableOpacity>
