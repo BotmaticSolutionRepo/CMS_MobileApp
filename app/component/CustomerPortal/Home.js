@@ -72,7 +72,7 @@ const [UserName, setUserName] = useState(route);
 
             />
             <Text style={styles.circularProgressText}>75%</Text>
-            <Text style={{ position: 'absolute', top: 74, fontSize: 13, color: Appearance.getColorScheme() == 'dark' ? '#FFFFFF' : 'black', fontWeight: 'bold', }}>Your Progress</Text>
+            <Text style={{ position: 'absolute', top: 74, fontSize: 13, color: '#007BFF' , fontWeight: 'bold', }}>Your Progress</Text>
           </View>
         </TouchableOpacity>
         <View style={{ flexDirection: 'row' }}>
@@ -123,15 +123,14 @@ const [UserName, setUserName] = useState(route);
                   {/* <Icon name="envelope" size={20} color="black" style={styles.messageIcon} /> */}
                   {/* <Text style={styles.messageText}>5 messages</Text> */}
                 </View>
-                <Text style={{ marginBottom: 10, marginTop:20 , marginLeft: 10, fontSize: 16, color: Appearance.getColorScheme() == 'dark' ? '#FFFFFF' : 'black', fontWeight: 'bold' }}>Documents</Text>
-                <View style={{ flexDirection: 'row' }}>
+                <Text style={{ marginBottom: 10, marginTop:30 , marginLeft: 20, fontSize: 16, color: Appearance.getColorScheme() == 'dark' ? '#FFFFFF' : 'black', fontWeight: 'bold' }}>Documents</Text>
+                {/* <View style={{ flexDirection: 'row' }}>
                   <View style={[styles.progressBar,{width:'51%'}]}>
-                    {/* Add progress bar with 70% */}
                     <View style={[styles.progress, { width: '49%' }]}></View>
                   </View>
 
                   <Text style={{ height: 20, marginLeft: 20, marginRight: 10, marginTop: 0, fontSize: 15 ,color:'gray'}}>49%</Text>
-                </View>
+                </View> */}
               </TouchableOpacity>
             </View>
 
@@ -160,15 +159,14 @@ const [UserName, setUserName] = useState(route);
                {/* <Icon name="envelope" size={20} color="black" style={styles.messageIcon} /> */}
                {/* <Text style={styles.messageText}>5 messages</Text> */}
              </View>
-             <Text style={{ marginBottom: 10, marginTop:20 , marginLeft: 10, fontSize: 16, color: Appearance.getColorScheme() == 'dark' ? '#FFFFFF' : 'black', fontWeight: 'bold' }}>My Investment</Text>
-             <View style={{ flexDirection: 'row' }}>
+             <Text style={{ marginBottom: 10, marginTop:30 , marginLeft: 20, fontSize: 16, color: Appearance.getColorScheme() == 'dark' ? '#FFFFFF' : 'black', fontWeight: 'bold' }}>My Investment</Text>
+             {/* <View style={{ flexDirection: 'row' }}>
                <View style={[styles.progressBar,{width:'51%'}]}>
-                 {/* Add progress bar with 70% */}
                  <View style={[styles.progress, { width: '60%' }]}></View>
                </View>
 
                <Text style={{ height: 20, marginLeft: 20, marginRight: 10, marginTop: 0, fontSize: 15,color:'gray' }}>60%</Text>
-             </View>
+             </View> */}
            </TouchableOpacity>
          </View>
            
@@ -199,15 +197,14 @@ const [UserName, setUserName] = useState(route);
                   {/* <Icon name="envelope" size={20} color="black" style={styles.messageIcon} /> */}
                   {/* <Text style={styles.messageText}>5 messages</Text> */}
                 </View>
-                <Text style={{ marginBottom: 10, marginTop:20 , marginLeft: 10, fontSize: 16, color: Appearance.getColorScheme() == 'dark' ? '#FFFFFF' : 'black', fontWeight: 'bold' }}>CMS Team</Text>
-                <View style={{ flexDirection: 'row' }}>
+                <Text style={{ marginBottom: 10, marginTop:30 , marginLeft: 20, fontSize: 16, color: Appearance.getColorScheme() == 'dark' ? '#FFFFFF' : 'black', fontWeight: 'bold' }}>Operational Team</Text>
+                {/* <View style={{ flexDirection: 'row' }}>
                   <View style={[styles.progressBar,{width:'51%'}]}>
-                    {/* Add progress bar with 70% */}
                     <View style={[styles.progress, { width: '79%' }]}></View>
                   </View>
 
                   <Text style={{ height: 20, marginLeft: 20, marginRight: 10, marginTop: 0, fontSize: 15,color:'gray' }}>79%</Text>
-                </View>
+                </View> */}
               </TouchableOpacity>
             </View>
 
@@ -236,15 +233,14 @@ const [UserName, setUserName] = useState(route);
                {/* <Icon name="envelope" size={20} color="black" style={styles.messageIcon} /> */}
                {/* <Text style={styles.messageText}>5 messages</Text> */}
              </View>
-             <Text style={{ marginBottom: 10, marginTop:20 , marginLeft: 10, fontSize: 16, color: Appearance.getColorScheme() == 'dark' ? '#FFFFFF' : 'black', fontWeight: 'bold' }}>Closed Files</Text>
-             <View style={{ flexDirection: 'row' }}>
+             <Text style={{ marginBottom: 10, marginTop:30 , marginLeft: 20, fontSize: 16, color: Appearance.getColorScheme() == 'dark' ? '#FFFFFF' : 'black', fontWeight: 'bold' }}>Closed Files</Text>
+             {/* <View style={{ flexDirection: 'row' }}>
                <View style={[styles.progressBar,{width:'51%'}]}>
-                 {/* Add progress bar with 70% */}
                  <View style={[styles.progress, { width: '87%' }]}></View>
                </View>
 
                <Text style={{ height: 20, marginLeft: 20, marginRight: 10, marginTop: 0, fontSize: 15 ,color:'gray'}}>87%</Text>
-             </View>
+             </View> */}
            </TouchableOpacity>
          </View>
            

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert,Appearance } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import Octicons from 'react-native-vector-icons/Octicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const Upload = () => {
-  const [cameraActive, setCameraActive] = useState(true);
+  const [cameraActive, setCameraActive] = useState(false);
 
   const openCamera = () => {
     launchCamera(
@@ -45,32 +47,34 @@ const Upload = () => {
 
   return (
     <View style={styles.container}>
-      {/* Camera Preview Section */}
-      {cameraActive && (
-        <View style={styles.cameraPreview}>
-          <Text style={styles.cameraText}>Camera is active</Text>
-          {/* Replace this text with actual camera preview logic if needed */}
-        </View>
-      )}
-
-    
-
-      {/* Capture Button */}
-      <View style={styles.captureButtonContainer}>
-        <TouchableOpacity style={styles.captureButton} onPress={openCamera} />
-      </View>
-
-      {/* Bottom Menu */}
-      <View style={styles.bottomMenu}>
       
-        <TouchableOpacity  onPress={openCamera}  style={styles.menuOption}>
-          <Text style={styles.menuText}>Record</Text>
-        </TouchableOpacity>
-       
-        <TouchableOpacity style={styles.menuOption} onPress={openGallery}>
-          <Text style={styles.menuText}>Video</Text>
-        </TouchableOpacity>
+      <View style={{borderColor:'gray',padding:20,borderWidth:1,borderRadius:10}}>
+      <View style={styles.taskBox}>
+                <View style={{ flexDirection: 'row', marginTop: 5 ,justifyContent:'space-between'}}>
+                    <Text style={[styles.title, { width: 'auto' }]}>
+                      Write Testimonials
+                    </Text>
+                    {/* <Octicons name="file-directory" size={30} color="#0079FB" style={{ marginLeft: 0, width: '25%' }} /> */}
+                    <MaterialIcons name="keyboard-arrow-right" size={40} color="#0079FB" style={{ marginTop: -5, width: '10%' }} />
+
+                </View>
+
+            </View>
+
+            <View style={styles.taskBox}>
+                <View style={{ flexDirection: 'row', marginTop: 5,justifyContent:'space-between' }}>
+                    <Text style={[styles.title, { width: '50%' }]}>
+                       Create Video
+                    </Text>
+                    {/* <Octicons name="file-directory" size={30} color="#0079FB" style={{ marginLeft: 0, width: '25%' }} /> */}
+                    <MaterialIcons name="keyboard-arrow-right" size={40} color="#0079FB" style={{ marginTop: -5, width: '10%' }} />
+
+                </View>
+
+            </View>
       </View>
+
+     
     </View>
   );
 };
@@ -78,7 +82,10 @@ const Upload = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',width:'100%'
+    backgroundColor: 'white',
+    width:'100%',
+    marginTop:40
+
   },
   cameraPreview: {
     flex: 1,
@@ -140,6 +147,63 @@ const styles = StyleSheet.create({
   menuText: {
     color: '#fff',
     fontSize: 14,
+  },
+  title: {
+      fontSize: 18,
+      justifyContent: 'center',
+      fontWeight: 'bold',
+      marginBottom: 10,
+  },
+  taskContainer: {
+      marginTop: 10,
+
+  },
+  taskBox: {
+      width: '100%',
+      height: 50,
+      backgroundColor: Appearance.getColorScheme() === 'dark' ? 'gray' : 'white',
+      marginBottom: 15,
+      borderRadius: 8,
+      paddingHorizontal: 10, justifyContent: 'space-around', padding: 5,
+      borderColor: 'gray',
+      borderWidth: 0.5,
+      ...Platform.select({
+          ios: {
+              // iOS-specific styles for elevation effect
+              shadowColor: '#4bbbf2',
+              shadowOffset: {
+                  width: 1,
+                  height: 2,
+              },
+              shadowOpacity: 0.90,
+              shadowRadius: 3.84,
+          },
+          android: {
+              // Android-specific elevation
+              elevation: 10,
+              shadowColor: '#4bbbf2',
+          },
+      }),
+  },
+  taskRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+  },
+  taskText: {
+      flex: 1,
+      fontSize: 16,
+      fontWeight: 'bold',
+  },
+  taskTextInput: {
+      width: 60,
+      height: 35,
+      borderWidth: 1,
+      borderColor: 'green',
+      borderRadius: 10,
+      paddingHorizontal: 5,
+      fontSize: 12,
+      marginTop: 10,
   },
 });
 

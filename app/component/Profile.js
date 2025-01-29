@@ -7,12 +7,10 @@ import { useNavigation } from '@react-navigation/native';
 
 const Profile = ({ UserName }) => {
   const navigation = useNavigation(); 
-   // Access the route object to get parameters
-
-  // Extract the username from the route params
   // const { UserName } = route.params;
 
   // Sample user data
+  console.log("profilfeusername____",UserName)
   const user = {
     name: UserName,
     email: 'basweshwar.g@botmaticsolution.in',

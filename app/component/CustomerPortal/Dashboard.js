@@ -39,11 +39,19 @@ const Dashboard = ({ route }) => {
       setLoading(false);
     }
   };
-  console.log('usernameeeeeeeee', UserName)
   const handleprofile = () => {
-    navigation.navigate('Profile', { UserName: UserName });
+    console.log('handleprofile_____', UserName)
+
+    // navigation.navigate('Profile', { UserName:UserName });
+    // navigation.navigate('Profile', { UserName }); 
+
+    navigation.navigate('Profile', { UserName : "John Doe" });
+
+    
 
   };
+
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -102,7 +110,7 @@ const Dashboard = ({ route }) => {
 <Feed/>: Currentpage == "upload" ?
 <Upload/>:Currentpage == "support" ?
 <SupportTeam/>:Currentpage == "user" ?
- <Profile UserName={"John Doe"} />
+ <Profile  UserName={UserName} />
  :null}
 
 

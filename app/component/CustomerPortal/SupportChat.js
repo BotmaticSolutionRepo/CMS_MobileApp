@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, FlatList, Image } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, FlatList, Image, Appearance } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -90,6 +90,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
+    backgroundColor:Appearance.getColorScheme()=='dark'?"black":'white'
   },
   heading: {
     fontSize: 18,
